@@ -2,9 +2,9 @@
 
 ## Overall
 
-**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression and authoritative World Event/Mandatory/Recovery/Status display integration are now independently reverified by Chat 07. However `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN with Wave 2–4/final UI work still incomplete.
+**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression and authoritative World Event/Mandatory/Recovery/Status display integration are independently verified. Lobby QR now has a confirmed presentation blocker: the rendered QR is cropped and cannot be decoded. `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` also remains OPEN for final raster-art/visual-complete scope.
 
-No resolved UI regression changed gameplay rules or reopened OI-001–OI-006.
+No current UI defect changes gameplay rules or reopens OI-001–OI-006.
 
 ## Closed / verified foundations
 
@@ -20,9 +20,7 @@ No resolved UI regression changed gameplay rules or reopened OI-001–OI-006.
 - Authoritative World Event / Mandatory / Recovery / Status display integration: PASS after Recovery lifecycle fix.
 
 Canonical backend path: `server/backend/`
-
 Canonical client path: `client/`
-
 Live same-origin service: `https://intergenerational-contract.onrender.com`
 
 ## Resolved Support/form-state regression
@@ -40,9 +38,7 @@ Final Support rerun evidence:
 
 ## Resolved authoritative display integration QA
 
-Chat 07 initially found Recovery quotes disappearing when the panel opened after the authoritative snapshot. Chat 06 fixed the presentation lifecycle in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION` by caching the latest authoritative snapshot and reapplying decoration after local panel renders, without adding client economic inference or network requests.
-
-Final rerun evidence:
+Final display rerun evidence:
 - workflow: `UIUX Display E2E`
 - run ID: `34050348433`
 - head SHA: `629b64d28cceb8b99307fd31fbc2c48ce40e7298`
@@ -52,15 +48,33 @@ Final rerun evidence:
 - full clean client suite: 27/27 PASS
 - authoritative engine build: PASS
 
-Verified scope includes World Event value/null fallback; Mandatory authoritative breakdown + projected wording; Recovery late-open cached quote rendering + server action validation + unchanged timer/deadline; Status fees/person counts/affordability and Noble competition/fallback/refund/end-of-round non-guarantee wording; null quote stale-value removal.
-
 `H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS.
 `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`: DONE.
 
+## Current Lobby QR blocker
+
+`H-20260907-033-07-LOBBY-QR-QA` is BLOCKED / FAIL.
+
+Clean client suite including QR regressions is PASS 32/32, but browser QA found the actual QR presentation is not decodable. Diagnostic evidence:
+- workflow: `Lobby QR E2E`
+- run ID: `34051451933`
+- head SHA: `196d8e3213b224c538d7a30fc84f48c1d2230e07`
+- artifact ID: `9994665230`
+- digest: `sha256:97a142c12ba2b8a4445d3483dc174d91357077c3b30c6351bdeaff9a712ef03c`
+- Lobby PIN visible: PASS
+- QR ready/rendered: PASS
+- requested QR module image: 192×192
+- visible QR container: approximately 202×202
+- artifact `qr-functional.png` visibly crops right/bottom QR modules
+- raw decode: FAIL
+- same captured image with diagnostic +32px white border: FAIL, proving the modules are already clipped rather than merely lacking external whitespace.
+
+Owner handoff: `H-20260907-034-06-LOBBY-QR-CROPPING` to Chat 06. H033 must be rerun after the layout fix before QR can be called complete.
+
 ## Remaining UI work
 
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN. Wave 2–4/final raster art, Lobby QR and remaining visual-complete scope are not made complete by Wave 1, Support or display-contract QA.
+`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN for final raster-art / visual-complete scope. Lobby QR cropping is a separate concrete blocker that must also be resolved.
 
 ## Release claim rule
 
-Do not call the full current player-facing UI release-ready until the remaining H019 implementation scope is completed and the corresponding QA gates pass. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
+Do not call the full current player-facing UI release-ready until the QR cropping defect is fixed and H033 passes, H019 final visual/art scope is completed, and corresponding QA gates pass. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
