@@ -31,13 +31,13 @@ try{
  const ctx=await browser.newContext({permissions:["clipboard-read","clipboard-write"]});
  const page=await ctx.newPage();
  await page.goto(origin,{waitUntil:"domcontentloaded"});await page.click('[data-screen="create"]');await page.fill("#name","QR Host");await page.click("#entry-go");
- await page.waitForSelector(".lobby-screen");await page.waitForSelector(".qr-functional canvas,.qr-functional img",{timeout:15000});
+ await page.waitForSelector(".lobby-screen");await page.waitForFunction(()=>document.querySelector('.qr-placeholder')?.getAttribute('data-qr-ready')==='1',null,{timeout:15000});
  const pin=(await page.locator(".room-pin").textContent())?.trim();check("large room PIN visible",pin==="ABC123",pin||"");
  const qrBox=page.locator(".qr-functional");const box=await qrBox.boundingBox();check("QR rendered at usable size",!!box&&box.width>=192&&box.height>=192,JSON.stringify(box));
  const shot=await qrBox.screenshot();const png=PNG.sync.read(shot);const decoded=jsQR(new Uint8ClampedArray(png.data),png.width,png.height,{inversionAttempts:"attemptBoth"});
  const expected=`${origin}/?room=ABC123`;check("QR decodes to exact same-origin room deep-link",decoded?.data===expected,decoded?.data||"decode failed");
  check("QR payload contains no private state",!decoded?.data.includes("reconnect")&&!decoded?.data.includes("playerId")&&!decoded?.data.includes("displayName")&&!decoded?.data.includes("token"),decoded?.data||"");
- const style=await page.evaluate(()=>{const el=document.querySelector('.qr-functional');const cs=getComputedStyle(el);const child=el?.querySelector('canvas,img');const r=child?.getBoundingClientRect();return{background:cs.backgroundColor,padding:cs.padding,width:r?.width||0,height:r?.height||0}});
+ const style=await page.evaluate(()=>{const el=document.querySelector('.qr-functional');const cs=getComputedStyle(el);const child=[...(el?.querySelectorAll('canvas,img')||[])].find(x=>{const r=x.getBoundingClientRect();return r.width>0&&r.height>0});const r=child?.getBoundingClientRect();return{background:cs.backgroundColor,padding:cs.padding,width:r?.width||0,height:r?.height||0}});
  check("QR high contrast with quiet-zone container",style.background==="rgb(255, 255, 255)"&&parseFloat(style.padding)>=12&&style.width>=160&&style.height>=160,JSON.stringify(style));
  check("Host Start remains usable with QR",await page.locator("#start").isEnabled(),"start enabled");
  const linkText=(await page.locator(".qr-link-text").textContent())?.trim();check("copy link text matches QR payload",linkText===expected,linkText||"");
