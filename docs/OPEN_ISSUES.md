@@ -50,9 +50,16 @@ Live Render settings and runtime success are intentionally tracked separately un
 
 ## OI-006 — Dependency-backed live server runtime verification
 
-**Status:** OPEN — RELEASE GATE.
+**Status:** OPEN — LIVE TRANSPORT VERIFIED / PENDING RELEASE QA.
 
-Owners: 04 — DEPLOYMENT & DEVOPS, then 03/07 for integration/release validation.
+Chat 04 verified the Render build, dependency-backed process, and live service.
+Chat 03 independently received a successful external `/health` response and
+passed live WebSocket Socket.IO smoke for create/join/start/state,
+disconnect/reconnect, `game:replay` routing, authoritative error acks, and
+public/private state emissions against deployed runtime commit
+`bbd30f8c08d71903b99462c071f347eca33d042f`.
+
+Remaining owner: 07 — RELEASE & QA for final integration/release validation.
 
 ## Non-blocking maintenance debt
 
