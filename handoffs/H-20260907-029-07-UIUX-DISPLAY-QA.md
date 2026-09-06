@@ -1,18 +1,21 @@
 handoff_id: H-20260907-029-07-UIUX-DISPLAY-QA
 from: 06
 to: 07
-status: BLOCKED
+status: OPEN
 title: QA authoritative World Event Mandatory Recovery Status display integration
 
 ## Context
 
 Chat 03 exposed authoritative read-only display contracts in server commit `9222968e2aba9970cd2f7038b9b901b304f40a89` and Chat 06 completed `H-20260907-028-06-UIUX-DISPLAY-INTEGRATION`.
 
+Chat 07 initially found a Recovery decoration lifecycle defect. Chat 06 fixed it in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION` by caching the latest authoritative snapshot and reapplying presentation decoration after local `data-panel` renders.
+
 ## Client integration
 
 - `client/src/types.ts` contains exact display quote types.
 - `client/src/display-contract.ts` decorates existing production UI from authoritative snapshots only.
-- `client/src/transport.ts` emits local browser `ic:snapshot` after room/player updates; no network protocol change.
+- `client/src/transport.ts` emits local browser `ic:snapshot` after room/player snapshot updates; no network protocol change.
+- display layer caches the latest snapshot and re-decorates after local panel opens without requesting/recomputing economic state.
 - `client/index.html` bootstraps display renderer before `main.js`.
 
 ## Required QA
@@ -26,6 +29,9 @@ Chat 03 exposed authoritative read-only display contracts in server commit `9222
    - no UI wording claims committed bankruptcy before resolution;
    - timer remains authoritative and unaffected.
 3. Recovery during current Human Voluntary:
+   - authoritative `recoveryQuotes` may arrive before the panel opens;
+   - open Recovery locally with no intervening network snapshot;
+   - all low/mid/high rows must render `.server-quote` labels from the cached authoritative snapshot;
    - each grade shows server currentPool/carryingCapacity/pendingNextRound/capacityRemaining/costPerUnit;
    - action semantics remain unchanged and server revalidates submitted units/cost.
 4. Status during current representative Status phase:
@@ -33,42 +39,24 @@ Chat 03 exposed authoritative read-only display contracts in server commit `9222
    - Noble slots, priority, pending slots, fallback Middle fee and potential refund render from server quote;
    - UI states that allocation occurs end-of-round and does not guarantee Noble outcome.
 5. Null/empty quote states must not show client-derived economic values.
-6. Smoke existing Market/Support/Birth/Marriage actions to ensure the new local snapshot presentation event does not change action payloads or timers.
+6. Smoke existing Market/Support/Birth/Marriage actions to ensure presentation lifecycle hooks do not change action payloads or timers.
 
-## QA Result
+## Prior evidence
 
-BLOCKED / FAIL on browser integration.
-
-QA harness/workflow added:
-- `qa/uiux-display-e2e.mjs`
-- `.github/workflows/uiux-display-e2e.yml`
-- workflow run `34049782937`
-- head `f28a659700fc9c70b0e5dbbed93f793529428bfc`
-- artifact `9994199735`
-- digest `sha256:e9fd43453820c4b555e1ca9eccd7016a96ce40bb2d449358afb855ad4cf6770a`
-
-Verified before failure:
+Initial workflow run `34049782937` verified before the Recovery failure:
 - authoritative engine build PASS;
 - full clean client suite PASS 25/25;
-- World Event authoritative value PASS;
-- null World Event fallback PASS;
-- Mandatory authoritative quote exists and all breakdown labels/values render PASS;
-- Mandatory wording remains projected/dự kiến and does not claim committed bankruptcy PASS;
-- Mandatory has no skip button PASS;
-- Mandatory display does not change authoritative deadline PASS.
+- World Event value/fallback PASS;
+- Mandatory quote rendering and projected wording PASS;
+- Mandatory deadline semantics PASS.
 
-Failure:
-- during authoritative Voluntary phase, `player.recoveryQuotes` exists, but opening Recovery after the snapshot does not render `.server-quote` labels;
-- Playwright times out waiting for `.recovery-row .server-quote`.
+Initial failure was only Recovery local-open decoration. Defect handoff `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION` is now DONE.
 
-Likely lifecycle defect: display decoration runs on `ic:snapshot`, while opening a local panel rerenders DOM without causing a new snapshot event. Recovery rows are therefore created after the last decoration pass.
+## Rerun focus
 
-Defect handoff: `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`.
-
-Status/remaining Recovery/action/null checks must be rerun after Chat 06 fixes the lifecycle issue.
+Rerun browser/server E2E from the Recovery open-after-snapshot step onward, then complete remaining Status/action/null-state checks. If clean, close this QA handoff; otherwise route any new defect to its owner.
 
 ## Constraints
 
 - Do not change gameplay rules or protocol while testing.
 - Treat server snapshot/action result as authoritative.
-- Presentation-only failure belongs to Chat 06.
