@@ -1,16 +1,16 @@
 handoff_id: H-20260906-019-06-FULL-UIUX-IMPLEMENTATION
 from: 05
 to: 06
-status: OPEN
+status: DONE
 title: Triển khai production UI/UX theo full audit
 
-## Context
+## Result
 
-Chat 05 đã hoàn thành full UI/UX audit tại `docs/UI_UX_FULL_AUDIT_2026-09-06.md`.
+DONE at Client/UI/UX implementation scope.
 
-## Progress
+## Completed scope
 
-### Wave 1 — COMPLETE
+### Wave 1
 - Landing/Create/Join/Tutorial/Lobby;
 - Host Start;
 - reconnect/get-state;
@@ -20,61 +20,53 @@ Chat 05 đã hoàn thành full UI/UX audit tại `docs/UI_UX_FULL_AUDIT_2026-09-
 - Birth response;
 - form-state regression fixed.
 
-### Wave 2 — IMPLEMENTED + QA PASS
+### Wave 2
 - HUD/World Event/Turn Track;
 - Mandatory/Status authoritative display;
 - Market/Recovery/Support/Birth/Marriage;
-- display lifecycle fix;
+- display lifecycle decoration fix;
 - `H-20260907-029-07-UIUX-DISPLAY-QA`: browser 67/67 PASS, clean client 27/27 PASS, engine PASS.
 
-### Wave 3 — IMPLEMENTED
+### Wave 3
 - Residence/Family/Character Profile;
 - Government drawer;
 - Niên sử;
 - Founder Draw/Round transition;
 - End Report + host-only Replay.
 
-### Lobby QR — IMPLEMENTED + QA PASS
+### Lobby QR
 - canonical same-origin deep-link/no-auto-join/fallback/copy-link;
 - H034 cropping fixed;
 - H035 fallback loop fixed;
 - `H-20260907-033-07-LOBBY-QR-QA`: clean client 33/33 PASS, browser 25/25 PASS.
 
-### Wave 4 — FINAL RASTER INTEGRATION COMPLETE, FINAL QA PENDING
+### Wave 4 raster art
+- `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION`: raster batches A–D produced and APPROVED;
+- `H-20260907-037-06-UIUX-ART-INTEGRATION-FINAL`: production raster integration completed;
+- terrain/world shell, Government, Residence/local marker, panel/button/tab frames, HUD/navigation/action icons, portraits, ambience and transition decorations are asset-backed when ready;
+- `H-20260907-040-06-UI-ART-INTEGER-SCALING`: Government non-integer scaling fixed with native 160×160 presentation and canonical 24×24 nested icons.
 
-`H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` is DONE:
-- required PNG batches A–D exist on `main`;
-- Chat 05 review APPROVED all batches;
-- source: `docs/UI_ART_BINARY_REVIEW_V1.md`.
+## Final independent verification
 
-`H-20260907-037-06-UIUX-ART-INTEGRATION-FINAL` is DONE at Client integration scope:
-- v1 manifest expanded with approved icon/ambience entries;
-- terrain/world shell uses approved atlas-backed integer-scaled raster layer when ready;
-- Government/Residence/local marker use approved rasters;
-- primary panel/button/tab frames use approved rasters;
-- HUD/navigation/action controls receive approved 24px icons;
-- Character Profile uses deterministic approved 96px portrait raster;
-- cloud/fog/bird/smoke/ripple ambience and founder/round/extinction decorations are wired;
-- optional crisis overlays remain disabled without safe authoritative mapping;
-- graceful asset fallback remains presentation resilience only;
-- gameplay/action/timer/protocol semantics unchanged.
+`H-20260907-038-07-UIUX-ART-FINAL-QA`: CLOSED / PASS.
 
-## Current verification
+Evidence:
+- workflow `UIUX Art Final E2E`;
+- run `34056472497`;
+- tested head `865d180f8a4962896330d4b81f4736de3cfa056a`;
+- clean client suite **38/38 PASS**;
+- desktop/mobile browser gate **20/20 PASS**;
+- required raster assets load from production with no failed required asset requests;
+- terrain/Government/Residence production rasters verified;
+- H040 integer scaling independently verified desktop/mobile;
+- required ambience is non-blocking;
+- tutorial/help does not pause/reset authoritative countdown;
+- no raw Character/player IDs exposed on tested player-facing surfaces.
 
-Already PASS:
-- authoritative display QA;
-- Lobby QR final QA;
-- Chat 05 raster production/review.
+## Scope boundary
 
-Pending:
-- final integrated clean client build/tests;
-- desktop/mobile visual/runtime QA against Section 16 of `docs/UI_ART_ASSET_CONTRACT_V1.md`;
-- missing asset request check;
-- exact raster/frame/icon/portrait rendering and interaction-overlap verification.
+Wave 4 is art-complete at independently verified UI/UX scope.
 
-## Final gate
+This closure does NOT by itself declare the whole Project release-ready. Project-level release status remains owned by Chat 07 / Chat 00.
 
-Created:
-- `H-20260907-038-07-UIUX-ART-FINAL-QA` -> Chat 07.
-
-H-019 remains OPEN only for independent final visual/runtime QA. Do not declare project-level art-complete or player-facing release-ready until H-038 PASS.
+No gameplay rule, server protocol, authoritative state meaning, action payload or timer semantics were changed by this UI/UX implementation closure.
