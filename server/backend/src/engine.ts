@@ -798,8 +798,19 @@ export class GameEngine{
     }
   }
 
+  canInitiateBirth(h:Household){
+    if(this.phase()!=="voluntary")return false;
+    const proposer=this.currentTurnCharacter();
+    if(!proposer||proposer.householdId!==h.id||h.representativeCharacterId!==proposer.id)return false;
+    if(!this.isCoupleHousehold(h))return false;
+    const spouses=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive&&x.ageStage>=3);
+    if(spouses.length!==2||!spouses.every(x=>this.isWorkerAge(x)))return false;
+    const existing=Object.values(this.state.birthProposals).filter(p=>p.householdId===h.id&&p.round===this.state.round&&!["cancelled","invalidated"].includes(p.status));
+    return existing.length<this.state.eventBirthLimit;
+  }
+
   attemptBirth(h:Household){
-    this.requirePhase("voluntary");const proposer=this.currentTurnCharacter();if(!proposer||proposer.householdId!==h.id)throw Error("not household turn");if(h.representativeCharacterId!==proposer.id)throw Error("only first spouse can propose birth");if(!this.isCoupleHousehold(h))return null;const spouses=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive&&x.ageStage>=3);if(spouses.length!==2||!spouses.every(x=>this.isWorkerAge(x)))return null;const existing=Object.values(this.state.birthProposals).filter(p=>p.householdId===h.id&&p.round===this.state.round&&!["cancelled","invalidated"].includes(p.status));if(existing.length>=this.state.eventBirthLimit)return null;const responder=spouses.find(x=>x.id!==proposer.id)!;const proposal={id:`birth-${crypto.randomUUID()}`,householdId:h.id,index:existing.length+1,proposerCharacterId:proposer.id,responderCharacterId:responder.id,status:"pending" as const,round:this.state.round};this.state.birthProposals[proposal.id]=proposal;return proposal;
+    this.requirePhase("voluntary");const proposer=this.currentTurnCharacter();if(!proposer||proposer.householdId!==h.id)throw Error("not household turn");if(h.representativeCharacterId!==proposer.id)throw Error("only first spouse can propose birth");if(!this.canInitiateBirth(h))return null;const spouses=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive&&x.ageStage>=3);const existing=Object.values(this.state.birthProposals).filter(p=>p.householdId===h.id&&p.round===this.state.round&&!["cancelled","invalidated"].includes(p.status));const responder=spouses.find(x=>x.id!==proposer.id)!;const proposal={id:`birth-${crypto.randomUUID()}`,householdId:h.id,index:existing.length+1,proposerCharacterId:proposer.id,responderCharacterId:responder.id,status:"pending" as const,round:this.state.round};this.state.birthProposals[proposal.id]=proposal;return proposal;
   }
 
 

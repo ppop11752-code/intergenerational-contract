@@ -79,6 +79,10 @@ The private snapshot contains:
 - 50% spending limit, shared-cost quota charge, voluntary spending and remaining allowance;
 - resource access from current-round Status;
 - whether the Character is the Household representative;
+- `canInitiateBirth`, a side-effect-free authoritative boolean that is true only
+  for the current Voluntary-turn Household representative when the Household is
+  a valid couple, both spouses are worker-age, and the current-round event Birth
+  limit has not been reached;
 - incoming marriage proposals;
 - outgoing marriage proposals (for cancel UI);
 - incoming birth proposals;
