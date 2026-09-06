@@ -4,6 +4,7 @@ export const UI_ART_MANIFEST=`${UI_ART_ROOT}manifest.json`;
 
 export function portraitKey(characterId:string){let h=0;for(const ch of characterId)h=(h*31+ch.charCodeAt(0))>>>0;return`portraitBase${String(h%8+1).padStart(2,"0")}`}
 export function assetUrl(manifest:UiArtManifest,key:string){const path=manifest.assets[key];return path?`${UI_ART_ROOT}${path}`:null}
+export function dataAttr(key:string){return`data-ui-${key.replace(/[A-Z]/g,m=>`-${m.toLowerCase()}`)}`}
 
 function probe(url:string){return new Promise<boolean>(resolve=>{const img=new Image();img.onload=()=>resolve(true);img.onerror=()=>resolve(false);img.src=url})}
 function cssName(key:string){return`--ui-${key.replace(/[A-Z]/g,m=>`-${m.toLowerCase()}`)}`}
@@ -19,6 +20,6 @@ html[data-ui-fog-edge="ready"] .fog{background-image:var(--ui-fog-edge);backgrou
 `;document.head.appendChild(style)}
 
 export async function initUiArt(){installAssetRules();let manifest:UiArtManifest;try{const r=await fetch(UI_ART_MANIFEST,{cache:"no-cache"});if(!r.ok)throw new Error(String(r.status));manifest=await r.json()}catch{document.documentElement.dataset.uiArt="fallback";return{manifest:null,loaded:[] as string[]}}
- const loaded:string[]=[];await Promise.all(Object.keys(manifest.assets).map(async key=>{const url=assetUrl(manifest,key);if(!url)return;if(await probe(url)){loaded.push(key);document.documentElement.style.setProperty(cssName(key),`url("${url}")`);document.documentElement.dataset[`ui${key[0].toUpperCase()}${key.slice(1)}` as any]="ready"}}));document.documentElement.dataset.uiArt=loaded.length?"partial":"fallback";return{manifest,loaded}}
+ const loaded:string[]=[];await Promise.all(Object.keys(manifest.assets).map(async key=>{const url=assetUrl(manifest,key);if(!url)return;if(await probe(url)){loaded.push(key);document.documentElement.style.setProperty(cssName(key),`url("${url}")`);document.documentElement.setAttribute(dataAttr(key),"ready")}}));document.documentElement.dataset.uiArt=loaded.length?"partial":"fallback";return{manifest,loaded}}
 
 if(typeof window!=="undefined"&&typeof document!=="undefined")void initUiArt();
