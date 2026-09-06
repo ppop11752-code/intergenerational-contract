@@ -73,3 +73,28 @@ Triển khai theo thứ tự ưu tiên trong audit, không thay gameplay/protoco
 - Cập nhật `reports/06_CURRENT.md`.
 - Nếu cần server contract bổ sung, tạo handoff cụ thể sang Chat 03.
 - Sau các P0/P1 chính, handoff Chat 07 để QA player-facing flow.
+
+## Progress — Chat 06
+
+Wave 1/P0 đã triển khai trên `main`:
+- separate Landing/Create/Join/Tutorial/Lobby;
+- normal room creation + Host Start;
+- reconnect/startup recovery via `room:reconnect` + `room:get-state`;
+- dedicated Waiting Queue;
+- standard connection/pending/success/error feedback;
+- raw Support Character ID input removed;
+- incoming Birth proposal response UI added.
+
+Wave 2–3 partial implementation đã có:
+- World HUD + Turn Track + map shell;
+- Mandatory/Status/Voluntary production-oriented surfaces;
+- six-card Market, Recovery, Birth/Marriage panels;
+- Government/Residence entry, Niên sử split view;
+- host-only Replay presentation;
+- responsive sheet layout basics.
+
+Support selector is safely unavailable until authoritative targets are exposed. Created `H-20260906-020-03-SUPPORT-TARGETS` for Chat 03.
+
+Local verification: `npm test` PASS 8/8 including TypeScript build.
+
+Handoff remains OPEN because Wave 4 art/motion and several Wave 2–3 detail/polish items are not yet complete; no release-ready claim is made.
