@@ -1,14 +1,14 @@
 handoff_id: H-20260906-019-06-FULL-UIUX-IMPLEMENTATION
 from: 05
 to: 06
-status: OPEN
+status: BLOCKED
 title: Triển khai production UI/UX theo full audit
 
 ## Context
 
 Chat 05 đã hoàn thành full UI/UX audit tại `docs/UI_UX_FULL_AUDIT_2026-09-06.md`.
 
-Current client started as a functional/integration prototype and is being rebuilt toward the locked UI/UX baseline.
+Current client started as a functional/integration prototype and has been rebuilt toward the locked UI/UX baseline.
 
 ## Required work
 
@@ -63,7 +63,7 @@ COMPLETE in client implementation:
 - form-state loss defect H-20260906-024 fixed with immutable action payloads before busy render.
 
 ### Wave 2
-Substantially implemented and authoritative display dependency resolved:
+IMPLEMENTED with authoritative display contracts:
 - persistent HUD with Round/Year/Population/Inflation/Public debt + ceiling/phase timer/Niên sử;
 - World Event consumes authoritative `game.eventName`;
 - Turn Track capped to 6 upcoming entries with current/local states;
@@ -76,14 +76,18 @@ Substantially implemented and authoritative display dependency resolved:
 - Birth proposals/responses;
 - Marriage incoming/accepted presentation and player-facing labels.
 
-Display lifecycle defect found by Chat 07 is fixed in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`:
-- latest authoritative snapshot is cached in presentation layer;
+Display lifecycle defect found by Chat 07 was fixed in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`:
+- latest authoritative snapshot cached in presentation layer;
 - local `data-panel` renders trigger re-decoration on the next tick;
-- Recovery opened after the last network snapshot no longer depends on a future snapshot to show server quotes;
-- same pass covers Event/Mandatory/Recovery/Status without recomputing economic values.
+- Event/Mandatory/Recovery/Status remain server-derived without client economic recomputation.
+
+Final authoritative display QA is DONE in `H-20260907-029-07-UIUX-DISPLAY-QA`:
+- browser-authoritative checks 67/67 PASS;
+- clean client suite 27/27 PASS;
+- authoritative engine build PASS.
 
 ### Wave 3
-Implemented structurally:
+IMPLEMENTED structurally:
 - Residence/Family drawer;
 - Character Profile + `← GIA ĐÌNH`;
 - Government four tabs: Overview/Budget/Debt/Social Security;
@@ -93,7 +97,7 @@ Implemented structurally:
 - End Report Ranking/Journey/World + host-only Replay + extinction-safe failure presentation.
 
 ### Wave 4
-Integration-ready but NOT ART-COMPLETE:
+INTEGRATION-READY but NOT ART-COMPLETE:
 - responsive/mobile bottom/full-height sheets;
 - Tutorial spotlight hooks/zones;
 - non-blocking ambient cloud/fog/motion layer;
@@ -104,16 +108,23 @@ Final raster binaries are still absent. Current fallback/CSS/placeholders remain
 
 ## Verification
 
-- Chat 07 initial display QA: authoritative engine build PASS and clean client suite PASS 25/25 before browser Recovery lifecycle failure.
-- World Event and Mandatory browser checks passed in that run.
-- H-030 lifecycle fix + deterministic regression are committed.
-- `H-20260907-029-07-UIUX-DISPLAY-QA` reopened for browser/server rerun after the fix.
+- `H-20260907-029-07-UIUX-DISPLAY-QA`: PASS.
+- Browser-authoritative checks: 67/67 PASS.
+- Clean client suite: 27/27 PASS.
+- Authoritative engine build: PASS.
+- Recovery open-after-snapshot lifecycle case specifically PASS after H-030 fix.
 
-## Remaining dependencies
+## Remaining blockers
 
-- Chat 03 display-contract dependency is RESOLVED by server commit `9222968e2aba9970cd2f7038b9b901b304f40a89` and `H-20260907-028-06-UIUX-DISPLAY-INTEGRATION` DONE.
-- Real raster binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` must still be produced/imported under `client/public/assets/ui/v1/`.
-- Chat 07 must rerun `H-20260907-029-07-UIUX-DISPLAY-QA` and later visual/runtime regression after real art binaries exist.
-- Lobby QR is still a placeholder; no renderer has been added.
+1. Lobby baseline requires large room PIN + QR, but authoritative UI sources do not define the QR payload/navigation flow. Chat 06 will not invent whether QR encodes a join URL, room PIN text, or another flow.
+2. Real raster PNG/WebP binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` are still absent; Wave 4 cannot be called art-complete.
+3. After real assets are integrated, Chat 07 must run final visual/runtime regression.
 
-Handoff remains OPEN. Do not declare art-complete or player-facing release-ready until remaining art/QA dependencies are complete.
+Created handoff:
+- `H-20260907-031-05-UIUX-QR-ART-CLOSURE` -> Chat 05 to lock Lobby QR payload/flow and provide/route final raster art binaries.
+
+## Blocked state
+
+This handoff is BLOCKED, not complete. There is no remaining safe independent Chat 06 implementation work for final closure until H-031 returns with QR UX contract and/or real art binaries.
+
+Do not declare art-complete or player-facing release-ready until those blockers and final visual/runtime QA are resolved.
