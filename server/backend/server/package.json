@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "test": "npm run build && node test/socket-events-contract.test.mjs",
+    "smoke:live": "node test/live-socket-smoke.mjs",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/server/src/index.js"
