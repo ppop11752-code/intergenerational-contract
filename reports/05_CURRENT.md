@@ -3,36 +3,40 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Hoàn thành phần đặc tả UI/UX của OI-004; sẵn sàng bàn giao Chat 06 triển khai client.
+Hoàn thành rà soát toàn bộ UI/UX hiện tại. Client đang ở mức prototype chức năng, chưa sẵn sàng phát hành người chơi theo baseline UI/UX & ART đã khóa.
 
 ### Changed
-- Khóa `docs/UI_TUTORIAL_SPEC.md` cho dedicated Tutorial guidance.
-- Tutorial dùng guidance theo ngữ cảnh T0–T11, không phải slide deck chặn game.
-- Seen/completed state là client-local, versioned; không phải authoritative gameplay state.
-- Guidance không được pause/reset/extend timer, không được skip Mandatory, không tự gửi gameplay action.
-- Landing `HƯỚNG DẪN` dùng transport hiện tại: tạo room với 1 Human rồi start; server hiện tự bù 9 NPC và không founder draw, nên OI-004 không cần server tutorial flag mới.
+- Tạo `docs/UI_UX_FULL_AUDIT_2026-09-06.md` với đánh giá toàn diện client hiện tại.
+- Xác nhận Tutorial OI-004 đã có logic/transport cơ bản, nhưng visual integration vẫn chỉ là prototype.
+- Phân loại gap theo P0/P1/P2 và khóa thứ tự triển khai Wave 1–4 cho Chat 06.
+- Kết luận các thiếu hụt lớn: Landing/Create/Join/Lobby, persistent World Map/HUD/Turn Track, reconnect/Waiting Queue, production Mandatory/Status/Voluntary, Market/Recovery/Support/Birth, marriage presentation, Niên sử, Residence/Government, Founder Draw/round transition, End Report, responsive, feedback states, art direction và animation.
+- Không thay gameplay, protocol hay `docs/RELEASE_STATUS.md`.
 
 ### Source
-- `docs/OPEN_ISSUES.md` — OI-004.
-- `docs/PROJECT_BASELINE.md` và `docs/RULE_LEDGER.md` — source authority / gameplay boundary.
-- Locked UI/UX baseline trong Migration Pack đã cung cấp: Landing có `HƯỚNG DẪN`, phase/timer/UI surfaces.
-- `server/backend/src/authoritative-room.ts` và `server/backend/server/src/index.ts` — verified current transport/start behavior.
+- Handoff `H-20260906-018-05-FULL-UIUX-AUDIT` từ Chat 00.
+- `client/src/main.ts`, `client/src/transport.ts`, `client/src/tutorial.ts`, `client/src/types.ts`, `client/styles.css` trên branch `main`.
+- `docs/UI_TUTORIAL_SPEC.md`.
+- Locked UI/UX baseline từ Migration Pack: `04_UI_UX_SPEC.md`.
 
 ### Impact
-- Chat 06 cần triển khai Tutorial entry, contextual coach cards, local progress state và recap help.
-- Không cần Chat 03 thay protocol/server cho phạm vi OI-004 hiện tại.
-- Chat 07 cần E2E/UX regression sau khi client có implementation.
+- Chat 06 cần tiếp tục triển khai production client theo các Wave trong audit.
+- Chat 07 chỉ nên đánh giá final player-facing UX sau khi các P0/P1 chính đã được triển khai.
+- Có thể cần Chat 03 nếu Chat 06 xác minh rằng snapshot hiện tại thiếu dữ liệu authoritative cho selector gia đình hoặc rich UI; không được tự tính eligibility ở client.
 
 ### Verified
-- GitHub `client/` hiện chỉ có placeholder README, chưa có verified client implementation.
-- Server `start()` với <=10 connected Humans join tất cả Humans và tạo NPC cho đủ initial population 10; founder draw chỉ chạy khi >10 Humans.
-- Authoritative phase deadlines tồn tại ở server và phải được UI tôn trọng.
+- Client hiện đã tồn tại thực tế trên GitHub, không còn là placeholder-only.
+- Tutorial T0–T11, local versioned progress, create/join/start/action/replay transport và các form hành động cốt lõi đã được kiểm tra trực tiếp từ source.
+- Current UI không có world map, Turn Track, Government/Residence drawers, normal Create/Lobby flow, reconnect UI, final End Report, production art system hoặc animation layer.
+- CSS hiện chỉ có responsive cơ bản cho grid/coach card, chưa đáp ứng mobile baseline.
 
 ### Unverified
-- Chưa có client runtime để kiểm chứng visual layout, responsive behavior, local persistence hoặc E2E Tutorial flow.
+- Chưa kiểm tra trực tiếp bằng browser visual runtime trong Chat 05.
+- Chưa xác minh mọi dữ liệu cần cho production Support/Residence/Government/Niên sử có đủ trong actual server snapshots hay cần mở rộng contract.
+- Chưa đánh giá asset art thực tế vì client hiện chưa có final asset-driven art layer.
 
 ### Handoff
-- Chat 06 — CLIENT IMPLEMENTATION: triển khai `docs/UI_TUTORIAL_SPEC.md`.
+- Chat 06 — CLIENT IMPLEMENTATION: triển khai các hạng mục ưu tiên từ `docs/UI_UX_FULL_AUDIT_2026-09-06.md`, bắt đầu Wave 1 P0.
 
 ### Open Issues
-- OI-004 vẫn OPEN ở cấp Project cho đến khi client implementation + QA hoàn tất.
+- Không mở gameplay issue mới.
+- UI/UX release readiness: chưa đạt; cần triển khai tiếp trước final player-facing release.
