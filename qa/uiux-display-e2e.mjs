@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { GameEngine } from "../server/backend/dist/engine.js";
 import { AuthoritativeRoom } from "../server/backend/dist/authoritative-room.js";
 
+// H-20260907-029 rerun after H-20260907-030 Recovery decoration lifecycle fix.
 const requireServer=createRequire(new URL("../server/backend/server/package.json",import.meta.url));
 const express=requireServer("express");
 const {Server}=requireServer("socket.io");
@@ -64,7 +65,6 @@ try{
  const n=sq.nobleCompetition;for(const label of["Slot Noble","Ưu tiên","Fallback","Refund tối đa tiềm năng"])check(`Status Noble label ${label}`,st.includes(label),st);check("Status Noble pending slots",st.includes(String(n.pendingNobleSlots)),st);check("Status Noble fallback fee",st.includes(vi(n.middleFallbackFee)),st);check("Status Noble potential refund",st.includes(vi(n.potentialRefund)),st);check("Status clearly non-guaranteed end-round allocation",st.includes("cuối vòng")&&st.includes("không phải cam kết"),st);
  const statusDeadline=room.phaseDeadlineAt;await page.waitForTimeout(1100);check("Status display does not reset deadline",room.phaseDeadlineAt===statusDeadline,`${statusDeadline} -> ${room.phaseDeadlineAt}`);
 
- // Null quote state: make local player not current turn while keeping game shell mounted.
  room.engine.state.turnState.activeIndex=99;push();await page.waitForTimeout(100);check("Null Status quote removes server-derived box",await page.locator(".status-card .server-display").count()===0||await page.locator(".status-card").count()===0,"no stale authoritative values");
  results.notes.push("Harness uses production client + compiled production AuthoritativeRoom/GameEngine over Socket.IO. Only deterministic phase/state setup is synthetic; quote generation, display snapshots and recovery action validation/mutation are production authoritative code.");
  results.notes.push("Market/Support/Birth/Marriage payload regressions are covered by the clean client suite; Support additionally has prior browser-authoritative E2E H-20260906-023. This run checks the new ic:snapshot presentation path does not alter timers or Recovery action semantics.");
