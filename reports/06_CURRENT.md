@@ -1,22 +1,25 @@
 # 06 — CLIENT IMPLEMENTATION — CURRENT REPORT
 
 ### Status
-Đang làm — H-20260906-019 Wave 1/P0 hoàn thành; Wave 2–3 đã triển khai một phần; Wave 4 chưa art-complete. Support selector đã tích hợp authoritative targets. Form-state loss defect đã sửa; chờ Chat 07 rerun E2E.
+Đang làm — H-20260906-019: Wave 1 hoàn thành; Wave 2–3 đã được mở rộng đáng kể; Wave 4 đã có responsive/motion/spotlight hooks nhưng chưa art-complete do thiếu asset package thật và một số authoritative display fields.
 
 ### Changed
-- Tách Landing / Create Room / Join Room / Tutorial / Lobby thành các flow riêng.
-- Thêm normal Create Room, roster Lobby, Host Start và NPC/founder-draw note.
-- Thêm startup recovery bằng `room:reconnect` + `room:get-state`, dùng reconnect token local hiện có.
-- Thêm connection/pending/success/error feedback.
-- Thêm dedicated Waiting Queue state, không có action controls.
-- Loại bỏ raw Character ID input ở Support.
-- Đã tích hợp `eligibleSupportTargets` authoritative từ server; Client không tự suy diễn quan hệ gia đình.
-- Support selector dùng danh sách server trả về; empty `[]` hiển thị trạng thái không có mục tiêu hợp lệ.
-- Thêm incoming Birth proposal accept/reject UI và giữ `canInitiateBirth` authoritative cho initiate action/T7.
-- Thêm production shell: persistent World HUD, Turn Track, map shell, Government/Residence entry, Voluntary dock, Market 6-card layout, Recovery panel, Niên sử split view, host-only Replay result presentation và responsive bottom-sheet behavior cơ bản.
-- Tutorial behavior/local progress/non-blocking help được giữ lại trong shell mới.
-- Đã sửa H-20260906-024: Market/Recovery/Support/Marriage giờ capture payload hoàn chỉnh trước busy-state render, không còn mất giá trị form về default trước `game:action`.
-- Thêm `client/src/action-payloads.ts` và regression cho non-default action values.
+- Giữ nguyên toàn bộ P0 đã hoàn thành: Landing/Create/Join/Tutorial/Lobby, Host Start, reconnect/get-state recovery, Waiting Queue, feedback, Birth response, Support authoritative selector.
+- Giữ fix H-20260906-024: Market/Recovery/Support/Marriage tạo immutable action payload trước busy render, không mất form state.
+- Nâng World HUD: Round/Year/Population/Inflation/Public debt + debt ceiling/phase timer/Niên sử.
+- Turn Track giới hạn 6 entry, có current/local visual state và character-profile navigation.
+- Bổ sung map semantic controls Government/Home/zoom và ambient non-blocking layer.
+- Nâng Mandatory/Status/Voluntary presentation bằng các authoritative aggregate fields hiện có; không tự tính missing quote/breakdown.
+- Market: six-card layout có price/pool/return/failure/subsidy/out-of-supply/status context.
+- Recovery: three-grade presentation + cash/quota/pool context.
+- Support: authoritative parent/child selector, no raw internal IDs.
+- Birth/Marriage: proposal presentation, incoming responses, accepted marriage notice và player-facing labels không dùng raw IDs.
+- Thêm Residence/Family drawer và Character Profile với `← GIA ĐÌNH`.
+- Thêm Government drawer 4 tab: Tổng quan / Ngân sách / Nợ công / An sinh.
+- Nâng Niên sử thành Journey + World analysis surfaces.
+- Thêm Founder Draw banner và Round Transition 2.5s dạng non-blocking/pointer-events none.
+- Nâng End Report thành Ranking/Journey/World tabs, extinction-safe failure presentation, host-only Replay.
+- Bổ sung responsive/mobile full-height sheets, Tutorial spotlight zones và ambient motion.
 
 ### Source
 - handoffs/H-20260906-019-06-FULL-UIUX-IMPLEMENTATION.md
@@ -24,37 +27,35 @@
 - handoffs/H-20260906-024-06-CLIENT-FORM-STATE-LOSS.md
 - docs/UI_UX_FULL_AUDIT_2026-09-06.md
 - docs/UI_TUTORIAL_SPEC.md
-- server/backend/MULTIPLAYER_PROTOCOL_V50.md
-- server commit `271da7b2a11b921c13bb454b8982b1a90975ec57`
+- Migration Pack `04_UI_UX_SPEC.md`
+- server/backend/src/authoritative-room.ts current public/private snapshots
 
 ### Impact
-- Client không còn là forms-only integration prototype; P0 shell/survivability đã có implementation production-oriented.
-- Support voluntary flow không còn blocker contract phía client/server.
-- Form values for Market/Recovery/Support/Marriage no longer reset before action payload construction.
-- Browser/server QA cần rerun Support flow và smoke các non-default action inputs.
-- Final pixel-art assets, rich animation, QR lobby, detailed Mandatory liquidation/bankruptcy, full Founder transition và complete world-profile polish vẫn còn việc Wave 2–4.
+- Client semantic/UI architecture now covers most locked Wave 1–3 surfaces and structural Wave 4 behavior.
+- Timer semantics remain authoritative via `phaseDeadlineAt`; panels/help/Niên sử/transitions do not mutate server timers.
+- Remaining visual release gap is now narrower: real asset-driven pixel-fantasy art, QR renderer, and several read-only server display facts.
+- No gameplay/protocol behavior was changed by Chat 06.
 
 ### Verified
-- Local `npm test`: PASS 13/13.
-- `npm test` bao gồm TypeScript build: PASS.
-- Regression xác nhận `room:reconnect` + `room:get-state` helpers tồn tại.
-- Regression xác nhận Landing/Create/Join/Lobby + Host Start surface.
-- Regression xác nhận không còn raw Character ID input cho Support và selector đọc authoritative target list.
-- Regression xác nhận incoming Birth response UI.
-- Regression xác nhận dedicated Waiting Queue và host-only Replay presentation.
-- Server regression cho `eligibleSupportTargets` đã được đối chiếu: direct living parent/child only, no side effects, action parity.
-- Regression form-state xác nhận Market units `7`, Recovery units `9`, Support selected target + amount `5`, Marriage candidate `candidate-42` được giữ đúng trong action payload.
-- Tutorial T7 vẫn bám `canInitiateBirth` authoritative.
+- Local reconstructed current client suite after this wave: `npm test` PASS 18/18.
+- TypeScript build included in `npm test`: PASS.
+- Regression covers reconnect/get-state, Landing/Create/Join/Lobby, World shell, Turn Track cap=6, Government tabs, Residence/Profile, non-blocking Founder/Round transition, End Report tabs/host replay, Tutorial spotlight without timer mutation, Support selector, Birth response and Waiting Queue.
+- Previous form-state regression remains represented: Market 7, Recovery 9, Support target + amount 5, Marriage candidate 42 payload preservation.
+- Server snapshot was re-inspected before using new UI fields; missing fields were not client-derived.
 
 ### Unverified
-- Chưa rerun browser/server E2E sau form-state fix.
-- Chưa xác minh authoritative Support mutation amount `5` qua production UI sau fix.
-- Chưa xác minh QR lobby/final art assets/animation vì chưa triển khai đầy đủ Wave 4.
-- Chưa tuyên bố UI player-facing release-ready.
+- Browser/server E2E for the newly expanded Wave 2–4 surfaces has not yet been rerun.
+- QR in Lobby is still a placeholder; no QR renderer is implemented.
+- Locked art requirement is not complete: current map/landmark/portrait visual layer still uses CSS/placeholders rather than final asset-driven pixel art.
+- Current World Event field, detailed Mandatory liquidation/bankruptcy breakdown, Recovery quote and full Status fee/competition/refund quote are not directly exposed by current snapshots.
+- UI is not yet declared player-facing release-ready.
 
 ### Handoff
-- Chat 07: `H-20260906-023-07-SUPPORT-FLOW-QA` đã reopen để rerun E2E sau form-state fix.
+- Chat 07: existing QA handoffs should rerun browser/server checks after this structural expansion.
+- Chat 03: `H-20260907-025-03-UIUX-DISPLAY-CONTRACT` — expose narrow authoritative read-only display fields where safe.
+- Chat 05: `H-20260907-026-05-UIUX-ART-ASSETS` — provide final asset-driven pixel-fantasy art package/spec.
 
 ### Open Issues
-- H-20260906-019 vẫn OPEN: Wave 1 complete, Wave 2–3 partial, Wave 4 pending.
-- H-20260906-024 DONE; không còn blocker form-state phía Chat 06.
+- H-20260906-019 remains OPEN.
+- No known current Client form-state blocker.
+- Final closure depends on QA + authoritative display fields + art assets; do not claim art-complete/release-ready yet.
