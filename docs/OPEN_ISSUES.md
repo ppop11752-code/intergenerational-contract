@@ -40,9 +40,13 @@ Owners: 05 — UI/UX & ART; 06 — CLIENT IMPLEMENTATION; 03 if a server tutoria
 
 ## OI-005 — Render/GitHub server tree deployment mismatch
 
-**Status:** OPEN / PENDING RE-VERIFICATION.
+**Status:** CLOSED — SOURCE TREE VERIFIED.
 
 Owner: 04 — DEPLOYMENT & DEVOPS.
+
+The original Render failure was caused by the repository lacking nested `server/src` for the Dockerfile COPY step. The current canonical backend at `server/backend/` now contains `server/src/index.ts`, `server/src/game-room.ts`, and `server/src/contracts.ts`. The current Dockerfile is internally consistent when Render/Docker uses `server/backend/` as its root/build context.
+
+Live Render settings and runtime success are intentionally tracked separately under OI-006.
 
 ## OI-006 — Dependency-backed live server runtime verification
 
