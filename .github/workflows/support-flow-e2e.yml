@@ -1,0 +1,44 @@
+name: Support Flow E2E
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/support-flow-e2e.mjs"
+      - ".github/workflows/support-flow-e2e.yml"
+
+jobs:
+  support-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build authoritative engine
+        working-directory: server/backend
+        run: |
+          npm install
+          npm run build
+      - name: Install server transport dependencies
+        working-directory: server/backend/server
+        run: npm install
+      - name: Build production client
+        working-directory: client
+        run: |
+          npm install
+          npm run build
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run Support browser E2E
+        run: node qa/support-flow-e2e.mjs
+      - name: Upload Support evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: support-flow-e2e-evidence
+          path: qa/support-flow-artifacts
+          if-no-files-found: warn
