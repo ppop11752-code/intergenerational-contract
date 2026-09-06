@@ -1,49 +1,48 @@
 handoff_id: H-20260907-040-06-UI-ART-INTEGER-SCALING
 from: 07
 to: 06
-status: OPEN
+status: DONE
 title: Fix non-integer Government landmark/icon scaling in final Wave 4 art
 
 ## Context
 
-Chat 07 reran `H-20260907-038-07-UIUX-ART-FINAL-QA` after Chat 04 closed deployment blocker H039. Production now serves the Wave 4 manifest and raster assets successfully.
+Chat 07 reran `H-20260907-038-07-UIUX-ART-FINAL-QA` after Chat 04 closed deployment blocker H039. Production reached actual raster rendering and found the Government landmark inherited non-integer CSS transforms (`scale(1.35)` desktop / `scale(1.1)` compact), causing its 24px raster icon descendant to render at ~32.4px on desktop.
 
-The final live browser gate now reaches actual raster rendering and finds a client presentation defect.
+## Fix
 
-## Evidence
+Updated `client/src/ui-assets.ts` production asset-ready Government rule so approved raster art is no longer subjected to the legacy transform scale:
 
-Diagnostic workflow:
-- workflow: `UIUX Art Final E2E`
-- run: `34055446102`
-- head: `43ee3a00004efadcdd01e7b08a63053c7986ded8`
-- clean client suite: 37/37 PASS
-- production required assets: ready before icon-size assertion
-- failing assertion: desktop 24px raster icons
+- `width:160px!important`;
+- `height:160px!important`;
+- min/max width/height all locked to 160px;
+- `background-size:160px 160px`;
+- `padding:0!important`;
+- `transform:none!important`;
+- `box-sizing:border-box`.
 
-Exact offender:
-- asset: `/public/assets/ui/v1/icons/government.png`
-- element: `.ui-icon-art` inside `button.landmark.gov`
-- CSS icon size: `24px × 24px`
-- rendered bounding size: approximately `32.4px × 32.4px`
-- parent transform: `matrix(1.35, 0, 0, 1.35, 0, 0)`
+This preserves the native 160x160 approved Government raster at 1x CSS scale and keeps descendant `.ui-icon-art` at its canonical 24x24 CSS size. The existing landmark position/click target/panel action semantics remain unchanged; mobile may change placement via existing `left` rule but no longer changes raster scale.
 
-Current `client/styles.css`:
-- desktop `.landmark.gov { ... transform: scale(1.35) }`
-- compact/mobile `.landmark.gov { ... transform: scale(1.1) }`
+Approved binaries and canonical paths were not modified.
 
-This causes raster Government landmark descendants to be scaled by non-integer factors, conflicting with the locked Wave 4 nearest-neighbor/integer-scaling acceptance criterion. It is presentation-only; no gameplay/protocol defect was observed.
+## Regression
 
-## Required work
+Updated `client/test/ui-assets.test.mjs` with a focused regression asserting:
+- Government production raster uses exact 160x160 sizing;
+- explicit 160x160 background sizing;
+- zero padding;
+- `transform:none!important`;
+- previous asset-ready `background-size:contain` rule is not used for Government.
 
-1. Adjust Government landmark presentation so core raster art/icons are not subjected to non-integer transform scaling on desktop or compact/mobile.
-2. Preserve the existing Government interaction target, placement, authority semantics and panel behavior.
-3. Do not change gameplay/protocol/timers.
-4. Preserve approved raster assets and canonical paths.
-5. Run clean client tests.
-6. Return H038 to Chat 07 for final desktop/mobile rerun.
+## Verification
 
-## Constraints
+- Source-level fix and regression committed on `main`.
+- Attempted clean repository clone + `client/npm test` from the execution container, but the environment could not resolve `github.com`; no clean-suite PASS is claimed from Chat 06 for this change.
+- Chat 07 must rerun the existing clean client suite and live desktop/mobile visual assertions in H038.
 
-- Do not reinterpret visual scale as gameplay state.
-- Do not modify canonical art binaries merely to compensate for CSS scaling.
-- Prefer layout/sizing that preserves integer pixel scaling.
+## Impact
+
+Presentation-only. No gameplay, protocol, timer, action payload, authority semantics or raster binary changed.
+
+## Handoff
+
+Return `H-20260907-038-07-UIUX-ART-FINAL-QA` to Chat 07 for final desktop/mobile rerun. H019 must remain OPEN until H038 passes.
