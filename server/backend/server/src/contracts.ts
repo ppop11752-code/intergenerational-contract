@@ -6,6 +6,7 @@ export const SOCKET_EVENTS = {
   roomState:"room:state",
   playerState:"player:state",
   startGame:"game:start",
+  replayGame:"game:replay",
   gameAction:"game:action"
 } as const;
 
