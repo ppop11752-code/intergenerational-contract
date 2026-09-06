@@ -54,6 +54,21 @@ try {
   const countdownContinued = timerBefore === null || timerAfter === null ? false : timerAfter <= timerBefore && (timerBefore <= 1 || timerAfter < timerBefore);
   check("help recap is non-blocking", countdownContinued, `timer ${timerBeforeText} -> ${timerAfterText}`);
   await page.screenshot({ path: `${outDir}/help-recap.png`, fullPage: true });
+  const closeHelp = page.locator("[data-close]");
+  if (await closeHelp.count()) await closeHelp.click();
+
+  await page.waitForFunction(() => document.body.textContent?.includes("STATUS"), null, { timeout: 30_000 });
+  const poor = page.locator('button[data-action*=\"status:set\"]').first();
+  if (await poor.count()) await poor.click();
+  await page.waitForFunction(() => document.body.textContent?.includes("VOLUNTARY"), null, { timeout: 20_000 });
+  await page.locator('[data-panel="birth"]').first().click();
+  const birthSection = page.locator("section").filter({ hasText: "SINH CON" }).first();
+  await birthSection.waitFor({ timeout: 10_000 });
+  const birthText = await birthSection.textContent();
+  const birthButtonCount = await birthSection.locator('button[data-action*="child:birth"]').count();
+  check("authoritative Birth UI is gated", birthButtonCount === 1 || birthText?.includes("chưa khả dụng") === true, `button=${birthButtonCount}; text=${birthText}`);
+  results.notes.push(birthButtonCount === 1 ? "Observed canInitiateBirth=true UI state in live Tutorial game." : "Observed canInitiateBirth=false UI state in live Tutorial game; deterministic true-state progression remains for QA/manual evidence.");
+  await page.screenshot({ path: `${outDir}/birth-gating.png`, fullPage: true });
 
   const hostCtx = await browser.newContext();
   const host = await hostCtx.newPage();
@@ -83,14 +98,6 @@ try {
   const normalCoachCount = await normal.locator(".coach").count();
   check("normal multiplayer has no Tutorial overlay", normalCoachCount === 0, `coach count=${normalCoachCount}`);
   await normal.screenshot({ path: `${outDir}/normal-room.png`, fullPage: true });
-
-  await normal.locator('[data-panel="birth"]').first().click();
-  const birthSection = normal.locator("section").filter({ hasText: "SINH CON" }).first();
-  await birthSection.waitFor({ timeout: 10_000 });
-  const birthText = await birthSection.textContent();
-  const birthButtonCount = await birthSection.locator('button[data-action*="child:birth"]').count();
-  check("authoritative Birth UI is gated", birthButtonCount === 1 || birthText?.includes("chưa khả dụng") === true, `button=${birthButtonCount}; text=${birthText}`);
-  results.notes.push(birthButtonCount === 1 ? "Observed canInitiateBirth=true UI state in live normal room." : "Observed canInitiateBirth=false UI state in live normal room; deterministic true-state progression remains for QA/manual evidence.");
 
   results.notes.push("Full deterministic T0–T11 progression is intentionally not forced by mutating gameplay/server semantics; this runner covers network/browser integration and records the remaining progression as independent QA scope.");
   await host.evaluate(() => { try { window.__e2eHostSocket?.disconnect(); } catch {} });
