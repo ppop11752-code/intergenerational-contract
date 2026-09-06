@@ -93,8 +93,10 @@ Wave 2–3 partial implementation đã có:
 - host-only Replay presentation;
 - responsive sheet layout basics.
 
-Support selector is safely unavailable until authoritative targets are exposed. Created `H-20260906-020-03-SUPPORT-TARGETS` for Chat 03.
-
-Local verification: `npm test` PASS 8/8 including TypeScript build.
+Support dependency đã được giải quyết:
+- Chat 03 exposed authoritative `eligibleSupportTargets` in server commit `271da7b2a11b921c13bb454b8982b1a90975ec57`.
+- Chat 06 completed `H-20260906-022-06-SUPPORT-TARGETS-INTEGRATION`.
+- Support UI now consumes the server target array and no longer depends on a temporary unavailable contract state.
+- Client build/regression after integration: PASS 9/9.
 
 Handoff remains OPEN because Wave 4 art/motion and several Wave 2–3 detail/polish items are not yet complete; no release-ready claim is made.
