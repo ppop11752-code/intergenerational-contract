@@ -1,0 +1,89 @@
+name: Handoff Router
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'handoffs/*.md'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  route-handoffs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create or close handoff issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const added = new Set();
+            const modified = new Set();
+            for (const commit of (context.payload.commits || [])) {
+              for (const file of (commit.added || [])) added.add(file);
+              for (const file of (commit.modified || [])) modified.add(file);
+            }
+
+            const isHandoff = (p) => p.startsWith('handoffs/') && p.endsWith('.md') && !p.endsWith('/README.md') && !p.endsWith('/TEMPLATE.md');
+            const clean = (v) => (v || '').trim().replace(/^['"]|['"]$/g, '');
+            const field = (text, key) => {
+              const match = text.match(new RegExp(`^${key}:\\s*(.+)$`, 'mi'));
+              return clean(match && match[1]);
+            };
+
+            async function findIssueById(id) {
+              const q = `${id} repo:${context.repo.owner}/${context.repo.repo} is:issue`;
+              const result = await github.rest.search.issuesAndPullRequests({ q, per_page: 100 });
+              return result.data.items.find(item => item.title.includes(id));
+            }
+
+            for (const path of [...added].filter(isHandoff)) {
+              if (!fs.existsSync(path)) continue;
+              const text = fs.readFileSync(path, 'utf8');
+              const id = field(text, 'handoff_id');
+              const from = field(text, 'from');
+              const to = field(text, 'to');
+              const status = field(text, 'status').toUpperCase();
+              const title = field(text, 'title');
+              if (!id || !to || !title || status !== 'OPEN') continue;
+
+              const existing = await findIssueById(id);
+              if (existing) continue;
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[HANDOFF → ${to}] ${id} — ${title}`,
+                body: `Automated handoff from Chat ${from || '?'} to Chat ${to}.\n\nSource file: https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/${path}\n\n---\n\n${text}`
+              });
+            }
+
+            for (const path of [...modified].filter(isHandoff)) {
+              if (!fs.existsSync(path)) continue;
+              const text = fs.readFileSync(path, 'utf8');
+              const id = field(text, 'handoff_id');
+              const status = field(text, 'status').toUpperCase();
+              if (!id || !['DONE', 'CLOSED'].includes(status)) continue;
+
+              const issue = await findIssueById(id);
+              if (!issue || issue.state === 'closed') continue;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Handoff file status changed to **${status}** on main. Closing this routing issue.`
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
