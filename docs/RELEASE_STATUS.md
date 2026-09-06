@@ -2,9 +2,9 @@
 
 ## Overall
 
-**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified, and the newer Support/form-state regression has now been fixed and independently reverified by Chat 07. However `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN with Wave 2–4/final UI work still incomplete.
+**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression and authoritative World Event/Mandatory/Recovery/Status display integration are now independently reverified by Chat 07. However `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN with Wave 2–4/final UI work still incomplete.
 
-The resolved client regression did not change gameplay rules or reopen OI-001–OI-006.
+No resolved UI regression changed gameplay rules or reopened OI-001–OI-006.
 
 ## Closed / verified foundations
 
@@ -17,6 +17,7 @@ The resolved client regression did not change gameplay rules or reopen OI-001–
 - Canonical backend source migration into GitHub: COMPLETE / verified against audited artifact.
 - Prior Tutorial/live integration evidence remains valid for the scope it covered.
 - Support authoritative selector/action integration: PASS after form-state fix.
+- Authoritative World Event / Mandatory / Recovery / Status display integration: PASS after Recovery lifecycle fix.
 
 Canonical backend path: `server/backend/`
 
@@ -26,9 +27,7 @@ Live same-origin service: `https://intergenerational-contract.onrender.com`
 
 ## Resolved Support/form-state regression
 
-Chat 07 originally reproduced Support amount `5` being sent as default `1`. Chat 06 fixed the shared form payload-capture mechanism in `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`.
-
-Final rerun evidence:
+Final Support rerun evidence:
 - workflow: `Support Flow E2E`
 - run ID: `34047655175`
 - head SHA: `8426be71465ad0dbcd64b9a8a50d62142f2217d6`
@@ -36,23 +35,31 @@ Final rerun evidence:
 - digest: `sha256:7146dce30b7b9277745feb527f36e657f7fdce2bb1dc44a07dd9be157c04eb4d`
 - result: 13/13 browser-authoritative checks PASS.
 
-PASS evidence includes:
-- selector exactly mirrors authoritative parent/child targets;
-- raw Character IDs are not shown in player-facing labels;
-- non-default second target (`child`) remains selected through submit;
-- amount `5` is preserved and authoritative mutation is exactly actor `100 -> 95`, child `0 -> 5`;
-- invalid amount and spending-cap errors are surfaced from the server without client reinterpretation;
-- Support interactions do not reset `phaseDeadlineAt` and countdown continues (`60s -> 59s`);
-- empty target list produces the no-target state with no selector/action control.
-
-Chat 06 deterministic regression additionally covers the shared payload-capture fix for Market units `7`, Recovery units `9`, Support target/amount `5`, and Marriage candidate selection; client suite PASS 13/13.
-
 `H-20260906-023-07-SUPPORT-FLOW-QA`: CLOSED / PASS.
 `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`: DONE.
 
+## Resolved authoritative display integration QA
+
+Chat 07 initially found Recovery quotes disappearing when the panel opened after the authoritative snapshot. Chat 06 fixed the presentation lifecycle in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION` by caching the latest authoritative snapshot and reapplying decoration after local panel renders, without adding client economic inference or network requests.
+
+Final rerun evidence:
+- workflow: `UIUX Display E2E`
+- run ID: `34050348433`
+- head SHA: `629b64d28cceb8b99307fd31fbc2c48ce40e7298`
+- artifact ID: `9994352923`
+- digest: `sha256:fe8c7061fd9edd0d038dbdbc637539a746e89b0978dafdc9ebf70aa851a38c2d`
+- browser-authoritative checks: 67/67 PASS
+- full clean client suite: 27/27 PASS
+- authoritative engine build: PASS
+
+Verified scope includes World Event value/null fallback; Mandatory authoritative breakdown + projected wording; Recovery late-open cached quote rendering + server action validation + unchanged timer/deadline; Status fees/person counts/affordability and Noble competition/fallback/refund/end-of-round non-guarantee wording; null quote stale-value removal.
+
+`H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS.
+`H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`: DONE.
+
 ## Remaining UI work
 
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN. Wave 2–4/final art and other UI/UX work are not made complete by Wave 1 or Support QA.
+`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN. Wave 2–4/final raster art, Lobby QR and remaining visual-complete scope are not made complete by Wave 1, Support or display-contract QA.
 
 ## Release claim rule
 
