@@ -26,39 +26,38 @@ Long-term balance/playtest remains separate from OI-002 consistency closure.
 
 **Status:** CLOSED — VERIFIED.
 
-`SOCKET_EVENTS` now exposes `replayGame: "game:replay"` and a contract regression
-test locks the complete authoritative set of 9 transport events. Server
-typecheck, contract test, and build passed on 2026-09-06.
+`SOCKET_EVENTS` now exposes `replayGame: "game:replay"` and a contract regression test locks the complete authoritative set of 9 transport events. Server typecheck, contract test, and build passed on 2026-09-06.
 
 Implementation commit: `e0e000ad9ec920ade3a73a4cf204b5e1954cd0b4`.
 
 ## OI-004 — Dedicated Tutorial guidance
 
-**Status:** OPEN — IMPLEMENTATION/DEPLOYMENT FIXES VERIFIED; FINAL LIVE BROWSER E2E BLOCKED BY QA ENVIRONMENT.
+**Status:** CLOSED — RELEASE QA VERIFIED.
 
-Owners: 07 — RELEASE & QA for final browser/server verification. Chat 03/04/06 implementation work is complete for the currently known defects.
+Implementation and deployment fixes from Chat 03/04/06 were followed by final browser/server E2E evidence using a GitHub-hosted Playwright runner against the live Render service.
 
-Resolved implementation/deployment items:
-
-- canonical client and authoritative backend are deployed same-origin on Render;
-- Tutorial help recap is non-modal/non-blocking and no longer uses `<dialog>`/`showModal()`;
-- server private snapshot exposes authoritative `canInitiateBirth` from engine eligibility;
-- Tutorial T7 and Birth action require `canInitiateBirth === true` and do not infer eligibility client-side;
-- client build/tests PASS 7/7 per Chat 06.
-
-Current live Render deploy checked by Chat 07:
+Final live evidence:
 
 - URL: `https://intergenerational-contract.onrender.com`
-- deploy: `dep-daengk8ou94c739la8ag`
-- commit: `e36239684a94887555ef40d7ffadc58085aae415`
+- workflow: `Live Client E2E`
+- run ID: `34039901844`
+- head SHA: `8facc98a38b654a30cad24aaf13667c78a529705`
+- artifact ID: `9991351341`
+- artifact digest: `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2`
 
-Comparison from client alignment commit `48e43df42dc9b9eb97f67c6d977f130560a7b39e` to the current live deploy commit shows only report/handoff changes, not runtime client/server changes.
+Release-QA evidence verified by Chat 07:
 
-Remaining verification gap:
+- live page load PASS;
+- same-origin Socket.IO connection PASS;
+- Tutorial entry with T0 visible PASS;
+- help recap non-blocking while authoritative countdown continued `7s -> 6s` PASS;
+- authoritative Birth gating observed live with `canInitiateBirth=false`, no `child:birth` button PASS;
+- normal multiplayer has no Tutorial overlay PASS;
+- client deterministic regression covers `canInitiateBirth=false/true` T7 behavior and non-modal help;
+- server deterministic regression covers Birth eligibility true/false and no-side-effect query/snapshot behavior;
+- T0–T11 trigger logic is covered deterministically; a single forced live 32-round playthrough is not required by current release policy.
 
-Chat 07 attempted to run final live browser/server E2E, but the execution sandbox cannot DNS-resolve `intergenerational-contract.onrender.com`; direct `/` and `/health` attempts fail before HTTP connection. Therefore no new product defect is identified, but final browser page-load, same-origin Socket.IO handshake, Tutorial room entry, live Birth false→true transition, help recap non-blocking behavior under countdown, and full T0–T11 browser progression remain unverified.
-
-Handoff `H-20260906-015-07-OI004-FINAL-E2E` is BLOCKED by QA execution environment, not by a known implementation defect.
+Compare from runner head `8facc98a38b654a30cad24aaf13667c78a529705` to current `main` showed only report/handoff changes, so browser evidence remains compatible with current runtime client/server source.
 
 ## OI-005 — Render/GitHub server tree deployment mismatch
 
@@ -66,7 +65,7 @@ Handoff `H-20260906-015-07-OI004-FINAL-E2E` is BLOCKED by QA execution environme
 
 Owner: 04 — DEPLOYMENT & DEVOPS.
 
-The original Render failure was caused by the repository lacking nested `server/src` for the Dockerfile COPY step. The current canonical backend at `server/backend/` now contains `server/src/index.ts`, `server/src/game-room.ts`, and `server/src/contracts.ts`. The current Dockerfile is internally consistent when Render/Docker uses `server/backend/` as its root/build context.
+The original Render failure was caused by the repository lacking nested `server/src` for the Dockerfile COPY step. The current canonical backend at `server/backend/` now contains the required server source tree and deployment mapping has been verified.
 
 Live Render settings and runtime success are tracked under OI-006.
 
@@ -74,9 +73,11 @@ Live Render settings and runtime success are tracked under OI-006.
 
 **Status:** CLOSED — RELEASE QA VERIFIED.
 
-Chat 04 verified the Render build and live dependency-backed runtime. Chat 03 obtained a successful external `/health` response and passed live WebSocket Socket.IO smoke for create/join/start/state, disconnect/reconnect, `game:replay` routing, authoritative error acks, and public/private state emissions against runtime commit `bbd30f8c08d71903b99462c071f347eca33d042f`.
+Chat 04 verified the Render build and live dependency-backed runtime. Chat 03 obtained a successful external `/health` response and passed live WebSocket Socket.IO smoke for create/join/start/state, disconnect/reconnect, `game:replay` routing, authoritative error acks, and public/private state emissions. Chat 07 independently validated release compatibility and kept OI-006 closed.
 
-Chat 07 independently checked the current Render service and latest live deploy. The service is live at `https://intergenerational-contract.onrender.com`; OI-006 remains closed because backend runtime/transport evidence is already compatible with the deployed server source.
+## Current blocking status
+
+No OI-001–OI-006 item remains OPEN or blocking.
 
 ## Non-blocking maintenance debt
 
