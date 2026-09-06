@@ -34,9 +34,22 @@ Implementation commit: `e0e000ad9ec920ade3a73a4cf204b5e1954cd0b4`.
 
 ## OI-004 — Dedicated Tutorial guidance
 
-**Status:** OPEN — SCOPE GAP.
+**Status:** OPEN — QA FAILED/BLOCKED.
 
-Owners: 05 — UI/UX & ART; 06 — CLIENT IMPLEMENTATION; 03 if a server tutorial flag is needed.
+Owners: 04 — DEPLOYMENT & DEVOPS; 06 — CLIENT IMPLEMENTATION. Chat 03 only if an existing authoritative eligibility fact must be exposed through the server snapshot.
+
+Chat 07 integration QA found:
+
+- current client transport uses same-origin Socket.IO, while the canonical Docker deployment builds only the backend and does not include/serve `client/`; no deployed canonical browser client exists yet for E2E;
+- Tutorial help recap uses modal behavior (`showModal()`) although the spec requires non-modal/non-blocking recap;
+- Birth/T7 is gated only by household representative state rather than authoritative Birth eligibility, so guidance/action may appear before the feature is actually available.
+
+Handoffs:
+
+- `H-20260906-011-04-CLIENT-STATIC-DEPLOY` → Chat 04.
+- `H-20260906-012-06-OI004-QA-DEFECTS` → Chat 06.
+
+After both fixes are verified, return to Chat 07 for browser/server integration and E2E release QA.
 
 ## OI-005 — Render/GitHub server tree deployment mismatch
 
