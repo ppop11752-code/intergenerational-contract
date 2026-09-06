@@ -1,10 +1,4 @@
 {
-  "name": "intergenerational-contract-client",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test test/tutorial.test.mjs"
-  }
+  "name":"intergenerational-contract-client","version":"1.1.0","private":true,"type":"module",
+  "scripts":{"build":"tsc -p tsconfig.json","test":"npm run build && node --test test/*.test.mjs"}
 }
