@@ -1,34 +1,38 @@
 handoff_id: H-20260907-027-06-UIUX-ART-INTEGRATION
 from: 05
 to: 06
-status: OPEN
+status: DONE
 title: Integrate locked UI art asset contract without claiming missing binaries
 
 ## Context
 
-Chat 05 completed `H-20260907-026-05-UIUX-ART-ASSETS` and locked:
+Chat 05 completed `H-20260907-026-05-UIUX-ART-ASSETS` and locked `docs/UI_ART_ASSET_CONTRACT_V1.md`.
 
-`docs/UI_ART_ASSET_CONTRACT_V1.md`
+Final raster binaries are still not present, so this handoff only covers integration scaffolding and must not be interpreted as art-complete.
 
-The contract removes ambiguity around asset root, filenames, dimensions, atlas rules, portrait/icon/frame approach, palette and art-complete acceptance criteria.
+## Result
 
-Final raster binaries are not yet present in the repository, so this handoff does not authorize an art-complete claim.
+- Added canonical runtime root: `client/public/assets/ui/v1/`.
+- Added locked-compatible `manifest.json` with version/tile/icon/portrait sizes and stable core keys.
+- Added `client/src/ui-assets.ts` asynchronous loader.
+- Loader probes assets individually and activates only successfully loaded presentation hooks; missing manifest/files fall back visually and never gate gameplay/transport/actions.
+- Added deterministic 8-base portrait-key assignment helper for presentation-only use.
+- Added nearest-neighbor/pixelated hooks and asset-backed rules for Government, parchment/dark frames, primary button, clouds and fog when those real binaries exist.
+- Bootstrapped loader before `main.js` from `client/index.html`.
+- Added `client/test/ui-assets.test.mjs` regression for manifest geometry/version, versioned root/path mapping and deterministic portrait assignment.
+- Added runtime-root README stating that binaries are intentionally not fabricated by Chat 06.
 
-## Required work
+## Verification
 
-1. Read `docs/UI_ART_ASSET_CONTRACT_V1.md`.
-2. Prepare client asset integration structure under `client/public/assets/ui/v1/` and manifest/loader contract as appropriate.
-3. Keep graceful development fallback when assets are missing, but do not treat fallback/CSS geometry as production art compliance.
-4. Preserve existing semantic DOM/action bindings and authoritative gameplay state.
-5. When real assets are added, switch map/Government/Residence/frame/portrait/icon surfaces to asset-backed rendering and remove equivalent fake-final CSS geometry.
-6. Keep nearest-neighbor/integer scaling for core pixel art.
-7. Do not rename abstract resources or infer gameplay data from art.
-8. Update `reports/06_CURRENT.md` with the precise distinction between integration-ready and art-complete.
-9. After real binaries are integrated, hand off to Chat 07 for visual/runtime regression.
+Local current-client verification after scaffold:
+- TypeScript build: PASS.
+- `npm test`: PASS 21/21.
 
 ## Acceptance boundary
 
-This handoff may be marked DONE for integration scaffolding without final binaries, but `H-20260906-019` Wave 4 must remain NOT ART-COMPLETE until the contract's Section 16 acceptance criteria are actually met.
+Integration scaffolding is complete, therefore this handoff is DONE.
+
+`H-20260906-019` Wave 4 remains NOT ART-COMPLETE until the actual required raster binaries exist and Section 16 of `docs/UI_ART_ASSET_CONTRACT_V1.md` is satisfied, including Chat 07 visual/runtime regression.
 
 ## Source
 
