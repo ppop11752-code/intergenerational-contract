@@ -1,1 +1,0 @@
-export function insertAtQueueEnd(q:string[],id:string){return q.includes(id)?q:[...q,id]} export function popQueue(q:string[]){return q.length?{playerId:q[0]!,queue:q.slice(1)}:{playerId:null,queue:q}}
