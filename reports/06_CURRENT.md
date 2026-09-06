@@ -1,64 +1,61 @@
 # 06 — CLIENT IMPLEMENTATION — CURRENT REPORT
 
 ### Status
-Đang làm — H-20260906-019 đã hoàn thành phần Client an toàn ở Wave 1–3, display integration và Lobby QR semantics; Wave 4 integration-ready nhưng NOT ART-COMPLETE vì raster binaries thật vẫn chưa có và final visual QA chưa chạy. QR cropping và fallback-loop defects đã sửa; chờ Chat 07 final QR rerun.
+Bị chặn — `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` đã hoàn thành phần Client chức năng ở Wave 1–3, authoritative display integration và Lobby QR. Wave 4 vẫn NOT ART-COMPLETE vì production raster binaries chưa tồn tại trên `main`.
 
 ### Changed
-- Giữ toàn bộ production shell, Support authoritative selector, form-state fix, display integration, Recovery decoration fix và art-loader scaffold hiện có.
-- `H-20260907-029-07-UIUX-DISPLAY-QA` PASS hoàn toàn: browser-authoritative checks 67/67, clean client suite 27/27, engine build PASS.
-- `H-20260907-032-06-LOBBY-QR-INTEGRATION` DONE theo locked `docs/UI_QR_CONTRACT_V1.md`.
-- `H-20260907-034-06-LOBBY-QR-CROPPING` DONE; desktop/mobile native QR decode đã được Chat 07 xác nhận PASS sau fix.
-- `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP` DONE.
-- Root cause H035: renderer failure set `data-qr-ready="0"`, nhưng same-URL short-circuit trước đây chỉ chấp nhận `"1"`; fallback DOM mutation kích hoạt MutationObserver và rewrite vô hạn.
-- `client/src/qr-runtime.ts` hiện coi cả `qrReady=1` và `qrReady=0` là settled cho cùng host + URL; `renderedFor=url` được đặt trước host mutation.
-- Host Lobby mới chưa có settled state vẫn có thể thử render lại bình thường; không thêm timer/retry loop.
-- Fallback text, large PIN, Host Start, copy-link, canonical deep-link, no-auto-join và server Join validation không đổi.
-- `client/test/qr-contract.test.mjs` bổ sung regression cho idempotent fallback/mutation-loop guard.
-- `H-20260907-033-07-LOBBY-QR-QA` đã reopen để final fallback verification.
+- `H-20260907-029-07-UIUX-DISPLAY-QA` DONE / PASS: browser-authoritative checks 67/67, clean client suite 27/27, engine build PASS.
+- `H-20260907-032-06-LOBBY-QR-INTEGRATION` DONE.
+- H-034 QR cropping và H-035 renderer-fallback loop đã sửa.
+- `H-20260907-033-07-LOBBY-QR-QA` hiện DONE / PASS: clean client suite 33/33, browser QA 25/25.
+- QR desktop/mobile native decode, canonical payload, privacy boundary, deep-link prefill, no-auto-join, stale/invalid handling, copy-link, Host Start và renderer failure fallback đều đã PASS.
+- Rà trực tiếp `client/public/assets/ui/v1/` trên GitHub `main`: vẫn chỉ có `README.md` và `manifest.json`; không có production PNG/WebP.
+- Tạo `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` để giao Chat 05 sản xuất/import và duyệt raster batches A–D theo pipeline đã khóa.
+- Cập nhật H-019: blocker hiện chỉ còn real art delivery -> Chat 06 integration -> Chat 07 final visual/runtime QA.
 
 ### Source
 - handoffs/H-20260906-019-06-FULL-UIUX-IMPLEMENTATION.md
-- handoffs/H-20260907-032-06-LOBBY-QR-INTEGRATION.md
+- handoffs/H-20260907-029-07-UIUX-DISPLAY-QA.md
 - handoffs/H-20260907-033-07-LOBBY-QR-QA.md
-- handoffs/H-20260907-034-06-LOBBY-QR-CROPPING.md
-- handoffs/H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP.md
-- docs/UI_QR_CONTRACT_V1.md
+- handoffs/H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION.md
 - docs/UI_ART_ASSET_CONTRACT_V1.md
+- docs/UI_ART_BINARY_DELIVERY_PIPELINE_V1.md
+- docs/UI_QR_CONTRACT_V1.md
 - docs/UI_UX_FULL_AUDIT_2026-09-06.md
 
 ### Impact
-- Functional QR cropping/scannability is already verified fixed.
-- Renderer-unavailable fallback should now stabilize instead of causing MutationObserver loop/hang.
-- Manual large room PIN, Host Start and copy-link remain independently usable.
-- Gameplay/actions/timers/network protocol unchanged.
-- QR remains navigation/presentation only.
-- Remaining release gap is real pixel-art binaries + final visual/runtime QA after final QR fallback verification.
+- Không còn blocker chức năng Client từ authoritative display hoặc Lobby QR.
+- Không còn việc an toàn độc lập cho Chat 06 để tự tiếp tục Wave 4 khi chưa có raster thật.
+- CSS/placeholders hiện tại chỉ là development fallback, không được coi là production art.
+- Gameplay/actions/timers/network protocol không thay đổi.
 
 ### Verified
-- `H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS.
-- Browser-authoritative display checks: 67/67 PASS.
-- Chat 07 QR rerun after H034: clean client suite 33/33 PASS; 21 production browser checks PASS before fallback branch; desktop/mobile native QR decode PASS; payload/privacy/deep-link/no-auto-join/copy-link/Host Start PASS.
-- Focused TypeScript compile for current `qr-contract.ts` + `qr-runtime.ts` after H035: PASS.
-- QR fallback idempotence regression committed.
+- Authoritative display browser QA: 67/67 PASS.
+- Lobby QR final browser QA: 25/25 PASS.
+- Clean client suite ở QR final QA: 33/33 PASS.
+- Desktop/mobile QR native decode PASS.
+- Renderer-unavailable fallback PASS và không còn mutation loop.
+- GitHub `main` asset root đã kiểm tra trực tiếp: chỉ `README.md` + `manifest.json`, production raster binaries absent.
 
 ### Unverified
-- Renderer-unavailable browser fallback after H035 has not yet been rerun by Chat 07.
-- Final raster PNG/WebP binaries under `client/public/assets/ui/v1/` are still absent.
-- Section 16 art-complete acceptance is not met.
-- Final visual/runtime QA after real binaries is not run.
-- UI is not yet declared player-facing release-ready.
+- Raster batches A–D chưa tồn tại/chưa được Chat 05 visual-approve.
+- Chat 06 chưa thể integration-verify terrain/Government/residences/frames/icons/portraits/ambience/transitions bằng binary thật.
+- `UI_ART_ASSET_CONTRACT_V1.md` Section 16 final visual/runtime QA chưa chạy.
+- UI chưa được tuyên bố art-complete hoặc player-facing release-ready.
 
 ### Handoff
-- Chat 07: `H-20260907-033-07-LOBBY-QR-QA` reopened after H035 fix for final fallback rerun.
-- Chat 05/asset production: real raster binaries matching `UI_ART_ASSET_CONTRACT_V1.md` still need to be produced/imported.
+- Chat 05: `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` — produce/import + visual review raster batches A–D.
+- Sau khi ít nhất Batch A được APPROVED và có trên `main`, Chat 05 cần trả integration handoff cho Chat 06.
+- Sau khi tất cả required batches được Chat 06 tích hợp, Chat 07 chạy final Section 16 visual/runtime QA.
 
 ### Open Issues
-- `H-20260906-019` remains BLOCKED on real art binaries + final visual/runtime QA and current QR fallback QA rerun.
+- `H-20260906-019` BLOCKED only on real raster art delivery + integration + final visual QA.
 - `H-20260907-027-06-UIUX-ART-INTEGRATION` DONE at scaffold/integration-ready level.
 - `H-20260907-028-06-UIUX-DISPLAY-INTEGRATION` DONE.
 - `H-20260907-029-07-UIUX-DISPLAY-QA` DONE / PASS.
 - `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION` DONE.
 - `H-20260907-032-06-LOBBY-QR-INTEGRATION` DONE.
+- `H-20260907-033-07-LOBBY-QR-QA` DONE / PASS.
 - `H-20260907-034-06-LOBBY-QR-CROPPING` DONE.
 - `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP` DONE.
-- Wave 4 remains NOT ART-COMPLETE until actual binaries + visual/runtime QA pass.
+- `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` OPEN.
