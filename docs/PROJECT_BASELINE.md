@@ -1,6 +1,6 @@
 # INTERGENERATIONAL CONTRACT — PROJECT BASELINE
 
-**Baseline ID:** PB-2026-09-06-v2  
+**Baseline ID:** PB-2026-09-06-v3  
 **Owner:** 00 — PROJECT CONTROL  
 **Status:** CANONICAL WORKING BASELINE  
 **Repository:** `ppop11752-code/intergenerational-contract`  
@@ -48,11 +48,11 @@ Additional rules:
 - Measure at end of round after natural Renewable regeneration.
 - Pending Recovery only affects the pool when applied at the start of the next round.
 
-Independent Chat 08 re-audit: PASS. Verified formula, clamp, denominators, engine integration, timing, test integration, typecheck, 42/42 legacy regression, 6/6 OI-002 regression, fuzz 20 games, simulation 30 games.
+Independent Chat 08 re-audit: PASS. Verified formula, clamp, denominators, engine integration, timing, test integration, typecheck, 42/42 Rule Ledger regression, 6/6 OI-002 regression, fuzz 20 games, simulation 30 games.
 
 ## OI-001 — marriage proposal lifecycle
 
-**Status: OPEN — IMPLEMENTED, AWAITING INDEPENDENT RE-AUDIT.**
+**Status: CLOSED — VERIFIED.**
 
 Rule authoritative A1+B1+C1:
 
@@ -66,13 +66,16 @@ Rule authoritative A1+B1+C1:
 - Successful settlement => `executed`; leaves active set but remains in history/state.
 - First valid accept in authoritative server processing order wins.
 
-Chat 02 implementation report: 9/9 OI-001 regression PASS; typecheck PASS; Rule Ledger 42/42 PASS; OI-002 6/6 PASS; fuzz 20 games PASS; simulation 30 games completed. Artifact reported with SHA-256 `a896c69cd186fbe6cb6cf7db780c25e341e683fd8545175b9e1df1c43b46b11f`.
+Independent Chat 08 re-audit verified the actual artifact and matched SHA-256:
 
-OI-001 remains OPEN until Chat 08 independently verifies the implementation artifact.
+`a896c69cd186fbe6cb6cf7db780c25e341e683fd8545175b9e1df1c43b46b11f`
+
+Verified directly: `model.ts`, `engine.ts`, `authoritative-room.ts`, OI-001 regression, `package.json`, test-gate integration, settlement timing, invalidation, disconnect/NPC takeover behavior, competing accepts, active set/history, typecheck, 42/42 Rule Ledger regression, 6/6 OI-002 regression, 9/9 OI-001 regression, fuzz 20 games, and simulation 30 games.
+
+Legacy Vitest `.test.ts` suites contain outdated expectations and are non-blocking maintenance debt, not normative OI-001 coverage.
 
 ## Remaining Open Issues
 
-- OI-001 — awaiting Chat 08 re-audit.
 - OI-003 — `SOCKET_EVENTS` helper missing `game:replay`.
 - OI-004 — dedicated Tutorial guidance not final.
 - OI-005 — Render/GitHub `server/src` deployment mismatch needs re-verification.
@@ -82,4 +85,4 @@ OI-001 remains OPEN until Chat 08 independently verifies the implementation arti
 
 GitHub is now the long-term shared repository. ChatGPT Project Sources should remain lightweight and point to this repository/version.
 
-Current repository contains the canonical working baseline and current-status documents. Full source migration is not yet complete; do not claim the GitHub tree is the complete game until server/client/source migration and verification are finished.
+Current repository contains canonical working docs and current-status reports. Complete verified backend/client source migration into GitHub is not yet finished. Do not claim the GitHub tree is the complete game until source migration is completed and the repository commit is matched against verified artifacts.
