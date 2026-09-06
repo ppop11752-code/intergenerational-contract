@@ -1,0 +1,42 @@
+name: Lobby QR E2E
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/lobby-qr-e2e.mjs"
+      - ".github/workflows/lobby-qr-e2e.yml"
+      - "client/src/qr-contract.ts"
+      - "client/src/qr-runtime.ts"
+      - "client/test/qr-contract.test.mjs"
+
+jobs:
+  lobby-qr-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install server transport dependencies
+        working-directory: server/backend/server
+        run: npm install
+      - name: Run clean client suite
+        working-directory: client
+        run: |
+          npm install
+          npm test
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0 jsqr@1.4.0 pngjs@7.0.0
+          npx playwright install --with-deps chromium
+      - name: Run Lobby QR browser E2E
+        run: node qa/lobby-qr-e2e.mjs
+      - name: Upload Lobby QR evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lobby-qr-e2e-evidence
+          path: qa/lobby-qr-artifacts
+          if-no-files-found: warn
