@@ -4,64 +4,66 @@
 
 ### Status
 
-Hoàn thành — `H-20260906-023-07-SUPPORT-FLOW-QA` PASS sau khi Chat 06 sửa form-state loss. Support selector/action đã được browser + authoritative server E2E xác minh.
+Bị chặn — `H-20260907-029-07-UIUX-DISPLAY-QA` phát hiện presentation lifecycle defect ở Recovery: authoritative quote có trong snapshot nhưng không xuất hiện khi panel được mở sau snapshot.
 
 ### Changed
 
-- Rerun Support QA sau `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`.
-- Tăng độ chặt runner để bắt buộc chọn target thứ hai (`child`) và nhập amount `5`, tránh PASS giả do default option/value.
-- Final workflow `Support Flow E2E` run `34047655175` PASS.
-- Artifact `9993594608`, digest `sha256:7146dce30b7b9277745feb527f36e657f7fdce2bb1dc44a07dd9be157c04eb4d`.
-- `results.json`: 13/13 checks PASS.
-- Đóng `H-20260906-023-07-SUPPORT-FLOW-QA`.
+- Đọc `H-20260907-029-07-UIUX-DISPLAY-QA`, report 06 và client display integration.
+- Thêm QA harness `qa/uiux-display-e2e.mjs` + workflow `.github/workflows/uiux-display-e2e.yml` dùng production client + compiled production `AuthoritativeRoom`/`GameEngine` qua Socket.IO.
+- Workflow `UIUX Display E2E` run `34049782937` chạy trên head `f28a659700fc9c70b0e5dbbed93f793529428bfc`.
+- Authoritative engine build PASS.
+- Full clean client suite PASS 25/25.
+- World Event và Mandatory browser integration PASS trước điểm fail.
+- Browser fail tại Recovery: `player.recoveryQuotes` tồn tại nhưng mở panel không tạo `.server-quote`; timeout 30s.
+- Xác định nguyên nhân khả dĩ: `display-contract` chỉ decorate trên `ic:snapshot`, trong khi local panel render xảy ra sau snapshot và không phát event mới.
+- Tạo defect handoff `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION` cho Chat 06.
 
 ### Source
 
-- `handoffs/H-20260906-023-07-SUPPORT-FLOW-QA.md`
-- `handoffs/H-20260906-024-06-CLIENT-FORM-STATE-LOSS.md`
-- `reports/03_CURRENT.md`
+- `handoffs/H-20260907-029-07-UIUX-DISPLAY-QA.md`
+- `handoffs/H-20260907-030-06-RECOVERY-DISPLAY-DECORATION.md`
 - `reports/06_CURRENT.md`
-- `server/backend/test/support-targets-snapshot.mjs`
+- `client/src/display-contract.ts`
+- `client/src/transport.ts`
 - `client/src/main.ts`
-- `client/src/action-payloads.ts`
-- `qa/support-flow-e2e.mjs`
-- `.github/workflows/support-flow-e2e.yml`
-- workflow run `34047655175`, head `8426be71465ad0dbcd64b9a8a50d62142f2217d6`
-- artifact `9993594608`
+- `client/test/display-contract.test.mjs`
+- `server/backend/src/authoritative-room.ts`
+- server display contract commit `9222968e2aba9970cd2f7038b9b901b304f40a89`
+- workflow run `34049782937`
+- artifact `9994199735`
+- artifact digest `sha256:e9fd43453820c4b555e1ca9eccd7016a96ce40bb2d449358afb855ad4cf6770a`
 
 ### Impact
 
-Support/form-state regression không còn là blocker. Shared payload-capture fix cho Market/Recovery/Support/Marriage có deterministic regression từ Chat 06. Không thay đổi gameplay/server rule. `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` vẫn OPEN nên chưa nâng toàn UI thành release-ready.
+World Event/Mandatory display đã browser-verify, nhưng Recovery authoritative display hiện không đáng tin khi người dùng mở panel sau snapshot. Status và các remaining checks chưa được chạy tới vì E2E dừng tại failure. Đây là presentation-only defect; không có bằng chứng gameplay/server rule bị sai.
 
 ### Verified
 
-- Authoritative engine build in QA CI: PASS.
-- Production client build in QA CI: PASS.
-- Selector mirrors exactly 2 authoritative parent/child targets: PASS.
-- Raw Character IDs absent from player-facing labels: PASS.
-- Non-default second target (`child`) remains selected: PASS.
-- Amount `5` preserved through busy-state render and action construction: PASS.
-- Authoritative mutation: actor cash `100 -> 95`, child cash `0 -> 5`: PASS.
-- Invalid amount error surfaced unchanged: `invalid support amount`.
-- Oversized/cap error surfaced unchanged: `action exceeds 50% start-of-round household-asset cap`.
-- `phaseDeadlineAt` unchanged across Support interactions: PASS.
-- Countdown continued `60s -> 59s`: PASS.
-- Empty target list shows no-target state; selector/action absent: PASS.
-- No manual Character ID input: PASS.
-- Chat 06 local suite: PASS 13/13; deterministic payload regression covers Market `7`, Recovery `9`, Support target + `5`, Marriage candidate.
+- Authoritative engine build: PASS.
+- Full clean client suite: PASS 25/25.
+- World Event active value từ authoritative snapshot: PASS.
+- World Event null -> `Không có`: PASS.
+- Mandatory quote tồn tại và toàn bộ breakdown labels/values hiển thị từ authoritative quote: PASS.
+- Mandatory liquidation/bankruptcy/shortfall wording giữ `DỰ KIẾN`, không claim committed bankruptcy: PASS.
+- Mandatory không có skip button: PASS.
+- Mandatory display không đổi `phaseDeadlineAt`: PASS.
+- Artifact ghi lại toàn bộ checks trước failure.
 
 ### Unverified
 
-- Support E2E used a deterministic QA parent/child fixture with production client + compiled production `GameEngine`/`AuthoritativeRoom`; it was not generated organically on the public Render service. Action validation/mutation itself used production authoritative code.
-- Wave 2–4/final art/remaining UI scope under H019 remains outside this QA closure.
+- Recovery quote rendering sau khi mở panel: FAIL hiện tại.
+- Recovery action cost/unit revalidation browser path sau display fix.
+- Status/Noble browser display end-to-end.
+- Null/empty quote stale-value behavior ngoài case World Event.
+- Final smoke Market/Support/Birth/Marriage trong cùng display run; clean client suite 25/25 vẫn PASS và Support có browser-authoritative E2E riêng trước đó.
 
 ### Handoff
 
-Không cần defect handoff mới. Chat 06 tiếp tục `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`; các wave tiếp theo quay lại Chat 07 để QA tương ứng.
+Chat 06 xử lý `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`, sau đó trả `H-20260907-029-07-UIUX-DISPLAY-QA` về Chat 07 để rerun.
 
 ### Open Issues
 
-- `H-20260906-023-07-SUPPORT-FLOW-QA`: CLOSED — PASS.
-- `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`: DONE.
-- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN — Wave 2–4 còn việc.
+- `H-20260907-029-07-UIUX-DISPLAY-QA`: BLOCKED / QA FAIL pending client presentation fix.
+- `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`: OPEN.
+- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
