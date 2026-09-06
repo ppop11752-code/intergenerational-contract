@@ -65,16 +65,22 @@ COMPLETE in client implementation:
 ### Wave 2
 Substantially implemented and authoritative display dependency resolved:
 - persistent HUD with Round/Year/Population/Inflation/Public debt + ceiling/phase timer/Niên sử;
-- World Event now consumes authoritative `game.eventName`;
+- World Event consumes authoritative `game.eventName`;
 - Turn Track capped to 6 upcoming entries with current/local states;
 - map semantic controls Government/Home/zoom;
-- Mandatory now consumes authoritative `mandatoryQuote`, including charge breakdown and projected liquidation/bankruptcy facts, explicitly labeled projected;
-- Status now consumes authoritative `statusQuote`: all fees/persons/affordability plus Noble competition/fallback/refund facts;
+- Mandatory consumes authoritative `mandatoryQuote`, including charge breakdown and projected liquidation/bankruptcy facts, explicitly labeled projected;
+- Status consumes authoritative `statusQuote`: all fees/persons/affordability plus Noble competition/fallback/refund facts;
 - Market six cards with price/pool/return/failure/subsidy/out-of-supply context;
-- Recovery now consumes authoritative `recoveryQuotes`: current pool/capacity/pending/cost-per-unit;
+- Recovery consumes authoritative `recoveryQuotes`: current pool/capacity/pending/cost-per-unit;
 - Support authoritative family selector;
 - Birth proposals/responses;
 - Marriage incoming/accepted presentation and player-facing labels.
+
+Display lifecycle defect found by Chat 07 is fixed in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`:
+- latest authoritative snapshot is cached in presentation layer;
+- local `data-panel` renders trigger re-decoration on the next tick;
+- Recovery opened after the last network snapshot no longer depends on a future snapshot to show server quotes;
+- same pass covers Event/Mandatory/Recovery/Status without recomputing economic values.
 
 ### Wave 3
 Implemented structurally:
@@ -98,16 +104,16 @@ Final raster binaries are still absent. Current fallback/CSS/placeholders remain
 
 ## Verification
 
-- Earlier current-client suite before display integration: TypeScript build PASS, `npm test` PASS 21/21.
-- Display integration added deterministic regression for all four authoritative display surfaces.
-- Modified display/type/transport modules were independently TypeScript-compiled and deterministic tests passed locally.
-- Full clean-repo suite after the newest display integration has not been run from the local container because external GitHub DNS is unavailable.
+- Chat 07 initial display QA: authoritative engine build PASS and clean client suite PASS 25/25 before browser Recovery lifecycle failure.
+- World Event and Mandatory browser checks passed in that run.
+- H-030 lifecycle fix + deterministic regression are committed.
+- `H-20260907-029-07-UIUX-DISPLAY-QA` reopened for browser/server rerun after the fix.
 
 ## Remaining dependencies
 
 - Chat 03 display-contract dependency is RESOLVED by server commit `9222968e2aba9970cd2f7038b9b901b304f40a89` and `H-20260907-028-06-UIUX-DISPLAY-INTEGRATION` DONE.
 - Real raster binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` must still be produced/imported under `client/public/assets/ui/v1/`.
-- Chat 07 must run `H-20260907-029-07-UIUX-DISPLAY-QA` plus later visual/runtime regression after real art binaries exist.
+- Chat 07 must rerun `H-20260907-029-07-UIUX-DISPLAY-QA` and later visual/runtime regression after real art binaries exist.
 - Lobby QR is still a placeholder; no renderer has been added.
 
 Handoff remains OPEN. Do not declare art-complete or player-facing release-ready until remaining art/QA dependencies are complete.
