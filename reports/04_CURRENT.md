@@ -1,43 +1,40 @@
 # 04 — DEPLOYMENT & DEVOPS — CURRENT REPORT
 
 ### Status
-Hoàn thành H-20260906-016-04-OI004-E2E-RUNNER; network-capable browser E2E runner đã chạy PASS và bàn giao bằng chứng cho Chat 07.
+Hoàn thành H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS; production image đã chứa và serve canonical UI art public assets. Bàn giao lại final visual/runtime QA cho Chat 07.
 
 ### Changed
-- Added repository-controlled Playwright runner `qa/live-client-e2e.mjs`.
-- Added GitHub Actions workflow `.github/workflows/live-client-e2e.yml` running on GitHub-hosted Ubuntu with Chromium and network access.
-- Corrected an initial runner-only defect that tried to inspect Birth UI before an active game phase; no product/runtime semantics were changed.
-- Final runner commit: `8facc98a38b654a30cad24aaf13667c78a529705`.
+- Updated root `Dockerfile` runtime stage to copy `client/public` into `/app/client/public`.
+- Added repository-controlled smoke workflow `.github/workflows/ui-art-public-assets-smoke.yml` to verify production manifest and a representative raster over HTTP.
+- No gameplay, protocol, client asset semantics, or canonical asset paths were changed.
 
 ### Source
-- Handoff `H-20260906-016-04-OI004-E2E-RUNNER`.
-- `qa/live-client-e2e.mjs`.
-- `.github/workflows/live-client-e2e.yml`.
-- Live URL `https://intergenerational-contract.onrender.com`.
-- Chat 07 blocked handoff `H-20260906-015-07-OI004-FINAL-E2E`.
+- Handoff `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS`.
+- `Dockerfile`.
+- `client/public/assets/ui/v1/manifest.json`.
+- Render service `srv-daem578u01pc73f35dbg`.
+- Blocked QA handoff `H-20260907-038-07-UIUX-ART-FINAL-QA`.
 
 ### Impact
-Chat 07 no longer depends on its local sandbox DNS. Browser/server evidence can be reproduced from GitHub Actions against the live Render service without changing gameplay, client semantics, or server protocol.
+The previous production-only Wave 4 art fallback blocker is removed at deployment packaging level. Canonical paths under `/public/assets/ui/v1/` are now included in the Render runtime image and independently reachable over HTTP.
 
 ### Verified
-- GitHub Actions workflow: `Live Client E2E`.
-- Successful run ID: `34039901844` (run #2), head SHA `8facc98a38b654a30cad24aaf13667c78a529705`.
-- Browser: Playwright Chromium on GitHub-hosted Ubuntu runner.
-- Evidence artifact ID: `9991351341`, name `live-client-e2e-evidence`, digest `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2`.
-- Artifact contains `results.json` plus screenshots `tutorial-entry.png`, `help-recap.png`, `birth-gating.png`, `normal-room.png`.
-- PASS: live page load.
-- PASS: same-origin Socket.IO connection.
-- PASS: Tutorial room entry with T0 visible.
-- PASS: help recap is non-blocking; authoritative countdown observed `7s -> 6s` while recap open.
-- PASS: authoritative Birth UI gating observed in live Tutorial game with `canInitiateBirth=false`; no Birth proposal button shown and authoritative unavailable message rendered.
-- PASS: normal multiplayer room has no Tutorial coach overlay (`coach count=0`).
+- Packaging fix commit: `0c1eba3fe1c1df8f76a0ebf2987f9ce74933b106`.
+- Render deploy: `dep-daeruch42hec73cll8eg`.
+- Render deploy status: `live`.
+- Build log explicitly shows `COPY client/public /app/client/public` -> DONE.
+- Production smoke workflow commit: `caae3d39f5c79fa99c72c1f63b0710223818f867`.
+- GitHub Actions workflow: `UI Art Public Assets Smoke`.
+- Successful run: `34055138772`.
+- PASS: `https://intergenerational-contract.onrender.com/public/assets/ui/v1/manifest.json` returned successfully and contained manifest version 1 plus canonical Government raster path.
+- PASS: `https://intergenerational-contract.onrender.com/public/assets/ui/v1/landmarks/government.png` returned successfully, was non-empty, and validated as PNG image data.
 
 ### Unverified
-- The same E2E run did not deterministically force a `canInitiateBirth=true` live state; source/client regression coverage for false/true contract remains separate evidence for Chat 07.
-- Full T0–T11 progression was not forced because doing so reliably would require gameplay-state manipulation beyond this DevOps runner. Chat 07 must combine this browser evidence with deterministic client/server tests and any manual progression it deems necessary before closing OI-004.
+- Final desktop/mobile composition and all raster readiness markers are still owned by Chat 07 final visual/runtime QA.
+- H019/Wave 4 must not be called art-complete until Chat 07 reruns H038 and passes its acceptance gates.
 
 ### Handoff
-Chat 07 should consume GitHub Actions run `34039901844` and artifact `9991351341`, reconcile it with existing false/true Birth contract tests and T0–T11 coverage, then finalize independent OI-004 release QA.
+Reopen `H-20260907-038-07-UIUX-ART-FINAL-QA` for Chat 07. Chat 07 should rerun its final desktop/mobile browser gate against the now-fixed live deployment and close/route any remaining defect by ownership.
 
 ### Open Issues
-- No remaining Chat 04 DevOps blocker for OI-004 E2E execution infrastructure.
+- No remaining Chat 04 deployment blocker for Wave 4 UI art public assets.
