@@ -2,12 +2,15 @@
 
 ## Overall
 
-**Not release-ready yet.** Core gameplay consistency issues OI-001 and OI-002 are independently verified and closed, and the verified backend baseline has now been migrated into GitHub. Remaining release/integration work is OI-003–OI-006 plus completion/verification of the client side.
+**Not release-ready yet.** Backend gameplay/protocol/deployment blockers OI-001, OI-002, OI-003, OI-005 and OI-006 are now closed/verified. The remaining release blocker tracked in Open Issues is OI-004, together with completion and verification of the client side and full integration/E2E release gate.
 
 ## Closed / verified
 
 - OI-001 marriage proposal lifecycle: CLOSED / independently verified.
 - OI-002 inflation scarcity combined formula: CLOSED / independently verified.
+- OI-003 protocol helper drift (`game:replay`): CLOSED / verified.
+- OI-005 deployment source-tree mismatch: CLOSED / source-tree verified.
+- OI-006 dependency-backed live server runtime: CLOSED / release QA verified.
 - Canonical backend source migration into GitHub: COMPLETE / verified against audited artifact.
 
 Canonical backend import commit:
@@ -18,13 +21,23 @@ Canonical backend path:
 
 `server/backend/`
 
+Live backend service:
+
+`https://intergenerational-contract.onrender.com`
+
+Latest live deploy independently checked by Chat 07 during OI-006 validation:
+
+`b33379595303f7f594184f8e1de468cdab853f7d`
+
+Transport-tested compatible runtime:
+
+`bbd30f8c08d71903b99462c071f347eca33d042f`
+
 ## Remaining blockers / gaps
 
-- OI-003 protocol helper drift (`game:replay`).
 - OI-004 dedicated Tutorial guidance.
-- OI-005 deployment tree mismatch / Render re-verification.
-- OI-006 dependency-backed live server runtime verification.
-- Complete verified client source migration / integration is not finished.
+- Complete verified client source migration / implementation / integration is not finished.
+- Client↔server end-to-end and full-system regression/release gate have not yet passed.
 
 ## Non-blocking maintenance debt
 
@@ -32,4 +45,4 @@ Legacy Vitest `.test.ts` suites contain expectations from pre-OI-001 behavior. T
 
 ## Rule for release claims
 
-Do not call the repository/game release-ready until current canonical backend, client, tests, deployment and integration evidence refer to the same verified commit/tag or explicitly compatible verified commits.
+Do not call the repository/game release-ready until current canonical backend, client, tests, deployment and integration evidence refer to the same verified commit/tag or explicitly compatible verified commits, and Chat 07 has completed the final integration/E2E release gate.
