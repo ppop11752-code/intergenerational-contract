@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {GameEngine} from '../dist/engine.js';
+const g=new GameEngine(); for(let i=0;i<10;i++)g.joinPlayer('A'+i);
+const chars=g.alive(); chars.forEach((c,i)=>c.ageStage=i<8?7:3);
+g.state.socialSecurity.lastWorkerAverageIncome=100;g.state.socialSecurity.payg=3;g.state.socialSecurity.pensionReserve=0;
+g.state.government.budget=0;g.state.government.reserveFloor=999999;g.state.debt=g.debtCeiling();
+g['applyPensionsAtRoundStart']();
+assert.equal(g.state.socialSecurity.pensionCrisis,true);
+assert.ok(g.state.socialSecurity.pensionPayoutRatio<0.70);
+console.log(JSON.stringify({ageingCollapse:true,payoutRatio:g.state.socialSecurity.pensionPayoutRatio,elderWorkerRatio:8/2}));

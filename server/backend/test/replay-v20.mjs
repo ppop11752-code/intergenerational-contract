@@ -1,0 +1,2 @@
+import assert from 'node:assert/strict';import {AuthoritativeRoom} from '../dist/authoritative-room.js';
+const r=new AuthoritativeRoom('ABC','P1','P1','S1');for(let i=2;i<=10;i++)r.join('P'+i,'P'+i,'S'+i);for(let i=1;i<=10;i++)r.setReady('P'+i,true);assert.equal(r.start('P1',()=>.5).ok,true);r.engine.state.ended=true;assert.equal(r.replay('P1').ok,true);assert.equal(r.started,false);assert.equal(r.engine,null);assert([...r.players.values()].every(p=>!p.ready));console.log(JSON.stringify({sameRoomReplay:true,playersPreserved:r.players.size}));

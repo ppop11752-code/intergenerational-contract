@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import {GameEngine} from "../dist/engine.js";
+import {taxPerPerson,accruePublicDebt} from "../dist/government.js";
+const g=new GameEngine();g.setRandomSource(()=>0.99);
+assert.equal(g.state.nonRenewablePool.low,700);assert.equal(g.state.pool.low,120);
+const t=taxPerPerson(g,100);assert.ok(t>11&&t<12);
+const d=g.state.debt;accruePublicDebt(g);assert.ok(g.state.debt>d);
+for(let i=0;i<10;i++)g.joinPlayer(`p${i}`);g.startRound();g.buildTurnOrder(()=>.5);g.beginMandatoryPhase();while(g.phase()==="mandatory")g.resolveCurrentMandatory();while(g.phase()==="marriage")g.completeMarriageTurn();
+while(g.phase()==="voluntary"){const c=g.currentTurnCharacter();if(c?.alive){try{g.buyResource(c,"low",1,"nonrenewable")}catch{}}g.completeVoluntaryTurn()}g.endRound();
+assert.ok(g.state.nonRenewablePool.low<700);
+for(const x of g.state.government.interventionLedger)assert.ok(x.amount>=0);
+console.log(JSON.stringify({taxOn100:t,debtAfterCompound:g.state.debt,renewableLow:g.state.pool.low,nonRenewableLow:g.state.nonRenewablePool.low,govBudget:g.state.government.budget},null,2));

@@ -1,0 +1,1 @@
+import {describe,expect,it} from "vitest"; import {livingCost,marketPrice} from "../src/economy.js"; describe("economy",()=>{it("inflates living cost",()=>expect(livingCost(100,2)).toBeCloseTo(18.3));it("initial low resource price is 10",()=>expect(marketPrice("low",10,{low:350,mid:180,high:70},{min:.5,max:2.5})).toBeCloseTo(10))});

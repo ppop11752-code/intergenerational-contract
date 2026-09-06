@@ -1,0 +1,13 @@
+import {GameEngine} from '../dist/engine.js';
+import {simulateGame} from '../dist/simulator.js';
+const g=new GameEngine();
+for(let i=0;i<150;i++)g.createNpc();
+g.startRound();
+let x=246813579;const rnd=()=>{x=(1664525*x+1013904223)>>>0;return x/4294967296};
+const order=g.buildTurnOrder(rnd);
+if(order.length!==150)throw new Error('turn order failed >100 population');
+if(new Set(order.map(e=>e.card)).size!==150)throw new Error('cards not unique');
+if(!order.every(e=>BigInt(e.card)>0n))throw new Error('non-positive card');
+const sim=simulateGame(3000,30);
+if(sim.rounds.length<1)throw new Error('simulation failed');
+console.log(JSON.stringify({cards:order.length,unique:true,maxCard:order.reduce((m,e)=>BigInt(e.card)>m?BigInt(e.card):m,0n).toString(),simulationRounds:sim.rounds.length,endingReason:sim.endingReason},null,2));
