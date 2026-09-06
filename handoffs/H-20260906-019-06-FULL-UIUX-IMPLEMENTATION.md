@@ -1,91 +1,80 @@
 handoff_id: H-20260906-019-06-FULL-UIUX-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
+status: OPEN
 title: Triển khai production UI/UX theo full audit
 
 ## Context
 
 Chat 05 đã hoàn thành full UI/UX audit tại `docs/UI_UX_FULL_AUDIT_2026-09-06.md`.
 
-Current client started as a functional/integration prototype and has been rebuilt toward the locked UI/UX baseline.
+## Progress
 
-## Progress — Chat 06
-
-### Wave 1
-COMPLETE:
+### Wave 1 — COMPLETE
 - Landing/Create/Join/Tutorial/Lobby;
 - Host Start;
-- reconnect/get-state recovery;
+- reconnect/get-state;
 - Waiting Queue;
 - feedback;
 - authoritative Support selector;
-- incoming Birth response UI;
-- H-024 form-state fix.
+- Birth response;
+- form-state regression fixed.
 
-### Wave 2
-IMPLEMENTED + AUTHORITATIVE DISPLAY QA PASS:
-- persistent HUD + World Event;
-- Turn Track;
-- Mandatory authoritative projected breakdown;
-- Status authoritative fee/Noble competition/fallback/refund;
-- Market six-card;
-- Recovery authoritative quote;
-- Support/Birth/Marriage;
-- H-030 late-render display decoration fixed;
-- H-029 browser-authoritative QA: 67/67 PASS; clean client suite 27/27 PASS; engine build PASS.
+### Wave 2 — IMPLEMENTED + QA PASS
+- HUD/World Event/Turn Track;
+- Mandatory/Status authoritative display;
+- Market/Recovery/Support/Birth/Marriage;
+- display lifecycle fix;
+- `H-20260907-029-07-UIUX-DISPLAY-QA`: browser 67/67 PASS, clean client 27/27 PASS, engine PASS.
 
-### Wave 3
-IMPLEMENTED structurally:
+### Wave 3 — IMPLEMENTED
 - Residence/Family/Character Profile;
-- Government four tabs;
-- Niên sử Journey + World;
-- Founder Draw + non-blocking round transition;
-- End Report Ranking/Journey/World + host-only Replay.
+- Government drawer;
+- Niên sử;
+- Founder Draw/Round transition;
+- End Report + host-only Replay.
 
-### Lobby QR closure
-IMPLEMENTED + QA PASS:
-- `H-20260907-032-06-LOBBY-QR-INTEGRATION` DONE from locked `docs/UI_QR_CONTRACT_V1.md`;
-- H-034 cropping defect fixed;
-- H-035 renderer-unavailable fallback loop fixed;
-- `H-20260907-033-07-LOBBY-QR-QA` DONE / PASS;
-- final QR QA: clean client suite 33/33 PASS, browser QA 25/25 PASS;
-- desktop/mobile native decode, same-origin payload, privacy boundary, deep-link prefill, no-auto-join, stale/invalid handling, copy-link, Host Start and renderer-fallback all PASS.
+### Lobby QR — IMPLEMENTED + QA PASS
+- canonical same-origin deep-link/no-auto-join/fallback/copy-link;
+- H034 cropping fixed;
+- H035 fallback loop fixed;
+- `H-20260907-033-07-LOBBY-QR-QA`: clean client 33/33 PASS, browser 25/25 PASS.
 
-### Wave 4
-INTEGRATION-READY but NOT ART-COMPLETE:
-- responsive/mobile sheets;
-- Tutorial spotlight;
-- non-blocking ambient motion;
-- v1 asset manifest/loader/fallback/deterministic portrait scaffolding.
+### Wave 4 — FINAL RASTER INTEGRATION COMPLETE, FINAL QA PENDING
 
-Direct GitHub verification on `main` still shows `client/public/assets/ui/v1/` contains only:
-- `README.md`;
-- `manifest.json`.
+`H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` is DONE:
+- required PNG batches A–D exist on `main`;
+- Chat 05 review APPROVED all batches;
+- source: `docs/UI_ART_BINARY_REVIEW_V1.md`.
 
-Required raster PNG/WebP files and subfolders are absent. Current CSS/placeholders remain development fallback only and do not satisfy `UI_ART_ASSET_CONTRACT_V1.md` Section 16.
+`H-20260907-037-06-UIUX-ART-INTEGRATION-FINAL` is DONE at Client integration scope:
+- v1 manifest expanded with approved icon/ambience entries;
+- terrain/world shell uses approved atlas-backed integer-scaled raster layer when ready;
+- Government/Residence/local marker use approved rasters;
+- primary panel/button/tab frames use approved rasters;
+- HUD/navigation/action controls receive approved 24px icons;
+- Character Profile uses deterministic approved 96px portrait raster;
+- cloud/fog/bird/smoke/ripple ambience and founder/round/extinction decorations are wired;
+- optional crisis overlays remain disabled without safe authoritative mapping;
+- graceful asset fallback remains presentation resilience only;
+- gameplay/action/timer/protocol semantics unchanged.
 
-## Verification
+## Current verification
 
-- Display QA: PASS 67/67 browser checks; clean client suite 27/27; engine build PASS.
-- Lobby QR final QA: clean client suite 33/33 PASS; browser QA 25/25 PASS.
-- QR and authoritative display semantics are no longer blockers.
-- Asset tree rechecked directly on GitHub `main`: no production raster binaries present.
+Already PASS:
+- authoritative display QA;
+- Lobby QR final QA;
+- Chat 05 raster production/review.
 
-## Current blocker
+Pending:
+- final integrated clean client build/tests;
+- desktop/mobile visual/runtime QA against Section 16 of `docs/UI_ART_ASSET_CONTRACT_V1.md`;
+- missing asset request check;
+- exact raster/frame/icon/portrait rendering and interaction-overlap verification.
 
-Only final art delivery/visual closure remains:
-1. Chat 05 must produce/import and visually approve required raster batches A–D under the exact `client/public/assets/ui/v1/` manifest paths.
-2. Chat 06 must integrate approved real binaries and remove corresponding CSS geometry/placeholders from production presentation while keeping load-failure fallback only.
-3. Chat 07 must run final `UI_ART_ASSET_CONTRACT_V1.md` Section 16 visual/runtime QA.
+## Final gate
 
 Created:
-- `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` -> Chat 05.
+- `H-20260907-038-07-UIUX-ART-FINAL-QA` -> Chat 07.
 
-## Blocked state
-
-H-019 remains **BLOCKED**, but now only on real raster art binary delivery + Chat 06 integration + final Chat 07 visual/runtime QA.
-
-There is no further safe independent Chat 06 work until at least Batch A is present and APPROVED. Do not fabricate binaries, atlas coordinates or production art from CSS placeholders.
-
-Do not declare art-complete or player-facing release-ready until all required batches are integrated and final visual/runtime QA passes.
+H-019 remains OPEN only for independent final visual/runtime QA. Do not declare project-level art-complete or player-facing release-ready until H-038 PASS.
