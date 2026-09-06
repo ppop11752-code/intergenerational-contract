@@ -1,7 +1,7 @@
 handoff_id: H-20260907-025-03-UIUX-DISPLAY-CONTRACT
 from: 06
 to: 03
-status: OPEN
+status: DONE
 title: Expose narrow authoritative display fields for remaining UI/UX surfaces
 
 ## Context
@@ -29,3 +29,34 @@ If one of these fields cannot be exposed without a gameplay decision, report it 
 ## Impact
 
 These are display-completion dependencies only. Existing actions/timers/protocol semantics should remain unchanged.
+
+## Result
+
+Completed by Chat 03.
+
+- Public `game.eventName` now exposes the current World Event or `null`.
+- Private `mandatoryQuote` is available only to the current player during
+  Mandatory and exposes the canonical charge breakdown plus projected resource
+  liquidation, bankruptcy, shortfall and dominant-cost facts.
+- Private `recoveryQuotes` is available only to the current player during
+  Voluntary and exposes per-grade cost/unit, current pool, carrying capacity,
+  pending-next-round units and remaining capacity.
+- Private `statusQuote` is available only to the current Household representative
+  during Status and exposes all three fees/affordability plus current Noble slot,
+  priority, fallback-fee and potential-refund facts.
+- Lobby and out-of-phase private snapshots return `null`/empty quote shapes.
+- Engine actions reuse the same pure quote helpers for Mandatory liquidation,
+  Recovery cost and Status fee; no gameplay rule or constant changed.
+
+Verification:
+
+- Backend `npm run release:check`: PASS.
+- Rule Ledger 42/42, OI-002 6/6, OI-001 9/9: PASS.
+- UI/UX display contract regression: PASS, including action parity and no side effects.
+- Fuzz 20 games and final simulation 30 games: PASS.
+- Nested server typecheck/build and Socket event contract 9/9: PASS.
+- Current client build/tests before field integration: PASS 18/18.
+
+Implementation commit: `9222968e2aba9970cd2f7038b9b901b304f40a89`.
+
+Follow-up: `H-20260907-028-06-UIUX-DISPLAY-INTEGRATION`.
