@@ -1,0 +1,39 @@
+name: Lobby QR Fallback E2E
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/lobby-qr-fallback-e2e.mjs"
+      - ".github/workflows/lobby-qr-fallback-e2e.yml"
+
+jobs:
+  lobby-qr-fallback-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install server transport dependencies
+        working-directory: server/backend/server
+        run: npm install
+      - name: Build client
+        working-directory: client
+        run: |
+          npm install
+          npm run build
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run isolated renderer fallback E2E
+        run: node qa/lobby-qr-fallback-e2e.mjs
+      - name: Upload fallback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lobby-qr-fallback-e2e-evidence
+          path: qa/lobby-qr-fallback-artifacts
+          if-no-files-found: warn
