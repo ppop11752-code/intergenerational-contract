@@ -2,12 +2,21 @@
 
 ## Overall
 
-**Not release-ready yet.** Core gameplay consistency issues OI-001 and OI-002 are now independently verified and closed, but the complete canonical source tree has not yet been migrated into GitHub and several release/integration issues remain open.
+**Not release-ready yet.** Core gameplay consistency issues OI-001 and OI-002 are independently verified and closed, and the verified backend baseline has now been migrated into GitHub. Remaining release/integration work is OI-003–OI-006 plus completion/verification of the client side.
 
 ## Closed / verified
 
 - OI-001 marriage proposal lifecycle: CLOSED / independently verified.
 - OI-002 inflation scarcity combined formula: CLOSED / independently verified.
+- Canonical backend source migration into GitHub: COMPLETE / verified against audited artifact.
+
+Canonical backend import commit:
+
+`d5142e6a58b3179517440cc5af3c8c706bcbc9b7`
+
+Canonical backend path:
+
+`server/backend/`
 
 ## Remaining blockers / gaps
 
@@ -15,7 +24,7 @@
 - OI-004 dedicated Tutorial guidance.
 - OI-005 deployment tree mismatch / Render re-verification.
 - OI-006 dependency-backed live server runtime verification.
-- Complete canonical server/client source migration into this GitHub repository is not finished.
+- Complete verified client source migration / integration is not finished.
 
 ## Non-blocking maintenance debt
 
@@ -23,4 +32,4 @@ Legacy Vitest `.test.ts` suites contain expectations from pre-OI-001 behavior. T
 
 ## Rule for release claims
 
-Do not call the repository/game release-ready until current canonical source, tests, deployment and integration evidence refer to the same verified commit/tag.
+Do not call the repository/game release-ready until current canonical backend, client, tests, deployment and integration evidence refer to the same verified commit/tag or explicitly compatible verified commits.
