@@ -1,0 +1,31 @@
+name: UI Art Public Assets Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - 'client/public/**'
+      - '.github/workflows/ui-art-public-assets-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      LIVE_URL: https://intergenerational-contract.onrender.com
+    steps:
+      - name: Verify manifest
+        run: |
+          set -euxo pipefail
+          curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 5 \
+            "$LIVE_URL/public/assets/ui/v1/manifest.json" -o manifest.json
+          grep -q '"version": 1' manifest.json
+          grep -q '"government": "landmarks/government.png"' manifest.json
+      - name: Verify representative raster
+        run: |
+          set -euxo pipefail
+          curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 5 \
+            "$LIVE_URL/public/assets/ui/v1/landmarks/government.png" -o government.png
+          test -s government.png
+          file government.png | grep -q 'PNG image data'
