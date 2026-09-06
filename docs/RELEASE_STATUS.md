@@ -2,11 +2,11 @@
 
 ## Overall
 
-**Release-ready at the current QA scope.** OI-001 through OI-006 are closed/verified, canonical backend and client are deployed together, live browser/server E2E has passed, and no blocking Open Issue remains.
+**Not release-ready at the current player-facing UI scope.** OI-001 through OI-006 remain closed/verified, but a newer production-client regression was found during Support flow QA after the prior release-ready claim.
 
-This status does not erase non-blocking maintenance debt or long-term balance/usability playtesting needs.
+The regression does not change gameplay rules or reopen OI-001–OI-006. It affects client form values used to construct authoritative actions.
 
-## Closed / verified
+## Closed / verified foundations
 
 - OI-001 marriage proposal lifecycle: CLOSED / independently verified.
 - OI-002 inflation scarcity combined formula: CLOSED / independently verified.
@@ -15,45 +15,44 @@ This status does not erase non-blocking maintenance debt or long-term balance/us
 - OI-005 deployment source-tree mismatch: CLOSED / source-tree verified.
 - OI-006 dependency-backed live server runtime: CLOSED / release QA verified.
 - Canonical backend source migration into GitHub: COMPLETE / verified against audited artifact.
-- Canonical client source/deployment integration: COMPLETE / verified at live browser/server E2E level.
+- Prior Tutorial/live integration evidence remains valid for the scope it covered.
 
-Canonical backend path:
+Canonical backend path: `server/backend/`
 
-`server/backend/`
+Canonical client path: `client/`
 
-Canonical client path:
+Live same-origin service: `https://intergenerational-contract.onrender.com`
 
-`client/`
+## Current blocking client regression
 
-Live same-origin service:
+During `H-20260906-023-07-SUPPORT-FLOW-QA`, Chat 07 reproduced the following with production client + authoritative `GameEngine`/`AuthoritativeRoom` over Socket.IO:
 
-`https://intergenerational-contract.onrender.com`
+- browser entered Support amount `5`;
+- authoritative mutation transferred only `1` (`actor 100 -> 99`, target 0 -> 1`).
 
-## Final OI-004 browser E2E evidence
+Root cause: `client/src/main.ts` calls `render()` inside `run()` before deferred action callbacks read DOM values. Form controls are rebuilt with defaults before action payload creation.
 
-- workflow: `Live Client E2E`
-- run ID: `34039901844`
-- head SHA: `8facc98a38b654a30cad24aaf13667c78a529705`
-- artifact ID: `9991351341`
-- digest: `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2`
+Support target/amount are directly affected; the same pattern must be audited for Market units, Recovery units, Marriage candidate, and any similar DOM-driven actions.
 
-PASS evidence includes:
+Blocking defect handoff: `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`.
 
-- live page load;
-- same-origin Socket.IO connection;
-- Tutorial room entry with T0 visible;
-- help recap non-blocking while authoritative countdown continued;
-- authoritative Birth UI gating in live unavailable state;
-- normal multiplayer receives no Tutorial overlay.
+Support QA handoff: `H-20260906-023-07-SUPPORT-FLOW-QA` is BLOCKED pending the client fix and rerun.
 
-Deterministic client/server regression separately covers Birth eligibility false/true behavior and Tutorial trigger logic, so no artificial live state mutation or forced 32-round browser session is required for current release closure.
+## QA evidence
 
-## Remaining non-blocking items
+- Support QA workflow: `Support Flow E2E`
+- failing run ID: `34046838461`
+- head SHA: `ca4d90a6320ade9e85586a70b7d48e7ea1a13077`
+- authoritative engine build: PASS
+- production client build: PASS
+- selector mirrors authoritative parent/child targets: PASS before action assertion
+- raw Character ID absent from player-facing labels: PASS
+- action payload fidelity for non-default amount: FAIL
 
-- Legacy Vitest `.test.ts` expectations from pre-OI-001 behavior should be updated/replaced/archived.
-- Long-term balance and usability playtesting may continue after release readiness.
-- A full 32-round manual browser playthrough can be retained as optional soak/playtest evidence, not a release blocker under the current policy.
+## Remaining UI work
+
+`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN. Wave 2–4/final art and other UI/UX work are not made complete by earlier Wave 1 QA.
 
 ## Release claim rule
 
-The current repository/runtime may be called release-ready only while subsequent runtime-affecting changes continue to pass the corresponding build, regression, deployment and integration gates. Any material gameplay/protocol/client/server change after this status must be revalidated before preserving the claim.
+Do not call the current player-facing client release-ready until Chat 06 resolves `H-20260906-024-06-CLIENT-FORM-STATE-LOSS` and Chat 07 reruns Support/relevant form-action QA successfully. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
