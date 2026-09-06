@@ -1,7 +1,7 @@
 handoff_id: H-20260906-023-07-SUPPORT-FLOW-QA
 from: 06
 to: 07
-status: OPEN
+status: BLOCKED
 title: QA production Support selector with authoritative targets
 
 ## Context
@@ -34,7 +34,25 @@ Chat 06 local verification after integration:
 - `npm test` PASS 9/9.
 - Regression covers authoritative Support selector presence and raw-ID absence.
 
-## Expected output
+## QA Result
 
-- Browser/server QA result for Support flow.
-- Defect handoff back to Chat 06 only if a client implementation issue is found.
+BLOCKED / FAIL pending client fix.
+
+Chat 07 added QA-only `qa/support-flow-e2e.mjs` + `.github/workflows/support-flow-e2e.yml`, using the production client over Socket.IO with compiled authoritative `GameEngine` + `AuthoritativeRoom` and a deterministic parent/child fixture derived from the server regression.
+
+Workflow run `34046838461`:
+- authoritative engine build: PASS;
+- production client build: PASS;
+- browser selector mirrored the authoritative parent/child target list;
+- player-facing labels did not expose raw Character IDs;
+- valid-action test reproduced a client defect: UI entered amount `5`, but authoritative mutation was only `1` (`actor 100 -> 99`, target 0 -> 1`).
+
+Root cause in `client/src/main.ts`: `run()` renders the UI before invoking the deferred callback that reads form values. The re-render resets `#amount` to default `1` and can reset `#support-target` to the first option before the action payload is created.
+
+This blocks reliable verification of valid non-default Support values and downstream invalid amount/cash/50% cap cases.
+
+## Defect Handoff
+
+`H-20260906-024-06-CLIENT-FORM-STATE-LOSS` -> Chat 06.
+
+After Chat 06 fixes/covers the DOM-read-after-render pattern, return this handoff to Chat 07 for rerun.
