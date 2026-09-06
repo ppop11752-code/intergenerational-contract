@@ -1,6 +1,7 @@
 import type{MandatoryQuote,PlayerSnapshot,RecoveryQuote,RoomSnapshot,StatusQuote}from"./types.js";
 
 type SnapshotDetail={room:RoomSnapshot|null;player:PlayerSnapshot|null};
+let latestSnapshot:SnapshotDetail={room:null,player:null};
 const vi=(x:number)=>Number.isFinite(x)?x.toLocaleString("vi-VN"):"—";
 const pct=(x:number)=>Number.isFinite(x)?`${(x*100).toFixed(1)}%`:"—";
 const dominantLabel:Record<string,string>={living:"Sinh hoạt",socialContribution:"An sinh",tax:"Thuế",childSupport:"Chu cấp con",parentSupport:"Chu cấp cha/mẹ",grief:"Tang chế",medical:"Y tế"};
@@ -10,6 +11,8 @@ export function worldEventText(room:RoomSnapshot|null){return room?.game?.eventN
 export function mandatorySummary(q:MandatoryQuote|null){if(!q)return null;return{total:q.breakdown.total,cashBefore:q.cashBefore,liquidationRequired:q.liquidationRequired,liquidationProceeds:q.liquidationProceeds,cashAfterLiquidation:q.cashAfterLiquidation,projectedBankruptcy:q.projectedBankruptcy,shortfall:q.shortfall,dominantCost:dominantLabel[q.dominantCost]||q.dominantCost}}
 export function recoverySummary(q:RecoveryQuote){return`${q.grade.toUpperCase()} · Pool ${vi(q.currentPool)}/${vi(q.carryingCapacity)} · Pending +${vi(q.pendingNextRound)} · Còn ${vi(q.capacityRemaining)} · ${vi(q.costPerUnit)}/đơn vị`}
 export function statusSummary(q:StatusQuote|null){if(!q)return null;return{cards:q.cards.map(c=>({status:c.status,label:statusLabel[c.status]||c.status,fee:c.fee,personsCharged:c.personsCharged,affordable:c.affordable})),noble:{...q.nobleCompetition}}}
+export function rememberSnapshot(detail:SnapshotDetail){latestSnapshot=detail;return latestSnapshot}
+export function currentSnapshot(){return latestSnapshot}
 
 function ensureStyle(){if(document.getElementById("display-contract-style"))return;const s=document.createElement("style");s.id="display-contract-style";s.textContent=`.server-display{margin-top:.75rem;padding:.65rem;border:2px solid #806337;background:#1f180fd9;color:#f2e3b7}.server-display h4{margin:.1rem 0 .5rem}.server-display dl{display:grid;grid-template-columns:1fr auto;gap:.3rem .7rem}.server-display dd{margin:0;text-align:right}.server-display .warning{color:#ffd08c}.server-display .danger{color:#ffb3a5}.server-quote{display:block;margin-top:.25rem;font-size:.72rem}.status-card .server-display{max-height:34vh;overflow:auto}`;document.head.appendChild(s)}
 function upsert(parent:Element,html:string){let box=parent.querySelector<HTMLElement>(":scope > .server-display");if(!box){box=document.createElement("div");box.className="server-display";parent.appendChild(box)}box.innerHTML=html}
@@ -19,5 +22,9 @@ function renderMandatory(player:PlayerSnapshot|null){const root=document.querySe
 function renderRecovery(player:PlayerSnapshot|null){const quotes=player?.recoveryQuotes||[];document.querySelectorAll<HTMLElement>(".recovery-row[data-recover]").forEach(row=>{const q=quotes.find(x=>x.grade===row.dataset.recover);let label=row.querySelector<HTMLElement>(".server-quote");if(!q){label?.remove();return}if(!label){label=document.createElement("span");label.className="server-quote";row.appendChild(label)}label.textContent=recoverySummary(q)})}
 function renderStatus(player:PlayerSnapshot|null){const root=document.querySelector(".status-card");if(!root)return;const q=player?.statusQuote||null;if(!q){root.querySelector(":scope > .server-display")?.remove();return}const cards=q.cards.map(c=>`<dt>${statusLabel[c.status]||c.status}</dt><dd>${vi(c.fee)} · ${c.personsCharged} người · ${c.affordable?"Đủ cash":"Thiếu cash"}</dd>`).join("");const n=q.nobleCompetition;upsert(root,`<h4>PHÍ & CẠNH TRANH AUTHORITATIVE</h4><dl><dt>Tài sản TB vòng</dt><dd>${vi(q.roundAverageAssets)}</dd><dt>Price Index</dt><dd>${vi(q.priceIndex)}</dd>${cards}<dt>Slot Noble</dt><dd>${n.slotsRequired}/${n.slotsTotal} cần · ${n.pendingNobleSlots} đang chờ</dd><dt>Ưu tiên</dt><dd>${n.priority.join(" → ")}</dd><dt>Turn card</dt><dd>${n.turnCard??"—"}</dd><dt>Fallback</dt><dd>${statusLabel[n.fallbackStatus]} · phí ${vi(n.middleFallbackFee)}</dd><dt>Refund tối đa tiềm năng</dt><dd>${vi(n.potentialRefund)}</dd></dl><p>Phân bổ Noble diễn ra cuối vòng; quote hiện tại không phải cam kết kết quả.</p>`)}
 
-export function decorateSnapshot({room,player}:SnapshotDetail){if(typeof document==="undefined")return;ensureStyle();renderEvent(room);renderMandatory(player);renderRecovery(player);renderStatus(player)}
-if(typeof window!=="undefined")window.addEventListener("ic:snapshot",e=>decorateSnapshot((e as CustomEvent<SnapshotDetail>).detail));
+export function decorateSnapshot(detail:SnapshotDetail){latestSnapshot=detail;if(typeof document==="undefined")return;ensureStyle();renderEvent(detail.room);renderMandatory(detail.player);renderRecovery(detail.player);renderStatus(detail.player)}
+export function redecorateLatest(){decorateSnapshot(latestSnapshot)}
+if(typeof window!=="undefined"){
+ window.addEventListener("ic:snapshot",e=>decorateSnapshot((e as CustomEvent<SnapshotDetail>).detail));
+ document.addEventListener("click",e=>{const target=e.target as Element|null;if(target?.closest?.("[data-panel]"))window.setTimeout(redecorateLatest,0)});
+}
