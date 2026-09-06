@@ -4,17 +4,19 @@
 
 ### Status
 
-Bị chặn — `H-20260907-038-07-UIUX-ART-FINAL-QA` đã vượt qua blocker deployment H039, nhưng final browser QA phát hiện Government raster bị non-integer scaling trong client.
+Hoàn thành — `H-20260907-038-07-UIUX-ART-FINAL-QA` PASS/CLOSED. Wave 4 art-complete ở phạm vi UI/UX QA độc lập.
 
 ### Changed
 
-- Xác nhận `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS` CLOSED; production smoke run `34055138772` PASS manifest + Government PNG.
-- Rerun final Wave 4 browser QA trên production live.
-- Clean client suite tiếp tục PASS **37/37**.
-- Required raster package hiện được tải thật; deployment blocker không còn.
-- Diagnostic QA run `34055446102`, head `43ee3a00004efadcdd01e7b08a63053c7986ded8` xác định exact offender của icon-size/integer-scaling gate.
-- Government icon có CSS `24×24` nhưng render ~`32.4×32.4` vì parent `button.landmark.gov` dùng `transform: scale(1.35)` trên desktop; compact/mobile hiện dùng `scale(1.1)`.
-- Tạo `H-20260907-040-06-UI-ART-INTEGER-SCALING` cho Chat 06.
+- Xác nhận H039 deployment packaging CLOSED và production phục vụ raster package.
+- Xác nhận H040 Government integer-scaling DONE.
+- Chạy fresh final gate sau H040 trên production đã ổn định.
+- Final workflow `UIUX Art Final E2E` run `34056472497`, head `865d180f8a4962896330d4b81f4736de3cfa056a`, job `101549187621`: SUCCESS.
+- Clean client suite: **38/38 PASS**.
+- Desktop/mobile browser gate: **20/20 PASS**.
+- Artifact `9996117188`, digest `sha256:4b49b53833d1decbc53555ad2424c295b2ade58c37ed4617bc3ec5564ab5f513`.
+- Tested Render head was live before final assertions (`dep-daesb7e7bikc73dm8n90`).
+- H038 CLOSED.
 
 ### Source
 
@@ -24,44 +26,44 @@ Bị chặn — `H-20260907-038-07-UIUX-ART-FINAL-QA` đã vượt qua blocker d
 - `docs/UI_ART_ASSET_CONTRACT_V1.md`
 - `docs/UI_ART_BINARY_REVIEW_V1.md`
 - `client/src/ui-assets.ts`
-- `client/styles.css`
+- `client/test/ui-assets.test.mjs`
 - `qa/uiux-art-final-e2e.mjs`
-- workflow run `34055446102`
-- artifact `9995814481`
-- digest `sha256:1fb5154ebb05fac8b9b9cf6531d964c94e3253952f1efeb856c87f7463d92313`
+- workflow run `34056472497`
+- artifact `9996117188`
 
 ### Impact
 
-Wave 4 raster package is now present in production and source regressions remain healthy. H038/H019 still cannot close because core Government pixel art is scaled by non-integer factors, violating the locked final art acceptance criterion. No gameplay, server protocol or timer semantics are affected.
+Wave 4 raster delivery, production packaging và final desktop/mobile runtime presentation đã được độc lập xác minh. Không phát hiện regression gameplay/protocol/timer/action semantics. `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` có thể được Chat 06 đóng ở phạm vi UI/UX implementation; Chat 07 không tự đóng umbrella handoff thuộc Chat 06.
 
 ### Verified
 
-- H039 deployment packaging fix: CLOSED / production smoke PASS.
-- Required live raster package is reachable and readiness checks pass before icon-size assertion.
-- Clean client build/tests: **37/37 PASS**.
-- Manifest/hooks/presentation-only art regression: PASS.
-- Market/Recovery/Support/Marriage payload regressions: PASS.
-- Birth response, Tutorial, waiting queue and QR contract regressions: PASS.
-- Exact scaled offender: Government raster icon inside `.landmark.gov`.
-- Desktop parent transform: `scale(1.35)` -> 24px icon renders ~32.4px.
-- Compact/mobile CSS also uses non-integer `scale(1.1)`.
+- Required production raster requests: PASS desktop/mobile.
+- Raster readiness markers: PASS.
+- Terrain raster/pixelated rendering: PASS.
+- Government/Residence raster: PASS.
+- Government native/integer sizing + 24×24 descendant icons after H040: PASS desktop/mobile.
+- Applicable T0 raster frame surfaces: PASS; remaining frame rules clean-regression covered.
+- Ambience non-blocking (`pointer-events:none`): PASS.
+- No raw IDs in tested player-facing surfaces: PASS.
+- Tutorial/help does not pause/reset countdown: PASS desktop/mobile.
+- Clean client regressions: **38/38 PASS**, including Market/Recovery/Support/Marriage payload capture, Birth response, QR contract, Tutorial, Government integer scaling and art-runtime presentation-only boundary.
+- H033 QR remains independently PASS and art/H040 changes do not modify QR runtime.
 
 ### Unverified
 
-- Final desktop/mobile QA after Government integer-scaling fix.
-- Remaining downstream frame/portrait/ambience/timer checks after the current fail-fast assertion.
-- H019 full UI/UX closure.
+- Project-wide release readiness beyond UI/UX scope is not asserted by H038 alone.
+- Formal closure of H019 remains with Chat 06.
 
 ### Handoff
 
-Chat 06 xử lý `H-20260907-040-06-UI-ART-INTEGER-SCALING`. Sau fix, trả H038 về Chat 07 để rerun final desktop/mobile gate. Không cần trả Chat 04 trừ khi xuất hiện lỗi static-serving/deployment mới.
+Chat 06: close/update `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` using H038 PASS evidence. No new defect handoff.
 
 ### Open Issues
 
-- `H-20260907-038-07-UIUX-ART-FINAL-QA`: BLOCKED pending H040.
-- `H-20260907-040-06-UI-ART-INTEGER-SCALING`: OPEN.
+- `H-20260907-038-07-UIUX-ART-FINAL-QA`: CLOSED / PASS.
+- `H-20260907-040-06-UI-ART-INTEGER-SCALING`: DONE / independently verified.
 - `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS`: CLOSED / production verified.
-- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN pending final art QA.
+- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN pending owner closure using final QA evidence.
 - `H-20260907-033-07-LOBBY-QR-QA`: DONE / PASS.
 - `H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
