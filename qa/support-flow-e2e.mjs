@@ -48,12 +48,16 @@ try{
   const optionLabels=await page.locator("#support-target option").allTextContents();
   check("selector mirrors authoritative targets",JSON.stringify(optionValues)===JSON.stringify(expected),`ui=${optionValues.length}; server=${expected.length}`);
   check("eligible parent and child exposed",expected.length===2&&snap.eligibleSupportTargets.some(x=>x.relation==="parent")&&snap.eligibleSupportTargets.some(x=>x.relation==="child"),JSON.stringify(snap.eligibleSupportTargets));
-  check("labels hide raw Character IDs",optionLabels.every((label,i)=>!label.includes(optionValues[i]||"__none__")),optionLabels.join(" | "));
+  check("labels hide raw Character IDs",optionLabels.every(label=>!expected.some(id=>label.includes(id))),optionLabels.join(" | "));
 
-  const targetId=await page.locator("#support-target").inputValue();const target=room.engine.state.characters[targetId];
+  const childTarget=snap.eligibleSupportTargets.find(x=>x.relation==="child");
+  check("non-default child target exists",!!childTarget,JSON.stringify(snap.eligibleSupportTargets));
+  await page.selectOption("#support-target",childTarget.characterId);
+  check("non-default child target selected",await page.locator("#support-target").inputValue()===childTarget.characterId,await page.locator("#support-target").inputValue());
+  const target=room.engine.state.characters[childTarget.characterId];
   const actorHousehold=room.engine.household(actor),targetHousehold=room.engine.household(target);const a0=actorHousehold.sharedCash,t0=targetHousehold.sharedCash;
   await page.fill("#amount","5");await page.click("#support-send");await page.waitForSelector(".toast.success");
-  check("valid support mutates authoritative cash",actorHousehold.sharedCash===a0-5&&targetHousehold.sharedCash===t0+5,`actor ${a0}->${actorHousehold.sharedCash}; target ${t0}->${targetHousehold.sharedCash}`);
+  check("valid support preserves selected target and amount",actorHousehold.sharedCash===a0-5&&targetHousehold.sharedCash===t0+5,`actor ${a0}->${actorHousehold.sharedCash}; child ${t0}->${targetHousehold.sharedCash}`);
 
   await page.click('[data-panel="support"]');await page.fill("#amount","0");await page.click("#support-send");await page.waitForSelector(".toast.error");
   check("invalid amount uses server error",(await page.locator(".toast.error").textContent()).length>0,await page.locator(".toast.error").textContent());
