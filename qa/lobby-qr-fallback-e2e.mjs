@@ -19,7 +19,6 @@ const browser=await chromium.launch({headless:true});
 try{
  const ctx=await browser.newContext();const page=await ctx.newPage();
  await page.goto(origin,{waitUntil:"domcontentloaded"});
- await page.waitForSelector('.landing-screen');
  await page.evaluate(()=>{window.QRCode=undefined;const app=document.querySelector('#app');if(app)app.innerHTML='<section class="lobby-screen"><div class="room-pin">ABC123</div><div class="qr-placeholder"></div><button id="start" type="button">BẮT ĐẦU</button></section>'});
  await page.waitForSelector('.qr-fallback',{timeout:5000});
  check("renderer unavailable shows required fallback",(await page.locator('.qr-fallback').textContent())?.trim()==="Không tạo được mã QR — hãy nhập mã phòng.",await page.locator('.qr-fallback').textContent()||"");
