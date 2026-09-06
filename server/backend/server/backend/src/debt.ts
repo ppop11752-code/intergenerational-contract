@@ -1,0 +1,1 @@
+import {DEFAULT_CONFIG,GameConfig} from "./config.js"; export function nextDebt(current:number,_active:number,_round:number,xMultiplier=1,cfg:GameConfig=DEFAULT_CONFIG){return current*(1+cfg.debt.growthRate*xMultiplier)} export function minimumDebtContribution(debt:number,workers:number,cfg:GameConfig=DEFAULT_CONFIG){return workers?debt*cfg.debt.growthRate/workers:0}
