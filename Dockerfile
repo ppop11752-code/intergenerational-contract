@@ -24,6 +24,7 @@ RUN npm install --omit=dev --no-audit --no-fund
 COPY --from=server-build /app/server/dist ./dist
 COPY client/index.html /app/client/index.html
 COPY client/styles.css /app/client/styles.css
+COPY client/public /app/client/public
 COPY --from=client-build /app/client/dist /app/client/dist
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD wget -qO- http://127.0.0.1:3001/health || exit 1
