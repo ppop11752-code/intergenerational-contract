@@ -1,0 +1,20 @@
+import type{Panel,PlayerSnapshot,RoomSnapshot,TutorialStepId}from"./types.js";
+export const TUTORIAL_VERSION=1;
+export const tutorialCopy:Record<TutorialStepId,{title:string;body:string}>={
+T0:{title:"Thế giới của bạn",body:"Theo dõi Vòng/Năm, Dân số, Lạm phát, Nợ công, lượt hiện tại và Niên sử. Mọi trạng thái quan trọng đều đến từ máy chủ."},
+T1:{title:"Khoản bắt buộc",body:"Khoản bắt buộc được xử lý tự động. Màn hình này chỉ trình bày kết quả; Tutorial không thể bỏ qua hay kéo dài thời gian."},
+T2:{title:"Địa vị",body:"Chọn địa vị khi bạn đủ điều kiện. Phí và quyền truy cập do trạng thái máy chủ quyết định; đồng hồ dùng thời hạn 15 giây từ server."},
+T3:{title:"Giai đoạn tự nguyện",body:"Market, Recovery, Support và Birth dùng chung một đồng hồ. Đổi bảng không đặt lại thời gian; Kết thúc lượt gửi turn:complete ngay."},
+T4:{title:"Thị trường",body:"Có tài nguyên Tái tạo/Không tái tạo với các cấp truy cập theo Status. Pool và giá hiển thị lấy trực tiếp từ server."},
+T5:{title:"Phục hồi",body:"Phục hồi chỉ áp dụng cho tài nguyên Tái tạo. Chi phí, pool và kết quả chờ vòng sau đều do server xác nhận."},
+T6:{title:"Hỗ trợ gia đình",body:"Hỗ trợ tự nguyện chỉ dành cho quan hệ cha/mẹ – con hợp lệ. Nếu không có người nhận, giao diện giữ trạng thái trống thay vì tạo mục giả."},
+T7:{title:"Sinh con",body:"Người đại diện hộ đề xuất theo từng con. Người phối ngẫu phản hồi sau; nếu không phản hồi, luật mặc định chấp nhận của server vẫn áp dụng."},
+T8:{title:"Hôn nhân",body:"Lời mời có thể xuất hiện ngoài lượt kinh tế. Pending có thể tồn tại; proposal đã accepted sẽ thực hiện cuối accepted round và không thể Reject/Cancel."},
+T9:{title:"Hàng chờ",body:"Khi ở Waiting Queue bạn không có điều khiển hành động. Vị trí hàng chờ đến từ server; không hứa trước thời gian tái sinh."},
+T10:{title:"Chuyển vòng & Niên sử",body:"Sau chuyển vòng, xem lại snapshot thế giới và hành trình trong Niên sử: Năm, Vòng, Dân số, Lạm phát và sự kiện."},
+T11:{title:"Báo cáo kết thúc",body:"Kết thúc game hiển thị xếp hạng, điểm trung bình và lịch sử. Tutorial chỉ được đánh dấu hoàn thành sau khi báo cáo này xuất hiện."}}
+export interface TutorialState{active:boolean;version:number;seenSteps:TutorialStepId[];completed:boolean;firstRound:number|null}
+export function loadTutorial(storage:Pick<Storage,"getItem">):TutorialState{try{const raw=storage.getItem(`ic:tutorial:v${TUTORIAL_VERSION}`);if(raw){const x=JSON.parse(raw);return{active:false,version:TUTORIAL_VERSION,seenSteps:Array.isArray(x.seenSteps)?x.seenSteps:[],completed:!!x.completed,firstRound:null}}}catch{}return{active:false,version:TUTORIAL_VERSION,seenSteps:[],completed:false,firstRound:null}}
+export function saveTutorial(storage:Pick<Storage,"setItem">,s:TutorialState){storage.setItem(`ic:tutorial:v${TUTORIAL_VERSION}`,JSON.stringify({version:TUTORIAL_VERSION,seenSteps:s.seenSteps,completed:s.completed}))}
+export function unlockedSteps(s:TutorialState,room:RoomSnapshot|null,player:PlayerSnapshot|null,panel:Panel):TutorialStepId[]{if(!s.active||!room?.game)return[];const g=room.game,out:TutorialStepId[]=["T0"];const mine=g.currentTurnPlayerId===player?.playerId;if(mine&&g.phase==="mandatory")out.push("T1");if(mine&&g.phase==="status"&&player?.financial?.representative)out.push("T2");if(mine&&g.phase==="voluntary")out.push("T3");if(mine&&g.phase==="voluntary"&&panel==="market")out.push("T4");if(mine&&g.phase==="voluntary"&&panel==="recovery")out.push("T5");if(mine&&g.phase==="voluntary"&&panel==="support")out.push("T6");if(mine&&g.phase==="voluntary"&&panel==="birth"&&player?.financial?.representative)out.push("T7");if((player?.incomingMarriageProposals?.length||0)>0||(player?.outgoingMarriageProposals?.length||0)>0)out.push("T8");if((player?.queuePosition??0)>0)out.push("T9");if(s.firstRound!=null&&g.round!==s.firstRound)out.push("T10");if(g.ended)out.push("T11");return out}
+export function nextCoach(s:TutorialState,room:RoomSnapshot|null,player:PlayerSnapshot|null,panel:Panel){return unlockedSteps(s,room,player,panel).find(x=>!s.seenSteps.includes(x))??null}
