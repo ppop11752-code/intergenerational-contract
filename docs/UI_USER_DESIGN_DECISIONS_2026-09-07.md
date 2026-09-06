@@ -24,6 +24,22 @@ These decisions are direct user confirmations for the new design-review phase. T
 16. **Founder Draw presentation:** Use a short dramatic reveal/contract-draw animation, but keep it **non-blocking**; authoritative server result still determines the outcome.
 17. **Initial game camera:** Start by showing the **whole settlement at a useful overview scale**; `Home` and `Government` remain quick navigation targets.
 18. **Adaptive HUD behavior:** Use a **hybrid emphasis model** — phase/timer state can change/emphasize inside the HUD, while important World Events appear as a separate compact temporary banner.
+19. **Landing credit:** Keep `Một trò chơi của QuacQuaz`, but visually subordinate it so it does not compete with the logo/menu.
+20. **Landing title treatment:** Keep the main title `INTERGENERATIONAL CONTRACT`; **do not show a subtitle** below it.
+21. **Typography roles:** Use a fantasy/display face for major titles/logo treatment, a highly readable body face for UI copy, and a pixel/mono/data face for HUD numbers. Avoid pixel/mono for long prose.
+22. **UI chrome:** Keep parchment / wood / dark-fantasy pixel-frame language for panels/chrome while preserving a brighter world/map.
+23. **Icons:** No emoji as primary production icons; use dedicated pixel-art icons.
+24. **Local marker:** Local player Residence/map uses a green marker with shape/icon support, not color-only meaning.
+25. **Government turn treatment:** Government building gets a subtle red outline/glow when active; never recolor the entire building red.
+26. **Turn Track emphasis:** Current turn is strongest; local player uses green treatment; Government uses red treatment; combine color with icon/shape cues.
+27. **Residence status:** Communicate Status primarily through architecture; no large `POOR/MIDDLE/NOBLE` labels directly on the map.
+28. **World ambience:** Keep subtle clouds, birds, chimney smoke, water ripples and vegetation movement; motion remains slow and non-distracting.
+29. **Fog ambience:** Edge fog may animate gently to imply a larger world beyond the visible settlement.
+30. **World Event atmosphere:** Existing authoritative World Events may alter ambience lightly; art may not invent gameplay states/signals.
+31. **Pixel rendering:** Use nearest-neighbor / integer-friendly scaling for core pixel art; avoid smoothing/blur.
+32. **Motion timing:** Drawer/panel transitions are generally short (~150–250 ms). Founder reveal/round transition may be longer. Motion never pauses, extends or delays authoritative timers/gameplay.
+33. **Responsive direction:** Desktop and mobile share the same art direction but use layout-appropriate patterns; mobile uses bottom/full-height sheets rather than a shrunken desktop layout.
+34. **Mobile Turn Track:** Use a compact horizontal/rail treatment rather than the desktop vertical column while preserving order and focus behavior.
 
 ## Constraints still active
 
