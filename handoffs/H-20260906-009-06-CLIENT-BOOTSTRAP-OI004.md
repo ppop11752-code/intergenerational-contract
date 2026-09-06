@@ -1,7 +1,7 @@
 handoff_id: H-20260906-009-06-CLIENT-BOOTSTRAP-OI004
 from: 00
 to: 06
-status: OPEN
+status: DONE
 title: Establish canonical client and implement OI-004 Tutorial
 
 ## Context
@@ -52,4 +52,17 @@ Decision authority is recorded as D-051 in `docs/DECISION_LOG.md` and `client/RE
 
 ## Result
 
-Pending Chat 06.
+Completed by Chat 06.
+
+- Canonical TypeScript client created under `client/`.
+- Current Socket.IO room/state/action flow implemented against existing server protocol.
+- OI-004 Tutorial T0–T11 implemented as client-local authoritative-state-driven guidance.
+- Normal multiplayer disables Tutorial overlays.
+- Local versioned Tutorial progress and help recap implemented.
+- `npm test` PASS 6/6; test command includes successful TypeScript build.
+- Chat 06 report updated.
+- QA handoff created for Chat 07.
+
+## Result commit/ref
+
+Client implementation range ends at `298884576a9d52fa2448f61672d475d83ae6e67b`; report commit `079e364ff83bc694c052bcfcab553049afa50339`.
