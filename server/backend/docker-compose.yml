@@ -1,0 +1,15 @@
+services:
+  intergenerational-contract-server:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      CORS_ORIGINS: "*"
+      MAX_ROOMS: 100
+      ROOM_TTL_MS: 7200000
+      ENDED_ROOM_TTL_MS: 1800000
+      MANDATORY_PRESENTATION_MS: 7000
+      STATUS_TIMEOUT_MS: 15000
+      VOLUNTARY_TIMEOUT_MS: 60000
+    restart: unless-stopped
