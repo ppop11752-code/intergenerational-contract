@@ -46,20 +46,17 @@ Owner: 04 — DEPLOYMENT & DEVOPS.
 
 The original Render failure was caused by the repository lacking nested `server/src` for the Dockerfile COPY step. The current canonical backend at `server/backend/` now contains `server/src/index.ts`, `server/src/game-room.ts`, and `server/src/contracts.ts`. The current Dockerfile is internally consistent when Render/Docker uses `server/backend/` as its root/build context.
 
-Live Render settings and runtime success are intentionally tracked separately under OI-006.
+Live Render settings and runtime success are tracked under OI-006.
 
 ## OI-006 — Dependency-backed live server runtime verification
 
-**Status:** OPEN — LIVE TRANSPORT VERIFIED / PENDING RELEASE QA.
+**Status:** CLOSED — RELEASE QA VERIFIED.
 
-Chat 04 verified the Render build, dependency-backed process, and live service.
-Chat 03 independently received a successful external `/health` response and
-passed live WebSocket Socket.IO smoke for create/join/start/state,
-disconnect/reconnect, `game:replay` routing, authoritative error acks, and
-public/private state emissions against deployed runtime commit
-`bbd30f8c08d71903b99462c071f347eca33d042f`.
+Chat 04 verified the Render build and live dependency-backed runtime. Chat 03 obtained a successful external `/health` response and passed live WebSocket Socket.IO smoke for create/join/start/state, disconnect/reconnect, `game:replay` routing, authoritative error acks, and public/private state emissions against runtime commit `bbd30f8c08d71903b99462c071f347eca33d042f`.
 
-Remaining owner: 07 — RELEASE & QA for final integration/release validation.
+Chat 07 independently checked the current Render service and latest live deploy. The service is still live at `https://intergenerational-contract.onrender.com`; deploy `dep-daemgcp42hec73cgduag` runs commit `b33379595303f7f594184f8e1de468cdab853f7d`. Comparison from the transport-tested runtime to that live commit shows no change in canonical server runtime source, multiplayer protocol, or gameplay source; intervening changes are documentation/handoff plus smoke tooling/package script only.
+
+Chat 07's execution sandbox could not resolve the public hostname, so it did not duplicate the external HTTP/Socket.IO call itself. This does not reopen OI-006 because the prior live transport evidence is compatible with the currently deployed server source and the current Render deploy is independently confirmed live.
 
 ## Non-blocking maintenance debt
 
