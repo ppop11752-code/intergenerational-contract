@@ -79,6 +79,9 @@ The private snapshot contains:
 - 50% spending limit, shared-cost quota charge, voluntary spending and remaining allowance;
 - resource access from current-round Status;
 - whether the Character is the Household representative;
+- `eligibleSupportTargets`, a side-effect-free authoritative list of living direct
+  parent/child Characters accepted as targets by `family:support`; it is populated
+  only for the current Character during Voluntary and is otherwise an empty array;
 - `canInitiateBirth`, a side-effect-free authoritative boolean that is true only
   for the current Voluntary-turn Household representative when the Household is
   a valid couple, both spouses are worker-age, and the current-round event Birth

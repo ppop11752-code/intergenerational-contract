@@ -218,13 +218,14 @@ export class AuthoritativeRoom{
   }
 
   privateSnapshot(playerId:string){
-    const e=this.engine;if(!e)return{playerId,character:null,household:null,queuePosition:null,canInitiateBirth:false};const c=this.activeCharacterFor(playerId),h=c?e.household(c):null;
+    const e=this.engine;if(!e)return{playerId,character:null,household:null,queuePosition:null,canInitiateBirth:false,eligibleSupportTargets:[]};const c=this.activeCharacterFor(playerId),h=c?e.household(c):null;
     const marriageCandidates=c&&c.ageStage>=3&&!e.isMarried(c)&&!e.hasAcceptedMarriagePending(c)?e.alive().filter(x=>x.id!==c.id&&x.ageStage>=3&&!e.isMarried(x)&&!e.hasAcceptedMarriagePending(x)&&!e.areCloseFamily(c,x)).map(x=>({characterId:x.id,ownerId:x.ownerId,npc:x.npc,ageStage:x.ageStage,ageLabel:this.ageLabel(x.ageStage),status:e.household(x).status,householdAssets:e.householdAssets(e.household(x))})):[];
+    const eligibleSupportTargets=c&&e.phase()==="voluntary"&&e.currentTurnCharacter()?.id===c.id?e.alive().filter(target=>e.isEligibleVoluntarySupportTarget(c,target)).map(target=>({characterId:target.id,relation:(target.childrenIds.includes(c.id)?"parent":"child") as "parent"|"child",ageLabel:this.ageLabel(target.ageStage),status:e.household(target).status})):[];
     const personalIncome=c?(e.state.realizedNetIncomeByCharacter[c.id]??0):0;
     const limit=c?(e.state.spendingLimitByCharacter[c.id]??null):null,sharedCharge=c?(e.state.sharedQuotaChargeByCharacter[c.id]??0):0,voluntarySpent=c?(e.state.voluntarySpentByCharacter[c.id]??0):0;
     return{playerId,character:c?{...c,ageLabel:this.ageLabel(c.ageStage)}:null,household:h,history:e.state.histories[playerId]??null,queuePosition:e.state.waitingQueue.includes(playerId)?e.state.waitingQueue.indexOf(playerId)+1:null,
       financial:h?{householdAssets:e.householdAssets(h),roundStartAssets:h.roundStartAssets,cash:h.sharedCash,householdNetIncome:e.netIncome(h),personalNetIncome:personalIncome,fundedSocialSecurity:c?(e.state.socialSecurity.personalBalances[c.id]??0):0,spendingLimit:limit,sharedQuotaCharge:sharedCharge,voluntarySpent,spendingRemaining:limit==null?null:Math.max(0,limit-sharedCharge-voluntarySpent),resourceAccess:this.resourceAccess(h.status),representative:h.representativeCharacterId===c?.id}:null,
-      incomingMarriageProposals:c?Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"&&p.targetCharacterId===c.id):[],outgoingMarriageProposals:c?Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"&&p.proposerCharacterId===c.id):[],incomingBirthProposals:c?Object.values(e.state.birthProposals).filter(p=>p.status==="pending"&&p.responderCharacterId===c.id):[],marriageCandidates,
+      incomingMarriageProposals:c?Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"&&p.targetCharacterId===c.id):[],outgoingMarriageProposals:c?Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"&&p.proposerCharacterId===c.id):[],incomingBirthProposals:c?Object.values(e.state.birthProposals).filter(p=>p.status==="pending"&&p.responderCharacterId===c.id):[],marriageCandidates,eligibleSupportTargets,
       canSendMarriage:c?e.currentTurnCharacter()?.id!==c.id:false,canInitiateBirth:!!h&&e.canInitiateBirth(h),currentPhase:e.phase(),phaseDeadlineAt:this.phaseDeadlineAt};
   }
 }

@@ -753,8 +753,12 @@ export class GameEngine{
     return cost;
   }
 
+  isEligibleVoluntarySupportTarget(c:Character,target:Character){
+    return c.alive&&target.alive&&(c.childrenIds.includes(target.id)||target.childrenIds.includes(c.id));
+  }
+
   voluntaryFamilySupport(c:Character,target:Character,amount:number){
-    this.requirePhase("voluntary");if(!c.alive||!target.alive)throw Error("dead character");const direct=c.childrenIds.includes(target.id)||target.childrenIds.includes(c.id);if(!direct)throw Error("support limited to direct parent-child relations");if(!Number.isFinite(amount)||amount<=0)throw Error("invalid support amount");this.assertVoluntarySpendAllowed(c,amount);const from=this.household(c),to=this.household(target);if(from.sharedCash<amount)throw Error("insufficient cash");from.sharedCash-=amount;to.sharedCash+=amount;this.recordVoluntarySpend(c,amount);this.state.telemetry.familyFlows.push({round:this.state.round,type:"voluntary_support",fromHouseholdId:from.id,toHouseholdId:to.id,amount});return amount;
+    this.requirePhase("voluntary");if(!c.alive||!target.alive)throw Error("dead character");if(!this.isEligibleVoluntarySupportTarget(c,target))throw Error("support limited to direct parent-child relations");if(!Number.isFinite(amount)||amount<=0)throw Error("invalid support amount");this.assertVoluntarySpendAllowed(c,amount);const from=this.household(c),to=this.household(target);if(from.sharedCash<amount)throw Error("insufficient cash");from.sharedCash-=amount;to.sharedCash+=amount;this.recordVoluntarySpend(c,amount);this.state.telemetry.familyFlows.push({round:this.state.round,type:"voluntary_support",fromHouseholdId:from.id,toHouseholdId:to.id,amount});return amount;
   }
 
   respondBirthProposal(c:Character,proposalId:string,accept:boolean){
