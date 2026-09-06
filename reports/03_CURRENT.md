@@ -4,37 +4,37 @@
 
 ### Status
 
-Hoàn thành `H-20260906-013-03-OI004-BIRTH-ELIGIBILITY`; server đã expose
-authoritative Birth eligibility và bàn giao Chat 06 tích hợp/xác minh client.
+Hoàn thành `H-20260906-020-03-SUPPORT-TARGETS`; server đã expose danh sách mục
+tiêu hỗ trợ gia đình authoritative và bàn giao Chat 06 tích hợp production client.
 
 ### Changed
 
-- Thêm pure query `GameEngine.canInitiateBirth()` dùng cùng điều kiện eligibility
-  hiện có của `attemptBirth()`; không gọi action và không mutate state.
-- Private player snapshot luôn expose boolean `canInitiateBirth`, bao gồm `false`
-  khi phòng chưa khởi động hoặc người chơi không đủ điều kiện.
-- Refactor `attemptBirth()` dùng chung pure query sau các authoritative error guard;
-  không đổi gameplay rule, constant hay semantics lỗi hiện có.
-- Bổ sung regression true/false, giới hạn Birth hiện hành và kiểm tra không side
-  effect; đưa test vào `test` và `smoke` gates.
-- Cập nhật multiplayer protocol.
+- Thêm pure query `GameEngine.isEligibleVoluntarySupportTarget()` dùng đúng luật
+  direct parent/child đang được `voluntaryFamilySupport()` chấp nhận.
+- Private snapshot luôn trả `eligibleSupportTargets`; chỉ populate cho đúng
+  Character đang ở lượt Voluntary, các trạng thái khác trả `[]`.
+- Mỗi target gồm `characterId`, `relation`, `ageLabel`, và Household `status`.
+- Action `family:support` dùng chung pure relation query nhưng giữ nguyên toàn bộ
+  error/amount/cash/spending-cap behavior.
+- Bổ sung regression action parity, true/false cases và no-side-effect; đưa vào
+  `test`/`smoke` gates và cập nhật multiplayer protocol.
 
 ### Source
 
 - `server/backend/src/engine.ts`
 - `server/backend/src/authoritative-room.ts`
-- `server/backend/test/birth-eligibility-snapshot.mjs`
+- `server/backend/test/support-targets-snapshot.mjs`
 - `server/backend/MULTIPLAYER_PROTOCOL_V50.md`
 - `server/backend/package.json`
-- Handoff `H-20260906-013-03-OI004-BIRTH-ELIGIBILITY`
-- Implementation commit `75f99122c85d7b9df377354ef1ce9b68829bfe36`
+- Handoff `H-20260906-020-03-SUPPORT-TARGETS`
+- Implementation commit `271da7b2a11b921c13bb454b8982b1a90975ec57`
 
 ### Impact
 
-Client không còn phải suy diễn Birth/T7 từ trạng thái representative. Field chỉ
-true khi action `child:birth` phù hợp authoritative state hiện tại: đúng Voluntary
-turn và Household representative, couple hợp lệ, cả hai spouse ở worker age, và
-chưa chạm event Birth limit của vòng hiện tại.
+Production client có thể hiển thị selector cha/mẹ–con từ private authoritative
+state, không yêu cầu người chơi nhập Character ID và không tự suy diễn quan hệ.
+Giá trị tiền gửi, tiền mặt còn lại và giới hạn chi tiêu vẫn được server kiểm tra
+khi nhận action như trước.
 
 ### Verified
 
@@ -43,23 +43,37 @@ chưa chạm event Birth limit của vòng hiện tại.
 - Rule Ledger: PASS 42/42.
 - OI-002 regression: PASS 6/6.
 - OI-001 regression: PASS 9/9.
-- Birth eligibility regression: PASS, gồm true/false và state không đổi sau query/snapshot.
+- Birth eligibility regression: PASS.
+- Support target regression: PASS — parent/child, unrelated, dead target, wrong
+  phase, wrong turn, lobby, action parity và snapshot no-side-effect.
 - Fuzz: PASS 20 games.
 - Final simulation: PASS 30 games.
-- Nested server typecheck: PASS.
+- Nested server typecheck/build: PASS.
 - Socket event contract: PASS 9/9.
-- Nested server build: PASS.
+- Current client build/tests: PASS 8/8.
+
+### Audit
+
+- Authoritative source: existing `voluntaryFamilySupport()` direct parent/child rule.
+- Blast radius checked: engine action, private snapshot, protocol, client placeholder.
+- Falsification cases checked: unrelated/dead target, lobby, non-Voluntary và non-current turn.
+- `docs/OPEN_ISSUES.md`: không có OI-001–OI-006 nào bị mở lại.
+- Gameplay constants/rules: unchanged.
+- Verification level: source + deterministic integration complete; live browser flow pending.
+
+AUDIT: PASS
 
 ### Unverified
 
-- Chưa chạy client/browser E2E với field mới.
-- Chưa xác minh T7/Birth UI live; thuộc bước tích hợp Chat 06 rồi release QA Chat 07.
+- Chưa xác minh selector Support mới trên live browser/deployed runtime.
+- Chưa hoàn thành toàn bộ Wave 2–4 UI/UX; không có claim release-ready.
 
 ### Handoff
 
-Chat 06 xử lý `H-20260906-014-06-OI004-BIRTH-INTEGRATION`: xác nhận snapshot
-contract trong client, chạy client tests/build và trả OI-004 về Chat 07 để E2E.
+Chat 06 xử lý `H-20260906-022-06-SUPPORT-TARGETS-INTEGRATION`, sau đó chuyển
+active Support flow cho Chat 07 browser/server QA.
 
 ### Open Issues
 
-- OI-004: server dependency đã giải quyết; vẫn OPEN chờ client integration và browser E2E.
+- Không mở lại OI-001–OI-006.
+- UI/UX production work vẫn tiếp tục dưới `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`.

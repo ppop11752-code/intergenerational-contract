@@ -1,7 +1,7 @@
 handoff_id: H-20260906-020-03-SUPPORT-TARGETS
 from: 06
 to: 03
-status: OPEN
+status: DONE
 title: Expose authoritative voluntary support targets for production client
 
 ## Context
@@ -32,3 +32,30 @@ Current private snapshot exposes Character/Household/family data, but does not e
 ## Expected output
 
 Authoritative eligible support target list consumable by production client without exposing raw-ID input.
+
+## Result
+
+Completed by Chat 03.
+
+- Added pure `GameEngine.isEligibleVoluntarySupportTarget()` from the existing
+  living direct parent/child rule and reused it in `voluntaryFamilySupport()`.
+- Private snapshots now always expose `eligibleSupportTargets`.
+- The list is populated only for the current Character during Voluntary and is
+  otherwise `[]`, including lobby, queue, other turns and other phases.
+- Each item contains `characterId`, `relation`, `ageLabel`, and current Household
+  `status`; the client no longer needs to request raw internal IDs from players.
+- No support amount, phase, spending cap, constant, or family rule changed.
+- Added deterministic action-parity, negative-case and no-side-effect coverage.
+
+Verification:
+
+- Backend `npm run release:check`: PASS.
+- Rule Ledger 42/42, OI-002 6/6, OI-001 9/9: PASS.
+- Support target snapshot regression: PASS.
+- Fuzz 20 games and final simulation 30 games: PASS.
+- Nested server typecheck/build and Socket event contract 9/9: PASS.
+- Current client build/tests: PASS 8/8.
+
+Implementation commit: `271da7b2a11b921c13bb454b8982b1a90975ec57`.
+
+Follow-up: `H-20260906-022-06-SUPPORT-TARGETS-INTEGRATION`.
