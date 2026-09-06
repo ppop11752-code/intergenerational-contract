@@ -2,7 +2,7 @@
 
 ## Overall
 
-**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression, authoritative World Event/Mandatory/Recovery/Status display integration, and Lobby QR navigation/presentation are independently verified. Final Wave 4 raster source/client integration passes regression, but the production Docker image currently omits `client/public/`, so deployed players receive art fallback instead of the approved raster package.
+**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression, authoritative World Event/Mandatory/Recovery/Status display integration, Lobby QR navigation/presentation, and Wave 4 public-asset deployment are verified. Final Wave 4 client/runtime QA is currently blocked by non-integer Government landmark scaling.
 
 No current UI defect changes gameplay rules or reopens OI-001–OI-006.
 
@@ -18,6 +18,7 @@ No current UI defect changes gameplay rules or reopens OI-001–OI-006.
 - Support authoritative selector/action integration: PASS.
 - Authoritative World Event / Mandatory / Recovery / Status display integration: PASS.
 - Lobby QR deep-link, scannability, mobile layout and renderer-failure fallback: PASS.
+- Wave 4 production public-asset packaging: PASS after H039.
 
 Canonical backend path: `server/backend/`
 Canonical client path: `client/`
@@ -45,28 +46,45 @@ Final QR evidence: workflow `Lobby QR E2E`, run `34052814658`, head `02bd76f002d
 `H-20260907-034-06-LOBBY-QR-CROPPING`: DONE.
 `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP`: DONE.
 
+## Wave 4 deployment — VERIFIED
+
+`H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS`: CLOSED.
+
+Production smoke evidence:
+- packaging commit: `0c1eba3fe1c1df8f76a0ebf2987f9ce74933b106`
+- Render deploy: `dep-daeruch42hec73cll8eg`
+- workflow: `UI Art Public Assets Smoke`
+- run: `34055138772`
+- manifest over production HTTP: PASS
+- Government PNG over production HTTP: PASS
+
+The previous fallback caused by omitted `client/public/` is resolved.
+
 ## Current Wave 4 art blocker
 
-`H-20260907-038-07-UIUX-ART-FINAL-QA`: **BLOCKED / FAIL at production packaging**.
+`H-20260907-038-07-UIUX-ART-FINAL-QA`: **BLOCKED** pending client fix H040.
 
-Diagnostic evidence:
+Latest diagnostic evidence:
 - workflow: `UIUX Art Final E2E`
-- run: `34054650882`
-- head: `b549df7e54194b4a062bc90e958cbc01e2f156f7`
+- run: `34055446102`
+- head: `43ee3a00004efadcdd01e7b08a63053c7986ded8`
 - clean client suite: **37/37 PASS**
-- browser live runtime: FAIL
-- live art status: `fallback`; all required raster readiness markers absent
-- artifact: `9995595825`
-- digest: `sha256:26f6bc41e11f686220a9c3419c9ecd5f285f299ff6453e6862da6a0e02b59404`
+- required raster package reaches ready state before failure
+- artifact: `9995814481`
+- digest: `sha256:1fb5154ebb05fac8b9b9cf6531d964c94e3253952f1efeb856c87f7463d92313`
 
-The tested head was already live on Render before browser execution. `Dockerfile` sets `STATIC_DIR=/app/client` and copies client index/styles/dist into `/app/client`, but omits `client/public/`. The approved manifest and PNG package under `client/public/assets/ui/v1/` therefore do not exist in the production image.
+Current defect:
+- Government icon CSS size is `24px × 24px`.
+- Its parent `button.landmark.gov` uses `transform: scale(1.35)` on desktop, so the raster renders approximately `32.4px × 32.4px`.
+- Compact/mobile CSS also uses non-integer `scale(1.1)`.
+- This violates the locked Wave 4 nearest-neighbor/integer-scaling acceptance criterion for core pixel art.
 
-Owner: `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS` -> Chat 04.
+Owner: `H-20260907-040-06-UI-ART-INTEGER-SCALING` -> Chat 06.
 
 ## Remaining UI work
 
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN pending successful production art deployment and final H038 desktop/mobile rerun.
+`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN pending H040 and successful final H038 desktop/mobile rerun.
 
 ## Release claim rule
 
-Do not call the full current player-facing UI release-ready until H039 fixes deployment packaging, H038 passes final desktop/mobile runtime QA, and H019 is closed at UI/UX scope. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
+Do not call the full current player-facing UI release-ready until H040 is fixed, H038 passes final desktop/mobile runtime QA, and H019 is closed at UI/UX scope. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
