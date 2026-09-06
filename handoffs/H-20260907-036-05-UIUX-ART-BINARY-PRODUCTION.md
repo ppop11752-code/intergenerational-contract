@@ -1,71 +1,58 @@
 handoff_id: H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION
 from: 06
 to: 05
-status: OPEN
+status: DONE
 title: Produce and import final UI art raster binaries
 
 ## Context
 
-Chat 06 resumed `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` after QR closure.
-
-Functional UI blockers are resolved:
-- authoritative display QA `H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS;
-- Lobby QR QA `H-20260907-033-07-LOBBY-QR-QA`: DONE / PASS with clean client suite 33/33 and browser QA 25/25.
-
-Direct GitHub verification on `main` shows `client/public/assets/ui/v1/` still contains only:
-- `README.md`;
-- `manifest.json`.
-
-No production PNG/WebP raster subfolders/files are present, so Wave 4 remains NOT ART-COMPLETE.
+Chat 06 resumed `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` after QR closure. Functional UI blockers had already passed QA; remaining blocker was real Wave 4 raster delivery.
 
 ## Required work
 
-Follow the already locked:
+Follow:
 - `docs/UI_ART_ASSET_CONTRACT_V1.md`;
 - `docs/UI_ART_BINARY_DELIVERY_PIPELINE_V1.md`.
 
-Produce/import and visually review the required raster batches at the exact manifest paths.
+Produce/import and visually review required raster batches A–D under `client/public/assets/ui/v1/` without changing gameplay/protocol semantics.
 
-### Batch A — critical world shell
-- `terrain/terrain_atlas.png`
-- `landmarks/government.png`
-- `landmarks/government_turn_glow.png`
-- `residences/poor.png`
-- `residences/middle.png`
-- `residences/noble.png`
-- `residences/local_marker.png`
-- `ambience/fog_edge.png`
+## Result
 
-### Batch B — UI chrome and icons
-- all required `frames/` files from the art contract;
-- all required `icons/` files from the art contract.
+DONE.
 
-### Batch C — portraits
-- `portraits/base_01.png` through `portraits/base_08.png`.
+Production mechanism:
+- `.github/scripts/generate_ui_art_v1.py`
+- `.github/workflows/ui-art-binary-build.yml`
+- GitHub Actions run `34053592977`: `completed / success`.
 
-### Batch D — ambience and transitions
-- required cloud/bird/smoke/ripple assets;
-- founder/round/extinction transition assets;
-- optional crisis overlays only where authoritative state already exposes that crisis.
+Real PNG binaries now exist on `main` under the exact locked asset root, including:
+- Batch A: terrain atlas, Government + turn glow, Poor/Middle/Noble residences, local marker, fog edge;
+- Batch B: required frames and required HUD/navigation/action icons;
+- Batch C: `portraits/base_01.png` through `base_08.png`;
+- Batch D: cloud/bird/smoke/ripple ambience, founder/round/extinction transitions, optional drought/fiscal atmosphere overlays.
 
-## Acceptance before return to Chat 06
+Per-batch Chat 05 visual review is recorded in:
+- `docs/UI_ART_BINARY_REVIEW_V1.md`
 
-1. Binaries exist in GitHub `main` at the exact locked paths.
-2. Chat 05 has performed per-batch visual review from Section 6 of `UI_ART_BINARY_DELIVERY_PIPELINE_V1.md`.
-3. No file changes gameplay meaning, resource identity, protocol, timers or action semantics.
-4. No base64/data-URI substitute is used for raster delivery.
-5. Report which batches are APPROVED and any files still rejected/missing.
-6. Update `reports/05_CURRENT.md`.
-7. Return an integration handoff to Chat 06 only after at least Batch A is present and approved; final closure requires all required batches.
+Review result:
+- Batch A — APPROVED;
+- Batch B — APPROVED;
+- Batch C — APPROVED;
+- Batch D — APPROVED;
+- rejected/missing required files: none identified at this delivery gate.
 
-## Constraints
+No asset encodes Human/NPC distinction, no abstract Resource is renamed into a commodity, and no gameplay rule, action, protocol, timer or authoritative state meaning was changed.
 
-- Do not change gameplay rules/constants.
-- Do not encode Human/NPC distinction in portraits/residences.
-- Do not rename abstract resources to commodities through art.
-- Preserve locked pixel dimensions, integer scaling, palette and transparent padding rules.
-- CSS fallback/placeholders remain development-only and cannot be used to claim production art completion.
+## Remaining gate
+
+This handoff closes **binary production/review**, not whole-client art closure.
+
+Next required sequence:
+1. Chat 06 integrates the real assets into production surfaces and removes equivalent primary CSS/placeholders where applicable;
+2. Chat 07 performs final desktop/mobile visual/runtime QA against the integrated client.
+
+Do not call the whole project art-complete until those gates pass.
 
 ## Parent
 
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains BLOCKED pending this binary delivery, Chat 06 integration, then Chat 07 final Section 16 visual/runtime QA.
+`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` may now resume from the art-binary blocker.
