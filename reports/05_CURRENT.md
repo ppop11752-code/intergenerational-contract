@@ -3,46 +3,35 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Hoàn thành production + visual review toàn bộ Wave 4 raster binaries; sẵn sàng bàn giao Chat 06 tích hợp. Whole-client art-complete vẫn chờ integration + Chat 07 visual/runtime QA.
+Đang làm — chuyển sang giai đoạn thiết kế giao diện có user approval trực tiếp. UI hiện tại chỉ là implementation theo baseline cũ, chưa được coi là final/approved chỉ vì code hoặc QA PASS.
 
 ### Changed
-- Xử lý `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` → DONE.
-- Sản xuất real PNG binaries theo `docs/UI_ART_ASSET_CONTRACT_V1.md` dưới `client/public/assets/ui/v1/`.
-- Thêm deterministic production source `.github/scripts/generate_ui_art_v1.py` và workflow `.github/workflows/ui-art-binary-build.yml`.
-- GitHub Actions run `34053592977` PASS và commit raster directories thật lên `main`.
-- Batch A world shell, Batch B frames/icons, Batch C portraits, Batch D ambience/transitions đều được Chat 05 visual-review và APPROVED.
-- Tạo `docs/UI_ART_BINARY_REVIEW_V1.md` làm bằng chứng review.
-- Cập nhật `client/public/assets/ui/v1/README.md` từ trạng thái missing-assets sang delivered/approved-for-integration.
-- Không thay gameplay, protocol, timer, action semantics hay resource identity.
+- Người dùng yêu cầu bắt đầu quy trình duyệt thiết kế trực tiếp từ cụm `Landing → Lobby → Room → HUD`.
+- Từ thời điểm này, các art direction/baseline UI cũ chỉ là nguồn tham chiếu nếu chưa được người dùng trực tiếp xác nhận.
+- Chat 05 phải đọc implementation/spec hiện tại, chỉ ra điểm yếu, đề xuất 2–3 hướng, giải thích trade-off và chờ user chọn/góp ý trước khi khóa thiết kế.
+- Không tạo handoff sang Chat 06 cho thiết kế mới trước khi user duyệt.
+- Không thay gameplay, protocol, timer, authoritative logic.
 
 ### Source
-- `handoffs/H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION.md`.
-- `docs/UI_ART_ASSET_CONTRACT_V1.md`.
-- `docs/UI_ART_BINARY_DELIVERY_PIPELINE_V1.md`.
-- `docs/UI_ART_BINARY_REVIEW_V1.md`.
-- GitHub Actions run `34053592977`.
+- Quyết định trực tiếp mới nhất của người dùng trong Chat 05 ngày 2026-09-07.
+- `client/src/main.ts`, `client/styles.css` trên branch `main`.
+- Các UI/UX/art docs cũ chỉ dùng làm tham chiếu, không tự coi là user-approved final direction.
 
 ### Impact
-- Art-binary blocker của Chat 06 đã được gỡ.
-- Chat 06 cần bật asset-backed production presentation và loại CSS/placeholders tương đương trên primary production surfaces.
-- Chat 07 cần final desktop/mobile visual/runtime QA sau integration.
-- Project chưa được gọi art-complete chỉ dựa trên binary presence.
+- Mọi claim trước đây về production UI/art readiness phải được hiểu là readiness theo baseline cũ, không phải user design approval.
+- Chat 06 không được triển khai một redesign mới từ Chat 05 cho đến khi có user-approved spec/handoff cụ thể.
+- Chat 07 QA PASS không thay thế user visual/design approval.
 
 ### Verified
-- `client/public/assets/ui/v1/` trên `main` hiện có các subfolder `terrain/`, `landmarks/`, `residences/`, `ambience/`, `frames/`, `portraits/`, `icons/`, `transitions/` cùng PNG binaries thật.
-- Manifest core paths khớp asset contract.
-- Per-batch local contact-sheet review đã kiểm tra silhouette, palette, landmark/residence distinction, portrait neutrality, ambience non-blocking intent và abstract resource icon treatment.
-- Workflow generation completed successfully.
+- Implementation hiện tại của Landing/Lobby/HUD đã được đọc trực tiếp từ `client/src/main.ts` và `client/styles.css`.
+- Current shell dùng dark green/brown/gold pixel-fantasy treatment, fixed top HUD, Turn Track trái, map giữa, phase/dock/panels nổi.
 
 ### Unverified
-- Chưa kiểm tra browser integrated production client dùng toàn bộ asset mới.
-- Chưa xác minh nearest-neighbor/integer scaling trong actual runtime sau Chat 06 integration.
-- Chưa có final responsive visual QA từ Chat 07.
+- Chưa có user approval cho bố cục, art direction, palette, typography, iconography, motion hoặc responsive của cụm Landing/Lobby/Room/HUD.
 
 ### Handoff
-- Chat 06 — CLIENT IMPLEMENTATION: integrate approved real raster package vào production UI, remove primary CSS/placeholders where equivalent asset exists, preserve semantic DOM/actions and timers.
-- Sau đó Chat 07 — RELEASE & QA: final visual/runtime regression desktop + mobile.
+- Chưa có. Chờ user duyệt thiết kế cụm Landing/Lobby/Room/HUD trước khi bàn giao Chat 06.
 
 ### Open Issues
-- Không còn missing-binary blocker ở Chat 05.
-- Whole-client Wave 4 art closure vẫn chờ Chat 06 integration + Chat 07 QA.
+- User design approval cho Landing/Lobby/Room/HUD đang OPEN.
+- Không mở rộng sang các màn hình khác cho đến khi cụm này được duyệt.
