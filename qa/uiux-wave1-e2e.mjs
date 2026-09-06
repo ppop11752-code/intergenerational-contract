@@ -8,7 +8,7 @@ const check=(name,ok,detail="")=>{results.checks.push({name,ok,detail});if(!ok)t
 const browser=await chromium.launch({headless:true});
 const waitText=(page,text,timeout=30000)=>page.waitForFunction(t=>document.body.textContent?.includes(t),text,{timeout});
 try{
-  const ctx=await browser.newContext();const page=await ctx.newPage();
+  const ctx=await browser.newContext();let page=await ctx.newPage();
   await page.goto(liveUrl,{waitUntil:"domcontentloaded",timeout:60000});
   await page.waitForSelector(".landing-screen",{timeout:30000});
   check("landing renders",await page.locator(".landing-screen").count()===1,"production landing visible");
@@ -19,6 +19,13 @@ try{
   check("create room -> lobby",!!roomCode&&roomCode.length===6,"room code visible");
   check("host start presentation",await page.locator("#start").count()===1,"host sees start button");
   await page.screenshot({path:`${outDir}/create-lobby.png`,fullPage:true});
+
+  // Saved-token startup recovery in lobby, isolated from disconnect/NPC takeover semantics.
+  await page.close();page=await ctx.newPage();await page.goto(liveUrl,{waitUntil:"domcontentloaded",timeout:60000});
+  await page.waitForSelector("#recover",{timeout:30000});await page.click("#recover");await page.waitForSelector(".lobby-screen",{timeout:30000});
+  check("saved reconnect recovery",(await page.locator(".room-pin").textContent())?.trim()===roomCode,"room:reconnect + room:get-state restored lobby");
+  check("recovered host retains start",await page.locator("#start").count()===1,"host authority presentation restored");
+  await page.screenshot({path:`${outDir}/reconnect-lobby.png`,fullPage:true});
 
   const joinCtx=await browser.newContext();const join=await joinCtx.newPage();
   await join.goto(liveUrl,{waitUntil:"domcontentloaded",timeout:60000});
@@ -37,16 +44,10 @@ try{
   check("waiting queue actionless",await late.locator(".queue-card [data-action],.queue-card [data-buy],.queue-card [data-recover],.queue-card #support-send,.queue-card #propose").count()===0,"no gameplay action controls inside queue");
   await late.screenshot({path:`${outDir}/waiting-queue.png`,fullPage:true});
 
-  // Saved reconnect token path: same storage context, close active page then recover from landing.
-  await join.close();const recovered=await joinCtx.newPage();await recovered.goto(liveUrl,{waitUntil:"domcontentloaded",timeout:60000});
-  await recovered.waitForSelector("#recover",{timeout:30000});await recovered.click("#recover");
-  await recovered.waitForSelector(".queue-card,.world-hud,.lobby-screen",{timeout:30000});
-  check("saved reconnect recovery",await recovered.locator(".world-hud,.lobby-screen,.queue-card").count()>0,"room:reconnect/get-state recovery returned authoritative surface");
-
   // Tutorial isolation/timer/help and safe support fallback.
   const tutCtx=await browser.newContext();const tut=await tutCtx.newPage();await tut.goto(liveUrl,{waitUntil:"domcontentloaded",timeout:60000});
   await tut.click('[data-screen="tutorial"]');await tut.fill("#name","Wave1 Tutorial");await tut.click("#entry-go");
-  await tut.waitForSelector(".coach",{timeout:30000});check("tutorial entry isolated",(await tut.locator(".coach").textContent())?.includes("T0")===true,"Tutorial coach appears only tutorial flow");
+  await tut.waitForSelector(".coach",{timeout:30000});check("tutorial entry isolated",(await tut.locator(".coach").textContent())?.includes("T0")===true,"Tutorial coach appears in tutorial flow");
   const seen=tut.locator('[data-seen="T0"]');if(await seen.count())await seen.click();
   await tut.waitForSelector("[data-timer]",{timeout:30000});const before=await tut.locator("[data-timer]").first().textContent();
   const help=tut.locator("[data-help]").first();if(await help.count())await help.click();await tut.waitForTimeout(1500);const after=await tut.locator("[data-timer]").first().textContent();
@@ -57,7 +58,7 @@ try{
   await tut.locator('[data-panel="support"]').first().click();await tut.waitForSelector(".feature-sheet",{timeout:10000});
   const supportText=await tut.locator(".feature-sheet").textContent();
   check("support has no raw Character ID",!String(supportText).includes("Character ID")&&await tut.locator('#support-target').count()===0,"safe unavailable state until authoritative target list exists");
-  check("normal room no tutorial overlay",await recovered.locator(".coach,.tutorial-help,.help-recap").count()===0,"normal flow has no tutorial guidance");
+  check("normal room no tutorial overlay",await page.locator(".coach,.tutorial-help,.help-recap").count()===0,"normal flow has no tutorial guidance");
   await tut.screenshot({path:`${outDir}/tutorial-support.png`,fullPage:true});
 
   results.notes.push("Incoming Birth response and host-only Replay require authoritative proposal/end-game states; validated separately by deterministic client regression/source checks in Chat 07 QA.");
