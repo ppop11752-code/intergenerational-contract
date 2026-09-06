@@ -10,12 +10,21 @@ WORKDIR /app/server
 RUN npm install --no-audit --no-fund
 RUN npm run build
 
+FROM node:22-alpine AS client-build
+WORKDIR /app/client
+COPY client/tsconfig.json ./
+COPY client/src ./src
+RUN npx --yes -p typescript@5.7.2 tsc -p tsconfig.json
+
 FROM node:22-alpine AS runtime
 WORKDIR /app/server
-ENV NODE_ENV=production PORT=3001
+ENV NODE_ENV=production PORT=3001 STATIC_DIR=/app/client
 COPY server/backend/server/package*.json ./
 RUN npm install --omit=dev --no-audit --no-fund
 COPY --from=server-build /app/server/dist ./dist
+COPY client/index.html /app/client/index.html
+COPY client/styles.css /app/client/styles.css
+COPY --from=client-build /app/client/dist /app/client/dist
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD wget -qO- http://127.0.0.1:3001/health || exit 1
 CMD ["node","dist/server/src/index.js"]
