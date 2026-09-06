@@ -2,7 +2,7 @@
 
 ## Overall
 
-**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression and authoritative World Event/Mandatory/Recovery/Status display integration are independently verified. Lobby QR cropping/scannability has been fixed and browser-verified on desktop/mobile, but the required QR renderer-unavailable fallback currently loops through `MutationObserver`; `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP` is OPEN. `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` also remains OPEN for final raster-art/visual-complete scope.
+**Not release-ready at the current full player-facing UI scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression, authoritative World Event/Mandatory/Recovery/Status display integration, and Lobby QR navigation/presentation are independently verified. `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN for final raster-art/visual-complete scope.
 
 No current UI defect changes gameplay rules or reopens OI-001–OI-006.
 
@@ -18,6 +18,7 @@ No current UI defect changes gameplay rules or reopens OI-001–OI-006.
 - Prior Tutorial/live integration evidence remains valid for the scope it covered.
 - Support authoritative selector/action integration: PASS after form-state fix.
 - Authoritative World Event / Mandatory / Recovery / Status display integration: PASS after Recovery lifecycle fix.
+- Lobby QR deep-link, scannability, mobile layout and renderer-failure fallback: PASS after H034/H035 fixes.
 
 Canonical backend path: `server/backend/`
 Canonical client path: `client/`
@@ -51,18 +52,18 @@ Final display rerun evidence:
 `H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS.
 `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`: DONE.
 
-## Lobby QR status
+## Lobby QR — VERIFIED
 
-The original QR cropping defect found by Chat 07 is resolved by `H-20260907-034-06-LOBBY-QR-CROPPING`.
+The original QR cropping defect was fixed by `H-20260907-034-06-LOBBY-QR-CROPPING`. The subsequent renderer-unavailable MutationObserver loop was fixed by `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP`.
 
-Post-fix browser evidence:
+Final QA evidence:
 - workflow: `Lobby QR E2E`
-- run ID: `34051902501`
-- head SHA: `46eca73a2363aa77ea0cb2958d277e8c7bf7e1b8`
-- artifact ID: `9994809830`
-- digest: `sha256:a5fadb67afd962b9445e6ef1482b234418e0bb709205b0b64ba6d89941c29290`
+- run ID: `34052814658`
+- head SHA: `02bd76f002d7aec439a8771cd32639cb0478f991`
+- artifact ID: `9995069093`
+- digest: `sha256:c8eccea29c6c934d4c124688323de345c6675180dc0a99b430ef1853e24cf7ca`
 - clean client suite: 33/33 PASS
-- 21 production browser checks PASS before renderer-unavailable fallback entry
+- browser checks: 25/25 PASS
 - desktop native QR decode: PASS
 - compact/mobile 390x844 native QR decode: PASS
 - module geometry: 192x192 + 16px native white quiet zone, no clipping
@@ -72,22 +73,16 @@ Post-fix browser evidence:
 - valid deep-link Landing/prefill/no-auto-join/explicit Join: PASS
 - invalid query: PASS
 - stale room existing `ROOM_NOT_FOUND`: PASS
+- QRCode.js unavailable fallback: PASS; exact fallback text shown, browser completes without loop/hang, large PIN and Host Start remain usable, no fake QR image/canvas.
 
-### Current QR blocker
-
-`H-20260907-033-07-LOBBY-QR-QA` remains BLOCKED because the required renderer-unavailable path is not graceful.
-
-In `client/src/qr-runtime.ts`, when `window.QRCode` is unavailable, fallback rendering mutates `.qr-placeholder`, the global `MutationObserver` schedules `refresh()`, and the same URL is rendered again because the short-circuit only accepts `data-qr-ready="1"`. This creates a repeated fallback mutation loop. Repeated browser fallback tests hang specifically in this path, matching the deterministic source control flow.
-
-Owner handoff: `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP` to Chat 06.
-
+`H-20260907-033-07-LOBBY-QR-QA`: DONE / PASS.
 `H-20260907-034-06-LOBBY-QR-CROPPING`: DONE / independently verified.
-`H-20260907-033-07-LOBBY-QR-QA`: BLOCKED pending H035.
+`H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP`: DONE / independently verified by final browser rerun.
 
 ## Remaining UI work
 
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN for final raster-art / visual-complete scope. Lobby QR fallback idempotency is a separate concrete blocker that must also be resolved.
+`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains OPEN for final raster-art / visual-complete scope.
 
 ## Release claim rule
 
-Do not call the full current player-facing UI release-ready until H035 is fixed and H033 closes, H019 final visual/art scope is completed, and corresponding QA gates pass. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
+Do not call the full current player-facing UI release-ready until H019 final visual/art scope is completed and corresponding QA gates pass. Any subsequent runtime-affecting change must continue to pass build, regression, deployment and integration gates.
