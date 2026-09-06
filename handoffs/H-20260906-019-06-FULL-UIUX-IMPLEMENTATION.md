@@ -44,6 +44,7 @@ Current client started as a functional/integration prototype and is being rebuil
 
 - `docs/UI_UX_FULL_AUDIT_2026-09-06.md`
 - `docs/UI_TUTORIAL_SPEC.md`
+- `docs/UI_ART_ASSET_CONTRACT_V1.md`
 - locked Migration Pack `04_UI_UX_SPEC.md`
 - current `client/`
 - authoritative server snapshots/protocol
@@ -92,25 +93,28 @@ Implemented structurally:
 - End Report Ranking/Journey/World + host-only Replay + extinction-safe failure presentation.
 
 ### Wave 4
-Partially implemented:
+Integration-ready but NOT ART-COMPLETE:
 - responsive/mobile bottom/full-height sheets;
 - Tutorial spotlight hooks/zones;
 - non-blocking ambient cloud/fog/motion layer;
-- improved fantasy frame/theme styling.
+- UI art contract integration scaffold completed in `H-20260907-027-06-UIUX-ART-INTEGRATION`;
+- canonical `client/public/assets/ui/v1/manifest.json` + async asset loader + graceful fallback + deterministic portrait mapping are in place;
+- loader never gates gameplay and only enables asset-backed presentation after a binary successfully loads.
 
-NOT art-complete: locked spec requires real asset-driven top-down pixel-art map, landmarks, portraits and frame assets; current client still uses CSS/placeholders for these pieces.
+Final raster binaries are still absent. Therefore current fallback/CSS/placeholders are development presentation only and do not satisfy art-complete acceptance.
 
 ## Verification
 
-Local reconstructed current client suite after latest expansion:
+Latest local current-client verification:
 - TypeScript build PASS.
-- `npm test` PASS 18/18.
+- `npm test` PASS 21/21.
 
 ## Remaining dependencies
 
 - `H-20260907-025-03-UIUX-DISPLAY-CONTRACT` -> Chat 03 for narrow authoritative read-only display fields: World Event, detailed Mandatory presentation, Recovery quote/pending detail and Status fee/competition/refund quote where safe.
-- `H-20260907-026-05-UIUX-ART-ASSETS` -> Chat 05 for final asset-driven pixel-fantasy package/spec.
+- Real raster binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` must be produced/imported under `client/public/assets/ui/v1/`.
+- After binaries are present, Chat 07 must run Section 16 visual/runtime regression.
 - Browser/server QA must rerun expanded surfaces.
 - Lobby QR is still a placeholder; no renderer has been added.
 
-Handoff remains OPEN. Do not declare player-facing release-ready until remaining dependencies and QA are complete.
+Handoff remains OPEN. Do not declare art-complete or player-facing release-ready until remaining dependencies and QA are complete.
