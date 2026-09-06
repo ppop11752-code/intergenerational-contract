@@ -3,35 +3,47 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — chuyển sang giai đoạn thiết kế giao diện có user approval trực tiếp. UI hiện tại chỉ là implementation theo baseline cũ, chưa được coi là final/approved chỉ vì code hoặc QA PASS.
+Đang làm — giai đoạn thiết kế giao diện có user approval trực tiếp. Cụm hiện tại: `Landing → Lobby → Room → HUD`. Chưa có redesign nào được khóa hoặc bàn giao Chat 06.
 
 ### Changed
-- Người dùng yêu cầu bắt đầu quy trình duyệt thiết kế trực tiếp từ cụm `Landing → Lobby → Room → HUD`.
-- Từ thời điểm này, các art direction/baseline UI cũ chỉ là nguồn tham chiếu nếu chưa được người dùng trực tiếp xác nhận.
-- Chat 05 phải đọc implementation/spec hiện tại, chỉ ra điểm yếu, đề xuất 2–3 hướng, giải thích trade-off và chờ user chọn/góp ý trước khi khóa thiết kế.
-- Không tạo handoff sang Chat 06 cho thiết kế mới trước khi user duyệt.
-- Không thay gameplay, protocol, timer, authoritative logic.
+- Người dùng xác nhận 10 preference/decision mới cho hướng thiết kế:
+  1. pixel art + Japanese anime/chibi;
+  2. Human/NPC phải phân biệt được bằng visual presentation;
+  3. world/map sáng sống động + UI chrome/panel trầm hơn;
+  4. pixel-frame nhưng không quá vuông/cứng;
+  5. Market chỉ mở khi bấm, không luôn hiện;
+  6. vị trí Voluntary actions do Chat 05 tối ưu theo độ gọn/readability;
+  7. Niên sử gồm `HÀNH TRÌNH` + `THẾ GIỚI`;
+  8. HUD adaptive: gọn mặc định, nhấn mạnh thông tin quan trọng khi cần;
+  9. Music + SFX chỉnh riêng trong Settings;
+  10. Landing sẽ thiết kế logo/symbol thật, current `IC` sigil không final.
+- Tạo `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md` để lưu các quyết định trên; đây là confirmed preferences, chưa phải approval một layout cụ thể.
+- Rà lại lịch sử prototype V5–V10.1 và tạo `docs/UI_PROTOTYPE_V5_V10_1_REFERENCE.md` làm historical reference non-authoritative.
+- Giữ nguyên nguyên tắc: code/QA PASS không đồng nghĩa user design approval; art direction cũ không tự authoritative nếu chưa được user trực tiếp xác nhận.
+- Không thay gameplay, protocol, timer hoặc authoritative logic.
 
 ### Source
 - Quyết định trực tiếp mới nhất của người dùng trong Chat 05 ngày 2026-09-07.
-- `client/src/main.ts`, `client/styles.css` trên branch `main`.
-- Các UI/UX/art docs cũ chỉ dùng làm tham chiếu, không tự coi là user-approved final direction.
+- Lịch sử cuộc trò chuyện `Game mô phỏng nhân sinh` và các frozen prototype V5–V10.1 được truy hồi.
+- `client/src/main.ts`, `client/styles.css` trên branch `main` chỉ là implementation reference.
 
 ### Impact
-- Mọi claim trước đây về production UI/art readiness phải được hiểu là readiness theo baseline cũ, không phải user design approval.
-- Chat 06 không được triển khai một redesign mới từ Chat 05 cho đến khi có user-approved spec/handoff cụ thể.
-- Chat 07 QA PASS không thay thế user visual/design approval.
+- Các art assumptions cũ bị supersede ở chỗ xung đột với 10 quyết định mới.
+- Chat 05 sẽ tiếp tục hỏi các điểm còn mơ hồ từ lịch sử UI trước khi dựng/khóa Landing/Lobby/Room/HUD.
+- Chat 06 chưa được nhận redesign mới cho đến khi user duyệt từng màn/cụm.
+- Prototype V5–V10.1 chỉ được dùng để tham khảo ý tưởng/delta, không làm source of truth.
 
 ### Verified
-- Implementation hiện tại của Landing/Lobby/HUD đã được đọc trực tiếp từ `client/src/main.ts` và `client/styles.css`.
-- Current shell dùng dark green/brown/gold pixel-fantasy treatment, fixed top HUD, Turn Track trái, map giữa, phase/dock/panels nổi.
+- Đã khôi phục được các mốc chính: V5 functional panels; V5.1 interaction/missing-flow pass; V6 world/map + end-to-end flow; V7 pixel/state coverage; V8 art-direction pass; V9 persistent map shell; V10 structure-correction pass (detail confidence medium); V10.1 UX-lock attempt.
+- Đã xác nhận user trực tiếp chọn pixel art + Japanese anime/chibi, Human/NPC visual distinction, hybrid bright-world/darker-UI direction, adaptive HUD, two-tab Niên sử, Settings audio controls và Landing logo design.
 
 ### Unverified
-- Chưa có user approval cho bố cục, art direction, palette, typography, iconography, motion hoặc responsive của cụm Landing/Lobby/Room/HUD.
+- Delta chi tiết độc lập của V10 so với V9/V10.1 chưa khôi phục đủ bằng chứng; tài liệu reference đã ghi rõ confidence medium, không suy diễn thêm.
+- Chưa có user approval cho layout cụ thể của Landing, Lobby, Room hoặc HUD.
 
 ### Handoff
-- Chưa có. Chờ user duyệt thiết kế cụm Landing/Lobby/Room/HUD trước khi bàn giao Chat 06.
+- Chưa có. Chờ user tiếp tục trả lời các câu hỏi thiết kế còn mơ hồ và duyệt cụm Landing/Lobby/Room/HUD.
 
 ### Open Issues
 - User design approval cho Landing/Lobby/Room/HUD đang OPEN.
-- Không mở rộng sang các màn hình khác cho đến khi cụm này được duyệt.
+- Còn cần làm rõ một số quyết định layout/interaction từ chat UI cũ trước khi bắt đầu khóa Landing.
