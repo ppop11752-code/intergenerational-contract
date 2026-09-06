@@ -1,6 +1,6 @@
 # INTERGENERATIONAL CONTRACT — PROJECT BASELINE
 
-**Baseline ID:** PB-2026-09-06-v3  
+**Baseline ID:** PB-2026-09-06-v4  
 **Owner:** 00 — PROJECT CONTROL  
 **Status:** CANONICAL WORKING BASELINE  
 **Repository:** `ppop11752-code/intergenerational-contract`  
@@ -74,6 +74,26 @@ Verified directly: `model.ts`, `engine.ts`, `authoritative-room.ts`, OI-001 regr
 
 Legacy Vitest `.test.ts` suites contain outdated expectations and are non-blocking maintenance debt, not normative OI-001 coverage.
 
+## Canonical backend baseline
+
+**Status: MIGRATED / VERIFIED AGAINST AUDITED ARTIFACT.**
+
+Path:
+
+`server/backend/`
+
+Import commit:
+
+`d5142e6a58b3179517440cc5af3c8c706bcbc9b7`
+
+Source artifact SHA-256:
+
+`a896c69cd186fbe6cb6cf7db780c25e341e683fd8545175b9e1df1c43b46b11f`
+
+Chat 00 checked the GitHub tree after manual bulk upload and matched critical Git blob hashes exactly against the audited artifact, including engine/model/authoritative-room/economy, nested server adapter files, package test gate, OI-001 regression, OI-002 regression and Rule Ledger regression.
+
+This is now the canonical verified backend baseline for subsequent specialist changes.
+
 ## Remaining Open Issues
 
 - OI-003 — `SOCKET_EVENTS` helper missing `game:replay`.
@@ -85,4 +105,4 @@ Legacy Vitest `.test.ts` suites contain outdated expectations and are non-blocki
 
 GitHub is now the long-term shared repository. ChatGPT Project Sources should remain lightweight and point to this repository/version.
 
-Current repository contains canonical working docs and current-status reports. Complete verified backend/client source migration into GitHub is not yet finished. Do not claim the GitHub tree is the complete game until source migration is completed and the repository commit is matched against verified artifacts.
+Canonical project docs and the independently verified backend source are now in GitHub. Complete verified client source migration/integration is still unfinished, so the repository is not yet the complete release-ready game.
