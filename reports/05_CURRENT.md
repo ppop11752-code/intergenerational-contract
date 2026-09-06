@@ -6,39 +6,36 @@
 Đang làm — giai đoạn thiết kế giao diện có user approval trực tiếp. Cụm hiện tại: `Landing → Lobby → Room → HUD`. Chưa có redesign nào được khóa hoặc bàn giao Chat 06.
 
 ### Changed
-- Người dùng đã xác nhận 18 preference/decision mới cho hướng thiết kế. Nhóm đầu gồm: pixel art + Japanese anime/chibi; Human/NPC phân biệt trực quan; world/map sáng sống động + UI chrome/panel trầm hơn; pixel-frame mềm hơn; Market chỉ mở khi bấm; Voluntary actions ưu tiên bố trí gọn; Niên sử `HÀNH TRÌNH` + `THẾ GIỚI`; HUD adaptive; Music + SFX trong Settings; thiết kế logo thật trên Landing.
-- Nhóm xác nhận mới bổ sung: world thay đổi nhẹ theo năm/thế hệ nhưng vẫn một fantasy world thống nhất; logo dạng fantasy contract seal + lifecycle imagery; Landing dùng world landscape + chibi/anime foreground; Human/NPC khác cả character styling và UI marker; Lobby dùng compact portrait grid; Founder Draw có reveal ngắn nhưng non-blocking; camera vào game bắt đầu ở settlement overview; HUD dùng phase/timer emphasis trong HUD + World Event banner riêng.
-- `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md` đã được cập nhật với toàn bộ 18 quyết định; đây là confirmed preferences, chưa phải approval một layout cụ thể.
-- `docs/UI_PROTOTYPE_V5_V10_1_REFERENCE.md` là historical reference non-authoritative cho prototype V5–V10.1.
-- Source Index/Migration Pack xác nhận prototype V5–V10.1 là frozen/non-authoritative; tên `final` không làm chúng authoritative.
-- Tiếp tục rà từng quyết định UI lịch sử còn chưa được user tái xác nhận theo cách `GIỮ / BỎ / SỬA`, trước hết chỉ trong phạm vi Landing/Lobby/Room/HUD.
+- Người dùng đã xác nhận 18 preference/decision mới cho hướng thiết kế và hoàn tất reconciliation nhóm cấu trúc lịch sử A1–A28 cho Landing/Lobby/Room/HUD.
+- Tạo `docs/UI_V5_V10_1_DECISION_RECONCILIATION_A_B.md` làm bản đối chiếu user-confirmed giữa prototype V5–V10.1 và quyết định hiện tại.
+- Các điểm lịch sử được giữ: Landing có 5 menu entries; Create/Join tách màn; Lobby Human-only; no Ready; no Host NPC controls; vào World Map trực tiếp sau Lobby/Founder reveal; Turn Track dọc trái 5–6 entries; Government là landmark trung tâm; Market không có map building; settlement mở rộng tự nhiên; Residence không zoning theo Status; Residence architecture theo Status + wealth scale nhẹ 0.90–1.15, family size không đổi house scale; pan/zoom tự do; map vẫn hiện dưới drawers/sheets; no permanent Player Bar; World Event banner non-blocking; mobile không đổi gameplay.
+- Các điểm lịch sử được sửa theo user/recommendation: reconnect CTA là secondary; PIN là primary và QR secondary; society-start info compact; Founder Draw là overlay/transition non-blocking thay vì standalone screen; HUD top-oriented nhưng chia cụm/adaptive thay vì một dải dashboard đặc; map quick-nav dùng icon compact; Government được mở bằng cách click trực tiếp công trình Nhà nước trên World Map.
+- `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md` vẫn là nguồn preference trực tiếp cho pixel art + Japanese anime/chibi, Human/NPC visual distinction, bright-world/darker-UI direction, logo, Lobby portrait grid, adaptive HUD và các quyết định mới khác.
 - Không thay gameplay, protocol, timer hoặc authoritative logic.
 
 ### Source
 - Quyết định trực tiếp mới nhất của người dùng trong Chat 05 ngày 2026-09-07.
 - `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md`.
+- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_A_B.md`.
 - `docs/UI_PROTOTYPE_V5_V10_1_REFERENCE.md`.
 - Lịch sử cuộc trò chuyện `Game mô phỏng nhân sinh`, Source Index và Migration Pack.
-- `client/src/main.ts`, `client/styles.css` trên branch `main` chỉ là implementation reference.
 
 ### Impact
-- Các art/layout assumptions cũ bị supersede ở chỗ xung đột với 18 quyết định mới.
-- Các quyết định lịch sử chưa tái xác nhận không được coi là mặc định giữ lại.
+- Nhóm structural decisions A1–A28 không còn mơ hồ và không được phép tự quay lại baseline prototype trái với reconciliation mới.
+- Chat 05 chỉ còn cần reconcile các chi tiết visual/motion/responsive còn sót của cụm này trước khi trình Landing design đầu tiên.
 - Chat 06 chưa được nhận redesign mới cho đến khi user duyệt từng màn/cụm.
-- Prototype V5–V10.1 chỉ dùng để tham khảo ý tưởng/delta, không làm source of truth.
 
 ### Verified
-- Đã khôi phục được các mốc chính V5→V10.1 và trạng thái frozen/non-authoritative.
-- Đã ghi nhận đầy đủ 18 quyết định trực tiếp mới nhất của user vào tài liệu design decisions.
+- Đã ghi nhận đầy đủ user decisions cho A1–A28, gồm các mục `GIỮ` và các mục `SỬA` theo recommendation/user wording.
+- Không có quyết định nào trong reconciliation làm thay đổi gameplay/protocol/timer/action semantics.
 
 ### Unverified
-- Delta chi tiết độc lập của V10 so với V9/V10.1 chưa khôi phục đủ bằng chứng; reference giữ confidence medium.
 - Chưa có user approval cho layout cụ thể của Landing, Lobby, Room hoặc HUD.
-- Một số quyết định lịch sử về menu structure, Lobby presentation, Turn Track, map navigation, Government/Residence drawers và shell vẫn cần user chọn GIỮ/BỎ/SỬA.
+- Một số quyết định lịch sử về typography, visual density, icon treatment, ambience/motion và responsive presentation của chính cụm này vẫn cần user tái xác nhận.
 
 ### Handoff
-- Chưa có. Chờ user hoàn tất review GIỮ/BỎ/SỬA và duyệt cụm Landing/Lobby/Room/HUD.
+- Chưa có. Chờ user hoàn tất historical visual/motion reconciliation và duyệt thiết kế Landing trước.
 
 ### Open Issues
 - User design approval cho Landing/Lobby/Room/HUD đang OPEN.
-- Historical decision reconciliation cho cụm này đang OPEN.
+- Historical visual/motion/responsive reconciliation cho cụm này đang OPEN.
