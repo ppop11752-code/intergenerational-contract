@@ -4,65 +4,66 @@
 
 ### Status
 
-Bị chặn bởi môi trường QA — đã rerun handoff `H-20260906-015-07-OI004-FINAL-E2E`; không còn thấy defect implementation/deployment đã biết, nhưng chưa thể chứng minh browser/server E2E thực tế vì runtime Chat 07 không phân giải được hostname Render.
+Hoàn thành — OI-004 PASS ở cấp Release & QA; final live browser/server E2E đã có bằng chứng độc lập qua GitHub-hosted Playwright runner.
 
 ### Changed
 
-- Rà lại fixes mới nhất từ Chat 04/06 cho OI-004.
-- Xác nhận canonical client + backend đã deploy same-origin trên Render.
-- Xác nhận Help recap đã đổi sang non-modal `<aside>`; không còn `<dialog>`/`showModal()`.
-- Xác nhận T7 và Birth action chỉ dùng authoritative `player.canInitiateBirth === true`.
-- Xác nhận server private snapshot expose `canInitiateBirth` từ `e.canInitiateBirth(h)`.
-- Xác nhận live Render deploy hiện tại chứa client/server fix và không có code drift sau client alignment commit.
-- Đã thử trực tiếp gọi live URL và `/health` từ execution sandbox; thất bại ở DNS resolution trước khi có HTTP response.
+- Xử lý `H-20260906-017-07-OI004-E2E-EVIDENCE` và `H-20260906-017-07-OI004-FINAL-QA`.
+- Độc lập kiểm tra GitHub Actions run `34039901844`, job `live-e2e`, artifact `9991351341` và runner source.
+- Xác nhận artifact digest `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2` và 5 file evidence.
+- Xác nhận live browser PASS cho page load, same-origin Socket.IO, Tutorial entry/T0, help recap non-blocking, Birth gating ở state `canInitiateBirth=false`, và normal multiplayer không có Tutorial overlay.
+- Kết hợp live evidence với deterministic client/server regression cho `canInitiateBirth` false/true và Tutorial trigger logic T0–T11.
+- Kết luận không cần ép live `canInitiateBirth=true` hoặc chơi đủ 32 vòng chỉ để lặp lại deterministic logic đã có regression coverage; không có release policy nào yêu cầu điều đó.
+- Đóng OI-004 và handoff final E2E trước đó.
 
 ### Source
 
+- `handoffs/H-20260906-017-07-OI004-E2E-EVIDENCE.md`
+- `handoffs/H-20260906-017-07-OI004-FINAL-QA.md`
 - `handoffs/H-20260906-015-07-OI004-FINAL-E2E.md`
+- `reports/03_CURRENT.md`
 - `reports/04_CURRENT.md`
 - `reports/06_CURRENT.md`
-- `docs/UI_TUTORIAL_SPEC.md`
-- `client/src/main.ts`
-- `client/src/tutorial.ts`
-- `server/backend/src/authoritative-room.ts`
-- Server birth eligibility commit `75f99122c85d7b9df377354ef1ce9b68829bfe36`
-- Client alignment commit `48e43df42dc9b9eb97f67c6d977f130560a7b39e`
-- Current live deploy commit `e36239684a94887555ef40d7ffadc58085aae415`
-- Live deploy `dep-daengk8ou94c739la8ag`
+- `.github/workflows/live-client-e2e.yml`
+- `qa/live-client-e2e.mjs`
+- `client/test/tutorial.test.mjs`
+- GitHub Actions run `34039901844`, head SHA `8facc98a38b654a30cad24aaf13667c78a529705`
+- Artifact `9991351341`
 - Live URL `https://intergenerational-contract.onrender.com`
 
 ### Impact
 
-Không còn blocker code đã biết cho OI-004. Tuy nhiên release gate vẫn chưa thể PASS vì browser/server E2E bắt buộc chưa được chạy thực tế từ một môi trường có thể truy cập Render.
+OI-004 không còn là release blocker. Các Open Issues OI-001–OI-006 hiện đều CLOSED/VERIFIED ở phạm vi đã định nghĩa. Project đạt release-ready ở cấp QA hiện tại, ngoại trừ maintenance debt đã được ghi rõ là non-blocking.
 
 ### Verified
 
-- Chat 04 report: canonical same-origin static deployment đã build/live.
-- Render: deploy `dep-daengk8ou94c739la8ag` status `live`, commit `e36239684a94887555ef40d7ffadc58085aae415`.
-- Compare `48e43df...` → `e362396...`: chỉ thay handoff/report, không thay client/server runtime code.
-- Source: normal multiplayer join đặt `tutorial.active=false`.
-- Source: Tutorial entry dùng `room:create` + `game:start`.
-- Source: timer đọc `phaseDeadlineAt`; Help recap không gửi gameplay action/timer mutation.
-- Source: Mandatory không có skip path.
-- Source: T7 chỉ unlock khi `canInitiateBirth === true`.
-- Source: Birth action chỉ hiện khi `canInitiateBirth === true`.
-- Source: server private snapshot trả authoritative `canInitiateBirth`.
-- Chat 06 đã báo client build + `npm test` PASS 7/7 sau integration.
+- Workflow job `live-e2e`: completed / success.
+- Runner checkout đúng head SHA `8facc98a38b654a30cad24aaf13667c78a529705`.
+- Artifact metadata khớp ID/name/digest và chưa expired.
+- `results.json`: 6/6 checks PASS.
+- Screenshot evidence đã kiểm trực tiếp cho Tutorial entry và help recap runtime.
+- Live page load: PASS.
+- Same-origin Socket.IO: PASS.
+- Tutorial room entry + T0 visible: PASS.
+- Help recap non-blocking: PASS, authoritative countdown tiếp tục `7s -> 6s`.
+- Live Birth unavailable state: PASS; không có `child:birth` action khi `canInitiateBirth=false`.
+- Normal multiplayer no Tutorial overlay: PASS.
+- Client deterministic regression: `canInitiateBirth=false` không unlock T7; `true` unlock T7; help recap non-modal.
+- Server release check/regression: Birth eligibility true/false và no-side-effect PASS theo Chat 03.
+- Compare runner head `8facc98...` → current `main`: chỉ handoff/report, không thay runtime client/server.
 
 ### Unverified
 
-- Browser page-load thật từ live Render URL.
-- Browser Socket.IO handshake same-origin ở deploy hiện tại.
-- Browser thao tác Tutorial room entry trên live deployment.
-- Live false→true transition của `canInitiateBirth` qua browser UI.
-- Help recap non-blocking trong browser thật trong khi authoritative countdown đang chạy.
-- Full T0–T11 playthrough qua game thực tế.
+- Không có live run riêng cố tình ép `canInitiateBirth=true`; deterministic server/client tests bao phủ nhánh này.
+- Không có một browser session duy nhất chơi xuyên suốt T0–T11 đủ 32 vòng; trigger logic T0–T11 có deterministic coverage và live runner chứng minh integration/browser path trọng yếu.
+- Long-term usability/balance playtest vẫn là hoạt động hậu QA, không phải blocker OI-004.
 
 ### Handoff
 
-Không tạo handoff code mới vì chưa phát hiện defect thuộc Chat 03/04/06. `H-20260906-015-07-OI004-FINAL-E2E` giữ trạng thái bị chặn cho tới khi có môi trường browser/network truy cập được live Render URL để chạy final E2E.
+Không cần handoff sửa code mới. Chat 00 có thể tiếp tục điều phối release/publishing nếu muốn.
 
 ### Open Issues
 
-- OI-004: OPEN — implementation/deployment fixes verified by source and deploy metadata; final live browser E2E blocked by QA execution environment.
-- OI-006: CLOSED — release QA verified.
+- OI-004: CLOSED — RELEASE QA VERIFIED.
+- OI-006: CLOSED — RELEASE QA VERIFIED.
+- Không còn Open Issue blocking trong `docs/OPEN_ISSUES.md`.
