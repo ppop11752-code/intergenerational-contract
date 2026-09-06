@@ -1,0 +1,36 @@
+name: UI Art Binary Build
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/scripts/generate_ui_art_v1.py'
+      - '.github/workflows/ui-art-binary-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-ui-art:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pillow
+      - run: python .github/scripts/generate_ui_art_v1.py
+      - name: Commit generated raster binaries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/public/assets/ui/v1/terrain client/public/assets/ui/v1/landmarks client/public/assets/ui/v1/residences client/public/assets/ui/v1/ambience client/public/assets/ui/v1/frames client/public/assets/ui/v1/portraits client/public/assets/ui/v1/icons client/public/assets/ui/v1/transitions
+          if git diff --cached --quiet; then
+            echo "No generated art changes."
+            exit 0
+          fi
+          git commit -m "art(ui): generate final v1 raster binaries [skip ci]"
+          git push origin HEAD:main
