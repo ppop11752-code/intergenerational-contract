@@ -622,6 +622,16 @@ export class GameEngine{
 
   mandatoryTotal(c:Character,net:number){return this.mandatoryBreakdown(c,net).total}
 
+  mandatoryQuote(c:Character){
+    const h=this.household(c),netIncome=this.netIncome(h),breakdown=this.mandatoryBreakdown(c,netIncome),cashBefore=h.sharedCash;
+    let liquidationProceeds=0;
+    if(cashBefore<breakdown.total)for(const type of ["renewable","nonrenewable"] as ResourceType[])for(const grade of ["low","mid","high"] as ResourceGrade[]){const inventory=(type==="renewable"?h.sharedResources:h.sharedNonRenewableResources)[grade];liquidationProceeds+=inventory*this.marketPrice(grade,type)*this.cfg.market.liquidationFactor}
+    const cashAfterLiquidation=cashBefore+liquidationProceeds,projectedBankruptcy=cashAfterLiquidation<breakdown.total;
+    const keys=["living","socialContribution","tax","childSupport","parentSupport","grief","medical"] as const;
+    const dominantCost=keys.reduce((a,key)=>breakdown[key]>breakdown[a]?key:a,"living" as typeof keys[number]);
+    return{breakdown:{...breakdown},netIncome,cashBefore,liquidationRequired:cashBefore<breakdown.total,liquidationProceeds,cashAfterLiquidation,projectedBankruptcy,shortfall:Math.max(0,breakdown.total-cashAfterLiquidation),dominantCost};
+  }
+
   private distributeMandatoryFlows(h:Household,_net:number){
     const livingMembers=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive);
     const workers=livingMembers.filter(x=>x.ageStage>=3&&x.ageStage<=6);
@@ -641,11 +651,11 @@ export class GameEngine{
   resolveMandatory(c:Character){
     const h=this.household(c);
     if(this.state.mandatoryResolvedHouseholds[h.id])return true;
-    const net=this.netIncome(h),breakdown=this.mandatoryBreakdown(c,net),need=breakdown.total;
-    const cashBefore=h.sharedCash,assetsBefore=this.householdAssets(h);
+    const quote=this.mandatoryQuote(c),net=quote.netIncome,breakdown=quote.breakdown,need=breakdown.total;
+    const cashBefore=quote.cashBefore,assetsBefore=this.householdAssets(h);
     let proceeds=0;
     if(h.sharedCash<need){
-      for(const type of ["renewable","nonrenewable"] as ResourceType[])for(const g of ["low","mid","high"] as ResourceGrade[]){const inv=type==="renewable"?h.sharedResources:h.sharedNonRenewableResources;proceeds+=inv[g]*this.marketPrice(g,type)*this.cfg.market.liquidationFactor}
+      proceeds=quote.liquidationProceeds;
       h.sharedCash+=proceeds;this.state.telemetry.cashFlow.liquidationProceeds+=proceeds;h.sharedResources=empty();h.sharedResourceCostBasis=empty();h.sharedNonRenewableResources=empty();h.sharedNonRenewableResourceCostBasis=empty();h.investmentLots=[];
       if(proceeds>0)this.state.chronology.push(`[Vòng ${this.state.round}] Thanh lý tài nguyên: ${proceeds.toFixed(2)}`);
       if(h.sharedCash<need){
@@ -712,11 +722,25 @@ export class GameEngine{
   }
 
   autoSelectStatusForCurrent(){
-    this.requirePhase("status");const c=this.currentTurnCharacter();if(!c)throw Error("no current turn");const h=this.household(c);const persons=this.isCoupleHousehold(h)?2:1;const candidates:Status[]=h.status==="noble"?["noble","middle","poor"]:h.status==="middle"?["middle","poor"]:["poor"];let chosen:Status="poor";for(const st of candidates){if(h.sharedCash+1e-9>=statusFee(st,this.state.roundAverageAssetsSnapshot,this.state.priceIndex,this.cfg)*persons){chosen=st;break}}return this.setStatus(c,chosen);
+    this.requirePhase("status");const c=this.currentTurnCharacter();if(!c)throw Error("no current turn");const h=this.household(c);const candidates:Status[]=h.status==="noble"?["noble","middle","poor"]:h.status==="middle"?["middle","poor"]:["poor"];let chosen:Status="poor";for(const st of candidates){if(this.statusFeeQuote(c,st).affordable){chosen=st;break}}return this.setStatus(c,chosen);
+  }
+
+  statusFeeQuote(c:Character,status:Status){
+    const h=this.household(c),personsCharged=this.isCoupleHousehold(h)?2:1,fee=statusFee(status,this.state.roundAverageAssetsSnapshot,this.state.priceIndex,this.cfg)*personsCharged;
+    return{status,fee,personsCharged,affordable:h.sharedCash+1e-9>=fee};
+  }
+
+  statusSelectionQuote(c:Character){
+    const h=this.household(c),cards=(["poor","middle","noble"] as Status[]).map(status=>this.statusFeeQuote(c,status));
+    const slotsTotal=Math.ceil(this.alive().length*this.cfg.status.noblePopulationShare),slotsRequired=Math.max(1,h.memberIds.filter(id=>this.state.characters[id]?.alive).length);
+    const pendingNobleSlots=Object.values(this.state.households).filter(x=>x.active&&x.pendingStatus==="noble").reduce((sum,x)=>sum+x.memberIds.filter(id=>this.state.characters[id]?.alive).length,0);
+    const nobleFee=cards.find(x=>x.status==="noble")!.fee,middleFallbackFee=statusFee("middle",this.state.roundAverageAssetsSnapshot,this.state.priceIndex,this.cfg)*slotsRequired;
+    const turnCard=this.state.turnState.entries.find(entry=>entry.characterId===h.representativeCharacterId)?.card??null;
+    return{roundAverageAssets:this.state.roundAverageAssetsSnapshot,priceIndex:this.state.priceIndex,cards,nobleCompetition:{slotsTotal,slotsRequired,pendingNobleSlots,incumbent:h.status==="noble",householdAssets:this.householdAssets(h),turnCard,priority:["incumbent","householdAssets","turnCard"] as const,allocationTiming:"end_of_round" as const,fallbackStatus:"middle" as const,middleFallbackFee,potentialRefund:Math.max(0,nobleFee-middleFallbackFee)}};
   }
 
   setStatus(c:Character,status:Status){
-    this.requirePhase("status");const h=this.household(c);if(h.representativeCharacterId!==c.id)throw Error("only household representative can buy status");const persons=this.isCoupleHousehold(h)?2:1;const fee=statusFee(status,this.state.roundAverageAssetsSnapshot,this.state.priceIndex,this.cfg)*persons;if(h.sharedCash+1e-9<fee)throw Error("insufficient cash for status");
+    this.requirePhase("status");const h=this.household(c);if(h.representativeCharacterId!==c.id)throw Error("only household representative can buy status");const fee=this.statusFeeQuote(c,status).fee;if(h.sharedCash+1e-9<fee)throw Error("insufficient cash for status");
     h.sharedCash-=fee;h.pendingStatus=status;h.pendingStatusPaid=fee;h.pendingStatusPurchaserId=c.id;this.state.statusPurchases[h.id]={householdId:h.id,requested:status,paid:fee,purchaserCharacterId:c.id,round:this.state.round};this.chargeSharedCostToQuota(h,fee);this.state.turnState.phase="voluntary";return status;
   }
 
@@ -740,10 +764,9 @@ export class GameEngine{
     this.requirePhase("voluntary");
     const h=this.household(c);
     if(!Number.isFinite(u)||u<=0)throw Error("invalid recovery units");
-    const room=Math.max(0,this.cfg.resource[g].carryingCapacity-this.state.pool[g]-this.state.pendingRecovery[g]);
-    const accepted=Math.min(u,room);
+    const quote=this.recoveryQuote(g),accepted=Math.min(u,quote.capacityRemaining);
     if(accepted<=0)throw Error("ecosystem already at carrying capacity");
-    const cost=this.marketPrice(g)*this.cfg.recovery.marketPriceRate*accepted*this.state.recoveryCostMultiplier;
+    const cost=quote.costPerUnit*accepted;
     this.assertVoluntarySpendAllowed(c,cost);
     if(h.sharedCash<cost)throw Error("recovery investment exceeds limit");
     h.sharedCash-=cost;this.state.telemetry.cashFlow.recoverySpending+=cost;
@@ -751,6 +774,11 @@ export class GameEngine{
     this.state.pendingRecovery[g]+=accepted;
     this.state.chronology.push(`[Vòng ${this.state.round}] Hộ ${h.id} đầu tư phục hồi ${accepted} ${g}, hiệu lực vòng sau`);
     return cost;
+  }
+
+  recoveryQuote(g:ResourceGrade){
+    const currentPool=this.state.pool[g],pendingNextRound=this.state.pendingRecovery[g],carryingCapacity=this.cfg.resource[g].carryingCapacity;
+    return{grade:g,currentPool,carryingCapacity,pendingNextRound,capacityRemaining:Math.max(0,carryingCapacity-currentPool-pendingNextRound),costPerUnit:this.marketPrice(g)*this.cfg.recovery.marketPriceRate*this.state.recoveryCostMultiplier};
   }
 
   isEligibleVoluntarySupportTarget(c:Character,target:Character){

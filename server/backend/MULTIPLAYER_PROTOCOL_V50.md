@@ -54,7 +54,7 @@ The public room snapshot contains:
 - room code, Host and Human connection states;
 - founder draw result and initial NPC count;
 - active Character / NPC-takeover / Waiting Queue positions for room players;
-- round, simulated year, phase, ending state and current turn;
+- round, simulated year, phase, ending state, current World Event name and current turn;
 - public debt, Government state, debt ceiling and fiscal history;
 - Renewable/Nonrenewable pools and server-quoted Market prices/returns/failure risks/subsidies;
 - PI, inflation, EIF reasons, Noble cap ratio and round-average-asset snapshot;
@@ -91,6 +91,17 @@ The private snapshot contains:
 - incoming birth proposals;
 - valid marriage-candidate summary;
 - `canSendMarriage`, current phase and phase deadline.
+- read-only display contracts scoped to the current player's active phase:
+  - `mandatoryQuote` during Mandatory, containing the authoritative charge
+    breakdown and projected liquidation/bankruptcy result;
+  - `recoveryQuotes` during Voluntary, containing per-grade cost/unit, current
+    pending-next-round units and remaining recovery capacity;
+  - `statusQuote` during the representative's Status phase, containing all three
+    fees plus the current Noble slot, priority, fallback and potential-refund facts.
+
+The public World Event field is `game.eventName` and is `null` when no event is
+active. Private display quotes are side-effect-free; submitted actions are still
+revalidated against the then-current authoritative state.
 
 ## Structured Player History
 
