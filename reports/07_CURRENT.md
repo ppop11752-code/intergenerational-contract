@@ -4,60 +4,64 @@
 
 ### Status
 
-Bị chặn — `H-20260906-023-07-SUPPORT-FLOW-QA` phát hiện client defect thật: form value bị reset trước khi `game:action` gửi lên authoritative server. Support flow chưa PASS.
+Hoàn thành — `H-20260906-023-07-SUPPORT-FLOW-QA` PASS sau khi Chat 06 sửa form-state loss. Support selector/action đã được browser + authoritative server E2E xác minh.
 
 ### Changed
 
-- Đọc handoff `H-20260906-023-07-SUPPORT-FLOW-QA`, report 03/06 và authoritative Support regression.
-- Xác nhận server `eligibleSupportTargets` đã hoàn tất; client đã tích hợp selector authoritative.
-- Thêm QA-only browser harness `qa/support-flow-e2e.mjs` + workflow `.github/workflows/support-flow-e2e.yml` dùng production client qua Socket.IO với compiled `GameEngine` + `AuthoritativeRoom`; fixture parent/child chỉ tạo state kiểm thử, không thay gameplay.
-- CI build authoritative engine PASS và production client build PASS.
-- Support selector đã hiển thị đúng authoritative parent/child targets và không lộ raw Character ID trước khi action test fail.
-- Phát hiện khi browser nhập Support amount `5`, authoritative mutation chỉ chuyển `1` (`actor 100 -> 99`, target 0 -> 1`).
-- Root cause: `run()` gọi `render()` trước khi deferred callback đọc DOM; input/select bị rebuild về default trước khi action payload được tạo.
-- Pattern tương tự có khả năng ảnh hưởng Market units, Recovery units và Marriage candidate; đã giao Chat 06 audit/fix.
+- Rerun Support QA sau `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`.
+- Tăng độ chặt runner để bắt buộc chọn target thứ hai (`child`) và nhập amount `5`, tránh PASS giả do default option/value.
+- Final workflow `Support Flow E2E` run `34047655175` PASS.
+- Artifact `9993594608`, digest `sha256:7146dce30b7b9277745feb527f36e657f7fdce2bb1dc44a07dd9be157c04eb4d`.
+- `results.json`: 13/13 checks PASS.
+- Đóng `H-20260906-023-07-SUPPORT-FLOW-QA`.
 
 ### Source
 
 - `handoffs/H-20260906-023-07-SUPPORT-FLOW-QA.md`
+- `handoffs/H-20260906-024-06-CLIENT-FORM-STATE-LOSS.md`
 - `reports/03_CURRENT.md`
 - `reports/06_CURRENT.md`
 - `server/backend/test/support-targets-snapshot.mjs`
 - `client/src/main.ts`
+- `client/src/action-payloads.ts`
 - `qa/support-flow-e2e.mjs`
 - `.github/workflows/support-flow-e2e.yml`
-- QA workflow run `34046838461`, head SHA `ca4d90a6320ade9e85586a70b7d48e7ea1a13077`
-- Defect handoff `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`
+- workflow run `34047655175`, head `8426be71465ad0dbcd64b9a8a50d62142f2217d6`
+- artifact `9993594608`
 
 ### Impact
 
-Support production flow không đáng tin cậy với giá trị người dùng nhập khác default; target selection cũng có nguy cơ reset về option đầu tiên. Vì cùng pattern tồn tại ở các action form khác, Wave 1/P0 cần regression lại sau fix. Không thay đổi hoặc nghi ngờ gameplay rule/server validation.
+Support/form-state regression không còn là blocker. Shared payload-capture fix cho Market/Recovery/Support/Marriage có deterministic regression từ Chat 06. Không thay đổi gameplay/server rule. `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` vẫn OPEN nên chưa nâng toàn UI thành release-ready.
 
 ### Verified
 
-- Server authoritative Support target/action regression: PASS theo Chat 03; parent/child only, unrelated/dead/wrong phase/wrong turn và no-side-effect covered.
-- Client build trong QA CI: PASS.
-- Authoritative engine build trong QA CI: PASS.
-- Browser selector mirror đúng `eligibleSupportTargets` trước action submit.
-- Parent + child đều có trong authoritative target list fixture.
-- Player-facing labels không chứa raw Character ID.
-- Browser nhập amount `5`, server mutation thực tế là `1`: defect reproduced deterministically.
-- Source inspection xác nhận DOM values được đọc trong callback sau `run()` đã gọi `render()`.
+- Authoritative engine build in QA CI: PASS.
+- Production client build in QA CI: PASS.
+- Selector mirrors exactly 2 authoritative parent/child targets: PASS.
+- Raw Character IDs absent from player-facing labels: PASS.
+- Non-default second target (`child`) remains selected: PASS.
+- Amount `5` preserved through busy-state render and action construction: PASS.
+- Authoritative mutation: actor cash `100 -> 95`, child cash `0 -> 5`: PASS.
+- Invalid amount error surfaced unchanged: `invalid support amount`.
+- Oversized/cap error surfaced unchanged: `action exceeds 50% start-of-round household-asset cap`.
+- `phaseDeadlineAt` unchanged across Support interactions: PASS.
+- Countdown continued `60s -> 59s`: PASS.
+- Empty target list shows no-target state; selector/action absent: PASS.
+- No manual Character ID input: PASS.
+- Chat 06 local suite: PASS 13/13; deterministic payload regression covers Market `7`, Recovery `9`, Support target + `5`, Marriage candidate.
 
 ### Unverified
 
-- Valid Support amount/target sau khi Chat 06 fix.
-- Invalid amount/cash/50% cap feedback qua production UI sau fix; current defect ngăn test đáng tin cậy các giá trị non-default.
-- Empty target state/timer checks trong harness chưa chạy tới cuối vì fail sớm tại valid mutation assertion; server/client source/regression riêng vẫn có coverage.
-- Market/Recovery/Marriage runtime impact của cùng pattern chưa được browser-prove; Chat 06 phải audit và regression.
+- Support E2E used a deterministic QA parent/child fixture with production client + compiled production `GameEngine`/`AuthoritativeRoom`; it was not generated organically on the public Render service. Action validation/mutation itself used production authoritative code.
+- Wave 2–4/final art/remaining UI scope under H019 remains outside this QA closure.
 
 ### Handoff
 
-Chat 06 xử lý `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`. Sau PASS, trả lại Chat 07 rerun `H-20260906-023-07-SUPPORT-FLOW-QA` và relevant Wave 1 form actions.
+Không cần defect handoff mới. Chat 06 tiếp tục `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`; các wave tiếp theo quay lại Chat 07 để QA tương ứng.
 
 ### Open Issues
 
-- `H-20260906-023-07-SUPPORT-FLOW-QA`: BLOCKED / QA FAIL pending client fix.
-- `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`: OPEN.
+- `H-20260906-023-07-SUPPORT-FLOW-QA`: CLOSED — PASS.
+- `H-20260906-024-06-CLIENT-FORM-STATE-LOSS`: DONE.
 - `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN — Wave 2–4 còn việc.
-- OI-001–OI-006 remain CLOSED; this is a newer client UI regression, not a reopening of gameplay-rule issues.
+- OI-001–OI-006 remain CLOSED/VERIFIED.
