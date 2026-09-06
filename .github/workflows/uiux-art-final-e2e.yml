@@ -25,6 +25,7 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
       - name: Run final desktop/mobile art E2E
+        # Fresh H038 rerun after H040 Government integer-scaling fix.
         run: node qa/uiux-art-final-e2e.mjs
       - name: Upload art evidence
         if: always()
