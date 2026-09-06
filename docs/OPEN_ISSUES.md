@@ -34,9 +34,9 @@ Implementation commit: `e0e000ad9ec920ade3a73a4cf204b5e1954cd0b4`.
 
 ## OI-004 — Dedicated Tutorial guidance
 
-**Status:** OPEN — QA FAILED/BLOCKED.
+**Status:** OPEN — SERVER DEPENDENCY RESOLVED; CLIENT/E2E PENDING.
 
-Owners: 04 — DEPLOYMENT & DEVOPS; 06 — CLIENT IMPLEMENTATION. Chat 03 only if an existing authoritative eligibility fact must be exposed through the server snapshot.
+Owners: 06 — CLIENT IMPLEMENTATION; 07 — QA & RELEASE. Chat 03 server work is complete.
 
 Chat 07 integration QA found:
 
@@ -44,12 +44,20 @@ Chat 07 integration QA found:
 - Tutorial help recap uses modal behavior (`showModal()`) although the spec requires non-modal/non-blocking recap;
 - Birth/T7 is gated only by household representative state rather than authoritative Birth eligibility, so guidance/action may appear before the feature is actually available.
 
+Chat 06 fixed the non-modal recap and changed the client to require authoritative
+`canInitiateBirth === true`. Chat 03 has now exposed that boolean in the private
+snapshot from the existing `attemptBirth()` eligibility as a pure, side-effect-free
+query. Server implementation commit: `75f99122c85d7b9df377354ef1ce9b68829bfe36`.
+
 Handoffs:
 
 - `H-20260906-011-04-CLIENT-STATIC-DEPLOY` → Chat 04.
 - `H-20260906-012-06-OI004-QA-DEFECTS` → Chat 06.
+- `H-20260906-013-03-OI004-BIRTH-ELIGIBILITY` → completed by Chat 03.
+- `H-20260906-014-06-OI004-BIRTH-INTEGRATION` → Chat 06 integration verification.
 
-After both fixes are verified, return to Chat 07 for browser/server integration and E2E release QA.
+After Chat 06 verifies the now-present field against client build/tests, return to
+Chat 07 for browser/server integration and E2E release QA. OI-004 remains open.
 
 ## OI-005 — Render/GitHub server tree deployment mismatch
 

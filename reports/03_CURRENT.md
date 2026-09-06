@@ -4,57 +4,62 @@
 
 ### Status
 
-Hoàn thành phạm vi transport của OI-006; đã bàn giao Chat 07 xác minh phát hành.
+Hoàn thành `H-20260906-013-03-OI004-BIRTH-ELIGIBILITY`; server đã expose
+authoritative Birth eligibility và bàn giao Chat 06 tích hợp/xác minh client.
 
 ### Changed
 
-- Chạy live Socket.IO smoke trên dịch vụ Render.
-- Thay smoke script cũ còn gọi `player:ready` bằng test đúng protocol hiện hành.
-- Thêm `npm run smoke:live` cho server.
-- Hoàn tất handoff `H-20260906-004-03-OI006`.
+- Thêm pure query `GameEngine.canInitiateBirth()` dùng cùng điều kiện eligibility
+  hiện có của `attemptBirth()`; không gọi action và không mutate state.
+- Private player snapshot luôn expose boolean `canInitiateBirth`, bao gồm `false`
+  khi phòng chưa khởi động hoặc người chơi không đủ điều kiện.
+- Refactor `attemptBirth()` dùng chung pure query sau các authoritative error guard;
+  không đổi gameplay rule, constant hay semantics lỗi hiện có.
+- Bổ sung regression true/false, giới hạn Birth hiện hành và kiểm tra không side
+  effect; đưa test vào `test` và `smoke` gates.
+- Cập nhật multiplayer protocol.
 
 ### Source
 
+- `server/backend/src/engine.ts`
+- `server/backend/src/authoritative-room.ts`
+- `server/backend/test/birth-eligibility-snapshot.mjs`
 - `server/backend/MULTIPLAYER_PROTOCOL_V50.md`
-- `server/backend/server/src/index.ts`
-- `reports/04_CURRENT.md`
-- Handoff `H-20260906-004-03-OI006`
-- Tested deployed runtime commit `bbd30f8c08d71903b99462c071f347eca33d042f`
-- Live smoke tooling commit `a6e423e39c8b17dadb403d3e59a42d7ac63a3994`
+- `server/backend/package.json`
+- Handoff `H-20260906-013-03-OI004-BIRTH-ELIGIBILITY`
+- Implementation commit `75f99122c85d7b9df377354ef1ce9b68829bfe36`
 
 ### Impact
 
-Server live đã chứng minh các đường transport nền tảng hoạt động đúng protocol.
-Client có thể tích hợp create/join/state/reconnect và `game:replay` theo contract
-v5.0. Việc loại `player:ready` khỏi smoke test ngăn test cũ báo sai.
+Client không còn phải suy diễn Birth/T7 từ trạng thái representative. Field chỉ
+true khi action `child:birth` phù hợp authoritative state hiện tại: đúng Voluntary
+turn và Household representative, couple hợp lệ, cả hai spouse ở worker age, và
+chưa chạm event Birth limit của vòng hiện tại.
 
 ### Verified
 
-- External `GET /health`: PASS (`ok: true`, version `5.0.0`).
-- Live WebSocket Socket.IO handshake: PASS.
-- Live event paths: `room:create`, `room:join`, `room:get-state`, `game:start`,
-  `game:replay`, `room:reconnect`, `game:action`, `room:state`, `player:state`.
-- Reconnect semantics: disconnect chuyển Character cũ sang NPC takeover; Human
-  trở lại Waiting Queue #1 bằng reconnect token.
-- Authoritative error acks: `NOT_BOUND`, `HOST_ONLY`, `GAME_NOT_ENDED`,
-  `INVALID_RECONNECT_TOKEN`, `NO_ACTIVE_CHARACTER`.
-- Local smoke bằng cùng test: PASS.
-- Server typecheck: PASS.
-- Contract regression: PASS 9/9 events.
-- Server build: PASS.
+- Backend `npm run release:check`: PASS.
+- Typecheck: PASS.
+- Rule Ledger: PASS 42/42.
+- OI-002 regression: PASS 6/6.
+- OI-001 regression: PASS 9/9.
+- Birth eligibility regression: PASS, gồm true/false và state không đổi sau query/snapshot.
+- Fuzz: PASS 20 games.
+- Final simulation: PASS 30 games.
+- Nested server typecheck: PASS.
+- Socket event contract: PASS 9/9.
+- Nested server build: PASS.
 
 ### Unverified
 
-- Chưa kiểm thử client end-to-end.
-- Chưa kiểm thử `game:replay` thành công sau khi chơi hết 32 vòng; live test đã
-  xác minh handler và authoritative precondition qua `GAME_NOT_ENDED`.
-- Chat 07 chưa hoàn tất release validation cuối của OI-006.
+- Chưa chạy client/browser E2E với field mới.
+- Chưa xác minh T7/Birth UI live; thuộc bước tích hợp Chat 06 rồi release QA Chat 07.
 
 ### Handoff
 
-Chat 07 xử lý `H-20260906-005-07-OI006` để xác minh phát hành cuối cho OI-006.
+Chat 06 xử lý `H-20260906-014-06-OI004-BIRTH-INTEGRATION`: xác nhận snapshot
+contract trong client, chạy client tests/build và trả OI-004 về Chat 07 để E2E.
 
 ### Open Issues
 
-- OI-006: live transport verified, pending Chat 07 release validation.
-- OI-004 và phần client tổng thể vẫn chưa hoàn thành.
+- OI-004: server dependency đã giải quyết; vẫn OPEN chờ client integration và browser E2E.

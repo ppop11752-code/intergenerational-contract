@@ -1,7 +1,7 @@
 handoff_id: H-20260906-013-03-OI004-BIRTH-ELIGIBILITY
 from: 06
 to: 03
-status: OPEN
+status: DONE
 title: Expose authoritative Birth eligibility for OI-004 client
 
 ## Context
@@ -43,4 +43,26 @@ The current private player snapshot does not expose that complete fact. Client n
 
 ## Result
 
-Pending Chat 03.
+Completed by Chat 03.
+
+- Added pure `GameEngine.canInitiateBirth()` using the existing authoritative
+  eligibility conditions without creating a proposal or mutating state.
+- Added `canInitiateBirth` to every private snapshot shape; lobby/no-engine and
+  all ineligible states return `false`.
+- Kept `attemptBirth()` gameplay behavior and authoritative error guards intact
+  while sharing the pure eligibility query.
+- Added regression coverage for eligible/ineligible states, current event limit,
+  and repeated query/snapshot side-effect checks.
+- Updated `MULTIPLAYER_PROTOCOL_V50.md`.
+
+Verification:
+
+- Backend `npm run release:check`: PASS.
+- Rule Ledger 42/42, OI-002 6/6, OI-001 9/9: PASS.
+- Birth eligibility snapshot regression: PASS.
+- Fuzz 20 games and final simulation 30 games: PASS.
+- Nested server typecheck/build and Socket event contract 9/9: PASS.
+
+Implementation commit: `75f99122c85d7b9df377354ef1ce9b68829bfe36`.
+
+Follow-up: `H-20260906-014-06-OI004-BIRTH-INTEGRATION`.
