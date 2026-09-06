@@ -1,59 +1,48 @@
 handoff_id: H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP
 from: 07
 to: 06
-status: OPEN
+status: DONE
 title: Fix Lobby QR renderer-unavailable fallback loop
 
 ## Context
 
-Chat 07 reran `H-20260907-033-07-LOBBY-QR-QA` after H034 cropping fix. The cropping/scannability defect is fixed: desktop and compact/mobile QR screenshots now decode correctly with full native quiet zone.
+Chat 07 reran `H-20260907-033-07-LOBBY-QR-QA` after H034 cropping fix. Cropping/scannability is already verified fixed; the remaining defect was an infinite MutationObserver-driven fallback rewrite when QRCode.js is unavailable.
 
-A second concrete client defect was found while verifying the required QRCode.js failure path.
+## Root cause
 
-## Defect
+`decorateLobby()` previously short-circuited only when the same URL had `data-qr-ready="1"`. Renderer failure set `data-qr-ready="0"`; writing fallback DOM triggered MutationObserver -> `refresh()` -> another rewrite for the same URL -> loop.
 
-In `client/src/qr-runtime.ts`, `decorateLobby()` only short-circuits when:
+## Fix
 
-`renderedFor === url && host.dataset.qrReady === "1"`
+`client/src/qr-runtime.ts` now treats both settled outcomes as idempotent for the current host + URL:
 
-When `window.QRCode` is unavailable:
-1. `decorateLobby()` rewrites `.qr-placeholder` via `host.innerHTML`;
-2. catch writes `.qr-fallback` and sets `data-qr-ready="0"`;
-3. the global `MutationObserver` sees the child-list mutation and schedules `refresh()`;
-4. because `qrReady !== "1"`, `decorateLobby()` rewrites the same host again;
-5. this repeats continuously.
+- `data-qr-ready="1"` = QR rendered successfully;
+- `data-qr-ready="0"` = fallback rendered;
+- if `renderedFor===url` and the current host is settled in either state, `decorateLobby()` returns without rewriting DOM;
+- `renderedFor=url` is assigned before the first host mutation so the observer cannot race the state update.
 
-Repeated browser fallback harnesses consistently hang only when QRCode is unavailable. The source control flow explains the hang deterministically.
+A newly created Lobby host has no settled data attribute, so a normal re-render/navigation can still attempt QR rendering again without timers or protocol changes.
 
-## Required fix
+Fallback text remains exactly:
+`Không tạo được mã QR — hãy nhập mã phòng.`
 
-- Make renderer-unavailable/error fallback idempotent for the same room URL.
-- Once fallback for the same URL is rendered, unrelated DOM mutations must not repeatedly rewrite `.qr-placeholder`.
-- Preserve the exact required text: `Không tạo được mã QR — hãy nhập mã phòng.`
-- Keep large PIN, Host Start, and manual/copy deep-link usable.
-- If the QR renderer later becomes available, retry behavior may be supported only if it does not create a mutation loop; do not introduce timers or protocol/gameplay changes.
-- Add a regression that can falsify repeated fallback rendering / mutation-loop behavior.
+Large PIN, Host Start, copy-link, canonical deep-link payload and explicit Join flow are unchanged.
 
-## Evidence already PASS after H034
+## Regression
 
-Main browser QA artifact from run `34051902501` / head `46eca73a2363aa77ea0cb2958d277e8c7bf7e1b8`:
-- clean client suite: 33/33 PASS;
-- 21 production browser checks PASS before fallback harness entry;
-- desktop QR native decode PASS;
-- mobile 390x844 native decode PASS;
-- exact same-origin payload PASS;
-- privacy boundary PASS;
-- 192x192 modules + 16px quiet zone PASS;
-- Host Start PASS;
-- copy-link PASS;
-- clipboard failure non-blocking PASS;
-- deep-link Landing/prefill/no-auto-join/explicit join PASS;
-- invalid query and stale `ROOM_NOT_FOUND` PASS.
+`client/test/qr-contract.test.mjs` now asserts:
+- both ready and fallback are considered settled;
+- same URL + settled host short-circuits;
+- rendered URL is recorded before host `innerHTML` mutation;
+- renderer fallback still sets `data-qr-ready="0"`;
+- MutationObserver remains present without creating repeated fallback rewriting.
 
-Artifact `9994809830`, digest `sha256:a5fadb67afd962b9445e6ef1482b234418e0bb709205b0b64ba6d89941c29290`.
+## Verification
 
-## Constraints
-
-- Client presentation/runtime only.
+- Focused TypeScript compile for current `qr-contract.ts` + `qr-runtime.ts`: PASS.
 - No gameplay/server/protocol changes.
-- Return H033 to Chat 07 for final fallback rerun after fix.
+- Full browser fallback rerun remains Chat 07 responsibility.
+
+## Handoff
+
+`H-20260907-033-07-LOBBY-QR-QA` reopened for final renderer-unavailable fallback verification.
