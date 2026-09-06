@@ -4,68 +4,66 @@
 
 ### Status
 
-Hoàn thành — `H-20260907-033-07-LOBBY-QR-QA` PASS. QR cropping và renderer-unavailable fallback loop đều đã được sửa và independently rerun thành công.
+Bị chặn — `H-20260907-038-07-UIUX-ART-FINAL-QA` source/regression PASS nhưng production runtime không có raster assets do Docker image bỏ sót `client/public/`.
 
 ### Changed
 
-- Rerun H033 sau `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP`.
-- Final workflow `Lobby QR E2E` run `34052814658`, head `02bd76f002d7aec439a8771cd32639cb0478f991` PASS.
-- Artifact `9995069093`, digest `sha256:c8eccea29c6c934d4c124688323de345c6675180dc0a99b430ef1853e24cf7ca`.
-- Clean client suite: 33/33 PASS.
-- Browser QA: 25/25 PASS.
-- Renderer-unavailable fallback now completes without MutationObserver hang and preserves exact fallback wording, PIN and Host Start.
-- H033 closed. No new defect handoff.
+- Đọc H038, H037, `docs/UI_ART_ASSET_CONTRACT_V1.md` và `docs/UI_ART_BINARY_REVIEW_V1.md`.
+- Thêm QA-only `qa/uiux-art-final-e2e.mjs` + `.github/workflows/uiux-art-final-e2e.yml` cho final desktop/mobile Wave 4 art gate.
+- Clean client suite PASS **37/37**, gồm final Wave 4 manifest, production raster hooks, presentation-only art runtime, action payload regressions, Tutorial và QR regressions.
+- Initial browser attempt bị deployment timing race và không được tính là product defect.
+- Final diagnostic run `34054650882`, head `b549df7e54194b4a062bc90e958cbc01e2f156f7`: Render đã live trước browser execution nhưng live client vẫn `data-ui-art="fallback"`; toàn bộ required asset readiness markers thiếu.
+- Root cause xác nhận trong `Dockerfile`: runtime stage copy `index.html`, `styles.css`, compiled `dist/` nhưng không copy `client/public/`; server dùng `STATIC_DIR=/app/client`.
+- Tạo `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS` cho Chat 04; H038 chuyển BLOCKED.
 
 ### Source
 
-- `handoffs/H-20260907-033-07-LOBBY-QR-QA.md`
-- `handoffs/H-20260907-034-06-LOBBY-QR-CROPPING.md`
-- `handoffs/H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP.md`
-- `docs/UI_QR_CONTRACT_V1.md`
-- `client/src/qr-runtime.ts`
-- `client/src/qr-contract.ts`
-- `client/test/qr-contract.test.mjs`
-- `qa/lobby-qr-e2e.mjs`
-- workflow run `34052814658`
-- artifact `9995069093`
+- `handoffs/H-20260907-038-07-UIUX-ART-FINAL-QA.md`
+- `handoffs/H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS.md`
+- `docs/UI_ART_ASSET_CONTRACT_V1.md`
+- `docs/UI_ART_BINARY_REVIEW_V1.md`
+- `client/src/ui-assets.ts`
+- `client/public/assets/ui/v1/manifest.json`
+- `Dockerfile`
+- `server/backend/server/src/index.ts`
+- `qa/uiux-art-final-e2e.mjs`
+- `.github/workflows/uiux-art-final-e2e.yml`
+- workflow run `34054650882`
+- artifact `9995595825`
+- digest `sha256:26f6bc41e11f686220a9c3419c9ecd5f285f299ff6453e6862da6a0e02b59404`
 
 ### Impact
 
-Lobby QR navigation/presentation contract is now release-QA verified at this scope. No gameplay/server/protocol behavior changed. Full player-facing UI is still not globally release-ready while `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` final art/visual-complete scope remains open.
+Wave 4 art source/integration is present and deterministic regressions pass, but deployed players still receive fallback presentation because production image omits the binary asset directory. Therefore H038/H019 cannot close and full player-facing UI is not release-ready. No gameplay/server protocol rule is affected.
 
 ### Verified
 
-- Clean client build/tests: PASS 33/33.
-- Large PIN + QR simultaneous: PASS.
-- Desktop native QR decode: PASS.
-- Mobile 390x844 native QR decode: PASS.
-- 192x192 modules + 16px white quiet zone, no clipping: PASS.
-- Exact same-origin uppercase room payload: PASS.
-- Payload privacy boundary: PASS.
-- Host Start usable with QR: PASS.
-- Copy-link exact payload: PASS.
-- Clipboard failure non-blocking: PASS.
-- Valid deep-link Landing/prefill/helper: PASS.
-- No auto-join before explicit `THAM GIA`: PASS.
-- Explicit Join uses normal `room:join`: PASS.
-- Invalid query ignored and normal Join usable: PASS.
-- Stale room surfaces existing `ROOM_NOT_FOUND`: PASS.
-- QRCode.js unavailable fallback: PASS; exact text shown, browser run completes without loop/hang, PIN and Host Start remain usable, no fake QR canvas/image.
-- H034 and H035 introduced no gameplay/server/protocol change.
+- Chat 05 raster binary batches A–D: APPROVED.
+- Chat 06 final integration source present.
+- Clean client build/tests: **37/37 PASS**.
+- Final Wave 4 manifest/hooks/presentation-only tests: PASS.
+- Market/Recovery/Support/Marriage non-default payload capture regressions: PASS.
+- Birth response, Tutorial, waiting queue and QR contract regressions: PASS.
+- Render tested head was `live` before diagnostic browser execution.
+- Live art runtime status: `fallback`; all required raster readiness markers absent.
+- Production Docker runtime omits `client/public/` while `STATIC_DIR=/app/client`.
 
 ### Unverified
 
-- Final raster-art / visual-complete scope under H019 remains outside H033 and still requires its own completion/QA.
+- Required raster assets loading in deployed production runtime after packaging fix.
+- Final desktop/mobile terrain/landmark/residence/icon/frame/portrait/ambience composition.
+- Final art/timer browser smoke after packaging fix.
+- H019 full UI/UX closure.
 
 ### Handoff
 
-Không có handoff lỗi mới. Chat 06 tiếp tục `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`; Chat 07 QA lại khi có handoff cho final art/visual scope.
+Chat 04 xử lý `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS`. Sau khi deployed manifest/raster assets được phục vụ, trả H038 về Chat 07 để rerun final desktop/mobile gate. Chỉ trả Chat 06 nếu sau deploy xuất hiện client integration defect riêng.
 
 ### Open Issues
 
+- `H-20260907-038-07-UIUX-ART-FINAL-QA`: BLOCKED / FAIL pending deployment packaging fix.
+- `H-20260907-039-04-DEPLOY-UI-ART-PUBLIC-ASSETS`: OPEN.
+- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN pending final art QA.
 - `H-20260907-033-07-LOBBY-QR-QA`: DONE / PASS.
-- `H-20260907-034-06-LOBBY-QR-CROPPING`: DONE / independently verified.
-- `H-20260907-035-06-LOBBY-QR-FALLBACK-LOOP`: DONE / independently verified by final browser rerun.
-- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN — final art/visual scope.
 - `H-20260907-029-07-UIUX-DISPLAY-QA`: DONE / PASS.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
