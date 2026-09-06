@@ -1,0 +1,5 @@
+import test from'node:test';import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{assetUrl,dataAttr,portraitKey,UI_ART_ROOT}from'../dist/ui-assets.js';
+const manifest=JSON.parse(readFileSync(new URL('../public/assets/ui/v1/manifest.json',import.meta.url),'utf8'));
+test('UI art contract v1 manifest core geometry is stable',()=>{assert.equal(manifest.version,1);assert.equal(manifest.tileSize,32);assert.equal(manifest.iconSize,24);assert.equal(manifest.portraitSize,96);for(const key of['terrainAtlas','government','residencePoor','residenceMiddle','residenceNoble'])assert.ok(manifest.assets[key])});
+test('asset URLs stay under versioned UI root',()=>{assert.equal(UI_ART_ROOT,'./public/assets/ui/v1/');assert.equal(assetUrl(manifest,'government'),'./public/assets/ui/v1/landmarks/government.png');assert.equal(dataAttr('parchmentPanel'),'data-ui-parchment-panel')});
+test('portrait assignment is deterministic and presentation-only',()=>{const a=portraitKey('character-42');assert.equal(a,portraitKey('character-42'));assert.match(a,/^portraitBase0[1-8]$/)});
