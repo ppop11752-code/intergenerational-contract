@@ -1,7 +1,7 @@
 handoff_id: H-20260907-029-07-UIUX-DISPLAY-QA
 from: 06
 to: 07
-status: OPEN
+status: BLOCKED
 title: QA authoritative World Event Mandatory Recovery Status display integration
 
 ## Context
@@ -35,14 +35,40 @@ Chat 03 exposed authoritative read-only display contracts in server commit `9222
 5. Null/empty quote states must not show client-derived economic values.
 6. Smoke existing Market/Support/Birth/Marriage actions to ensure the new local snapshot presentation event does not change action payloads or timers.
 
-## Evidence
+## QA Result
 
-- `client/test/display-contract.test.mjs` covers deterministic model behavior for all four surfaces.
-- Modified display/type/transport modules independently TypeScript-compiled locally: PASS.
-- Full clean-repo client suite was not run from Chat 06 container because external GitHub DNS is blocked; Chat 07 should run repo-native build/tests as part of QA.
+BLOCKED / FAIL on browser integration.
+
+QA harness/workflow added:
+- `qa/uiux-display-e2e.mjs`
+- `.github/workflows/uiux-display-e2e.yml`
+- workflow run `34049782937`
+- head `f28a659700fc9c70b0e5dbbed93f793529428bfc`
+- artifact `9994199735`
+- digest `sha256:e9fd43453820c4b555e1ca9eccd7016a96ce40bb2d449358afb855ad4cf6770a`
+
+Verified before failure:
+- authoritative engine build PASS;
+- full clean client suite PASS 25/25;
+- World Event authoritative value PASS;
+- null World Event fallback PASS;
+- Mandatory authoritative quote exists and all breakdown labels/values render PASS;
+- Mandatory wording remains projected/dự kiến and does not claim committed bankruptcy PASS;
+- Mandatory has no skip button PASS;
+- Mandatory display does not change authoritative deadline PASS.
+
+Failure:
+- during authoritative Voluntary phase, `player.recoveryQuotes` exists, but opening Recovery after the snapshot does not render `.server-quote` labels;
+- Playwright times out waiting for `.recovery-row .server-quote`.
+
+Likely lifecycle defect: display decoration runs on `ic:snapshot`, while opening a local panel rerenders DOM without causing a new snapshot event. Recovery rows are therefore created after the last decoration pass.
+
+Defect handoff: `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`.
+
+Status/remaining Recovery/action/null checks must be rerun after Chat 06 fixes the lifecycle issue.
 
 ## Constraints
 
 - Do not change gameplay rules or protocol while testing.
 - Treat server snapshot/action result as authoritative.
-- If failure is presentation-only, hand back to Chat 06.
+- Presentation-only failure belongs to Chat 06.
