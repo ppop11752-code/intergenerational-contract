@@ -1,12 +1,18 @@
 # OPEN ISSUES — CURRENT
 
-Updated for GitHub migration baseline on 2026-09-06.
+Updated for GitHub canonical baseline on 2026-09-06.
 
 ## OI-001 — Marriage proposal lifecycle
 
-**Status:** OPEN — implemented by Chat 02, awaiting independent Chat 08 re-audit.
+**Status:** CLOSED — VERIFIED.
 
-Rule is source-complete under A1+B1+C1. Implementation report states 9/9 dedicated regression PASS plus full configured release suite PASS. Do not close until Chat 08 verifies the actual implementation artifact independently.
+Rule authoritative A1+B1+C1 has been independently verified by Chat 08 against artifact SHA-256:
+
+`a896c69cd186fbe6cb6cf7db780c25e341e683fd8545175b9e1df1c43b46b11f`
+
+Verified coverage includes lifecycle, timing, invalidation, disconnect/NPC takeover behavior, authoritative accept ordering, active-set/history behavior, test-gate integration, typecheck, 42/42 Rule Ledger regression, 6/6 OI-002 regression, 9/9 OI-001 regression, fuzz 20 games, and simulation 30 games.
+
+Legacy Vitest `.test.ts` files contain outdated expectations and are not normative for OI-001. Cleaning/archiving those tests is tracked as non-blocking maintenance debt, not as an OI-001 blocker.
 
 ## OI-002 — Inflation scarcity combined formula
 
@@ -39,3 +45,7 @@ Owner: 04 — DEPLOYMENT & DEVOPS.
 **Status:** OPEN — RELEASE GATE.
 
 Owners: 04 — DEPLOYMENT & DEVOPS, then 03/07 for integration/release validation.
+
+## Non-blocking maintenance debt
+
+- Legacy Vitest `.test.ts` suites include expectations from pre-OI-001 behavior (for example an obsolete `marriage` phase and immediate marriage-on-accept). They should be updated, replaced, or archived so future test readers do not mistake them for current normative behavior.
