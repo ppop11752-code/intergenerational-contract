@@ -1,63 +1,45 @@
 handoff_id: H-20260907-028-06-UIUX-DISPLAY-INTEGRATION
 from: 03
 to: 06
-status: OPEN
+status: DONE
 title: Integrate authoritative UI UX display contracts
 
-## Context
+## Result
 
-Chat 03 completed `H-20260907-025-03-UIUX-DISPLAY-CONTRACT`. The remaining
-World HUD, Mandatory, Recovery and Status display facts are now available from
-authoritative snapshots without client-side economic calculations.
+Integrated the authoritative display contracts from server commit `9222968e2aba9970cd2f7038b9b901b304f40a89` without duplicating gameplay calculations.
 
-## Contract
+### Client changes
 
-### Public game snapshot
+- Added exact snapshot types for:
+  - public `game.eventName`;
+  - private `mandatoryQuote`;
+  - private `recoveryQuotes`;
+  - private `statusQuote`.
+- Added `client/src/display-contract.ts` presentation layer.
+- `GameTransport` now emits local browser event `ic:snapshot` after authoritative room/player snapshot updates; this is client presentation plumbing only and does not change network protocol.
+- Bootstrapped display renderer before `main.js`.
 
-- `eventName: string | null`
+### Rendering
 
-### Private player snapshot
+- World HUD renders authoritative `eventName`, with `Không có` null fallback.
+- Mandatory renders authoritative breakdown and projected liquidation/bankruptcy values; projected outcomes are explicitly labeled as estimates for the current snapshot, not committed resolution.
+- Recovery renders per-grade current pool, carrying capacity, pending-next-round, remaining capacity and cost/unit directly from `recoveryQuotes`.
+- Status renders authoritative fees/persons/affordability plus Noble slots, priority, fallback Middle fee and potential refund.
+- Null/empty quotes leave existing safe baseline presentation instead of client-derived values.
 
-- `mandatoryQuote` during the current player's Mandatory phase, otherwise `null`:
-  - `breakdown` with `living`, `socialContribution`, `tax`, `childSupport`,
-    `parentSupport`, `grief`, `medical`, `total`;
-  - `netIncome`, `cashBefore`, `liquidationRequired`, `liquidationProceeds`,
-    `cashAfterLiquidation`, `projectedBankruptcy`, `shortfall`, `dominantCost`.
-- `recoveryQuotes` during the current player's Voluntary phase, otherwise `[]`:
-  - per grade: `grade`, `currentPool`, `carryingCapacity`, `pendingNextRound`,
-    `capacityRemaining`, `costPerUnit`.
-- `statusQuote` during the current representative's Status phase, otherwise `null`:
-  - `roundAverageAssets`, `priceIndex`;
-  - `cards`: `status`, `fee`, `personsCharged`, `affordable`;
-  - `nobleCompetition`: `slotsTotal`, `slotsRequired`, `pendingNobleSlots`,
-    `incumbent`, `householdAssets`, `turnCard`, authoritative priority order,
-    end-round allocation timing, Middle fallback fee and potential refund.
+### Verification
 
-All quotes are side-effect-free. Values describe the snapshot at emission time;
-submitted actions are revalidated by the server against current state.
+- Added `client/test/display-contract.test.mjs` covering all four display contracts.
+- Modified modules were independently TypeScript-compiled and deterministic summary tests passed locally.
+- Full repo clone/full clean-repo client suite could not be run from the container because external GitHub DNS is unavailable; no false full-suite PASS claim is made here.
 
-Implementation commit:
+## Constraints preserved
 
-`9222968e2aba9970cd2f7038b9b901b304f40a89`
+- No gameplay rules/constants/actions/timers changed.
+- No client economic/eligibility calculations added.
+- Server remains authoritative and revalidates submitted actions.
+- No hidden NPC Persona exposed.
 
-## Required work
+## Handoff
 
-1. Add the exact snapshot types without duplicating calculations in the client.
-2. Render World Event, Mandatory details, Recovery cost/pending details and Status
-   fee/competition/refund details with safe null/empty fallbacks.
-3. Label Mandatory bankruptcy/liquidation values as projected during the timed
-   presentation; do not present a quote as a committed result before resolution.
-4. Run client build/tests and add deterministic regression for all four surfaces.
-5. Update `reports/06_CURRENT.md` and the parent UI/UX implementation handoff.
-6. Route the integrated surfaces to Chat 07 for browser/server QA.
-
-## Constraints
-
-- Do not derive economic values or eligibility client-side.
-- Do not change gameplay rules, constants, actions or timers.
-- Do not expose hidden NPC Persona.
-
-## Expected output
-
-- Four display surfaces consuming canonical snapshot fields.
-- Client verification and QA handoff.
+Chat 07 should run browser/server QA via `H-20260907-029-07-UIUX-DISPLAY-QA`.
