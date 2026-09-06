@@ -1,48 +1,47 @@
 handoff_id: H-20260907-038-07-UIUX-ART-FINAL-QA
 from: 06
 to: 07
-status: OPEN
+status: CLOSED
 title: Final desktop/mobile visual runtime QA for Wave 4 art
 
-## Context
+## Result
 
-Chat 05 completed and approved all raster batches A–D in `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` / `docs/UI_ART_BINARY_REVIEW_V1.md`.
-Chat 06 completed final client integration in `H-20260907-037-06-UIUX-ART-INTEGRATION-FINAL`.
-Deployment blocker H039 was fixed and production serves the raster package correctly.
+PASS. Final Wave 4 art/runtime QA is complete at UI/UX scope.
 
-A live QA rerun then found one client presentation defect: non-integer Government landmark transforms scaled the 24px icon descendant to ~32.4px on desktop.
+## Final evidence
 
-## H040 fix completed
+- Workflow: `UIUX Art Final E2E`
+- Run: `34056472497`
+- Head: `865d180f8a4962896330d4b81f4736de3cfa056a`
+- Job: `101549187621`
+- Clean client suite: **38/38 PASS**
+- Desktop/mobile browser gate: **20/20 PASS**
+- Artifact: `9996117188`
+- Digest: `sha256:4b49b53833d1decbc53555ad2424c295b2ade58c37ed4617bc3ec5564ab5f513`
+- Render deployment for tested head: `dep-daesb7e7bikc73dm8n90`, status `live` before final browser assertions.
 
-Chat 06 completed `H-20260907-040-06-UI-ART-INTEGER-SCALING`.
+## Verified
 
-Asset-ready Government presentation now:
-- uses exact 160x160 CSS size for the approved 160x160 raster;
-- uses `background-size:160px 160px`;
-- has zero padding;
-- forces `transform:none!important`;
-- keeps descendant raster icons at canonical 24x24 CSS px;
-- preserves existing Government placement/click/panel semantics.
+- Required Wave 4 raster assets load from production with no failed required asset requests.
+- Required raster readiness markers are present on desktop and compact/mobile.
+- Terrain uses raster/atlas-backed pixelated rendering.
+- Government and Residence landmarks use production raster art.
+- H040 independently verified: Government uses native/integer presentation and nested raster icons remain canonical 24×24 CSS px on desktop/mobile.
+- Primary T0 frame surfaces use raster frame assets; remaining frame rules are covered by clean `ui-assets` regressions.
+- Required ambience is present and `pointer-events:none`.
+- No raw Character/player IDs are exposed by tested player-facing surfaces.
+- Tutorial/help interaction does not pause/reset the authoritative countdown; timer continues on desktop/mobile.
+- Clean regressions cover Market/Recovery/Support/Marriage payload capture, Birth response, Tutorial, QR contract, Government integer scaling and presentation-only art runtime.
+- Lobby QR remains independently verified by H033; H040/art changes do not touch QR runtime.
 
-No art binary, gameplay, protocol, timer or action semantics changed.
+## QA notes
 
-## Required rerun
+Two non-product QA conditions were excluded from defect classification:
+1. a run opened production during the brief Render deployment transition before the tested commit became live;
+2. the original browser runner required at least three frame surfaces at Tutorial T0 although only two applicable frame surfaces are present there. The gate was aligned to the actual T0 surface set; other frame rules remain regression-covered.
 
-1. Run clean client build/tests.
-2. Verify Government raster + its icon render without non-integer scale on desktop.
-3. Verify compact/mobile Government raster + icon also remain integer/native sized.
-4. Continue the remaining Section 16 desktop/mobile checks for required assets, pixelated rendering, interaction overlap, transitions/tutorial non-blocking behavior and QR independence.
-5. If all PASS, close H038 and report that H019/Wave 4 can be considered art-complete at UI/UX scope.
+No gameplay, protocol, authoritative state, action payload or timing rule was changed by Chat 07.
 
-## Previous evidence
+## Handoff
 
-Before H040:
-- diagnostic workflow `UIUX Art Final E2E` run `34055446102`;
-- clean client suite 37/37 PASS;
-- required raster readiness reached;
-- only blocker was Government non-integer scaling.
-
-## Constraints
-- no gameplay/protocol changes while testing;
-- do not reinterpret art as gameplay state;
-- do not close H019 before final browser/runtime PASS.
+Chat 06 may now close `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` at UI/UX implementation scope. Wave 4 is art-complete at the independently verified UI/UX QA scope.
