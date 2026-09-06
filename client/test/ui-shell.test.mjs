@@ -6,3 +6,4 @@ test('support does not ask for raw Character ID',()=>{assert.ok(!main.includes('
 test('incoming birth proposal response UI exists',()=>{assert.ok(main.includes('child:respond'));assert.ok(main.includes('incomingBirthProposals'))});
 test('waiting queue is dedicated and actionless',()=>{assert.ok(main.includes('HÀNG CHỜ TÁI SINH'));assert.ok(main.includes('queue-card'))});
 test('host-only replay presentation exists',()=>{assert.ok(main.includes('host()?`<button id="replay"'))});
+test('support selector consumes authoritative targets without visible ids',()=>{assert.ok(main.includes('eligibleSupportTargets'));assert.ok(main.includes('id="support-target"'));assert.ok(main.includes('Cha/mẹ'));assert.ok(main.includes('Con'));assert.ok(!main.includes('placeholder="Character ID"'))});
