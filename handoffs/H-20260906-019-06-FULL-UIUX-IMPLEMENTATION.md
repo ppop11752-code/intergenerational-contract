@@ -31,8 +31,8 @@ IMPLEMENTED + AUTHORITATIVE DISPLAY QA PASS:
 - Status authoritative fee/Noble competition/fallback/refund;
 - Market six-card;
 - Recovery authoritative quote;
-- Support/Birth/Marriage.
-- H-030 late-render display decoration fixed.
+- Support/Birth/Marriage;
+- H-030 late-render display decoration fixed;
 - H-029 browser-authoritative QA: 67/67 PASS; clean client suite 27/27 PASS; engine build PASS.
 
 ### Wave 3
@@ -44,16 +44,13 @@ IMPLEMENTED structurally:
 - End Report Ranking/Journey/World + host-only Replay.
 
 ### Lobby QR closure
-IMPLEMENTED in `H-20260907-032-06-LOBBY-QR-INTEGRATION` from locked `docs/UI_QR_CONTRACT_V1.md`:
-- QR payload = same-origin `/?room=<ROOM_CODE>`;
-- valid query prefills Join code in uppercase;
-- no auto-join;
-- large room PIN remains independent fallback;
-- QR renderer failure gives plain-language manual-code fallback;
-- optional copy-link uses identical public payload;
-- no server/protocol change.
-
-QA handoff: `H-20260907-033-07-LOBBY-QR-QA`.
+IMPLEMENTED + QA PASS:
+- `H-20260907-032-06-LOBBY-QR-INTEGRATION` DONE from locked `docs/UI_QR_CONTRACT_V1.md`;
+- H-034 cropping defect fixed;
+- H-035 renderer-unavailable fallback loop fixed;
+- `H-20260907-033-07-LOBBY-QR-QA` DONE / PASS;
+- final QR QA: clean client suite 33/33 PASS, browser QA 25/25 PASS;
+- desktop/mobile native decode, same-origin payload, privacy boundary, deep-link prefill, no-auto-join, stale/invalid handling, copy-link, Host Start and renderer-fallback all PASS.
 
 ### Wave 4
 INTEGRATION-READY but NOT ART-COMPLETE:
@@ -62,23 +59,33 @@ INTEGRATION-READY but NOT ART-COMPLETE:
 - non-blocking ambient motion;
 - v1 asset manifest/loader/fallback/deterministic portrait scaffolding.
 
-Final raster binaries are still absent. Current CSS/placeholders are development fallback only and do not satisfy `UI_ART_ASSET_CONTRACT_V1.md` Section 16.
+Direct GitHub verification on `main` still shows `client/public/assets/ui/v1/` contains only:
+- `README.md`;
+- `manifest.json`.
+
+Required raster PNG/WebP files and subfolders are absent. Current CSS/placeholders remain development fallback only and do not satisfy `UI_ART_ASSET_CONTRACT_V1.md` Section 16.
 
 ## Verification
 
 - Display QA: PASS 67/67 browser checks; clean client suite 27/27; engine build PASS.
-- QR modules independent TypeScript check: PASS.
-- QR regression added under `client/test/qr-contract.test.mjs`.
-- Full clean client suite after the newest QR integration is pending Chat 07 rerun.
+- Lobby QR final QA: clean client suite 33/33 PASS; browser QA 25/25 PASS.
+- QR and authoritative display semantics are no longer blockers.
+- Asset tree rechecked directly on GitHub `main`: no production raster binaries present.
 
-## Remaining blockers
+## Current blocker
 
-1. `H-20260907-033-07-LOBBY-QR-QA` must verify browser scan/decode/prefill/no-auto-join/fallback.
-2. Real raster PNG/WebP binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` are still absent.
-3. After real assets are integrated, Chat 07 must run final Section 16 visual/runtime regression.
+Only final art delivery/visual closure remains:
+1. Chat 05 must produce/import and visually approve required raster batches A–D under the exact `client/public/assets/ui/v1/` manifest paths.
+2. Chat 06 must integrate approved real binaries and remove corresponding CSS geometry/placeholders from production presentation while keeping load-failure fallback only.
+3. Chat 07 must run final `UI_ART_ASSET_CONTRACT_V1.md` Section 16 visual/runtime QA.
+
+Created:
+- `H-20260907-036-05-UIUX-ART-BINARY-PRODUCTION` -> Chat 05.
 
 ## Blocked state
 
-H-019 remains BLOCKED only on QR browser QA + real art binaries/final visual QA. QR semantics are no longer ambiguous and server display dependencies are resolved.
+H-019 remains **BLOCKED**, but now only on real raster art binary delivery + Chat 06 integration + final Chat 07 visual/runtime QA.
 
-Do not declare art-complete or player-facing release-ready until those remaining blockers pass.
+There is no further safe independent Chat 06 work until at least Batch A is present and APPROVED. Do not fabricate binaries, atlas coordinates or production art from CSS placeholders.
+
+Do not declare art-complete or player-facing release-ready until all required batches are integrated and final visual/runtime QA passes.
