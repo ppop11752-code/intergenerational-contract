@@ -4,66 +4,65 @@
 
 ### Status
 
-Hoàn thành — OI-004 PASS ở cấp Release & QA; final live browser/server E2E đã có bằng chứng độc lập qua GitHub-hosted Playwright runner.
+Hoàn thành — `H-20260906-021-07-UIUX-WAVE1-QA` PASS WITH WARNINGS. Wave 1/P0 player-facing flow đã có live browser/server E2E evidence; chưa đánh dấu toàn UI release-ready vì Wave 2–4 và Support server dependency vẫn còn ngoài phạm vi handoff này.
 
 ### Changed
 
-- Xử lý `H-20260906-017-07-OI004-E2E-EVIDENCE` và `H-20260906-017-07-OI004-FINAL-QA`.
-- Độc lập kiểm tra GitHub Actions run `34039901844`, job `live-e2e`, artifact `9991351341` và runner source.
-- Xác nhận artifact digest `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2` và 5 file evidence.
-- Xác nhận live browser PASS cho page load, same-origin Socket.IO, Tutorial entry/T0, help recap non-blocking, Birth gating ở state `canInitiateBirth=false`, và normal multiplayer không có Tutorial overlay.
-- Kết hợp live evidence với deterministic client/server regression cho `canInitiateBirth` false/true và Tutorial trigger logic T0–T11.
-- Kết luận không cần ép live `canInitiateBirth=true` hoặc chơi đủ 32 vòng chỉ để lặp lại deterministic logic đã có regression coverage; không có release policy nào yêu cầu điều đó.
-- Đóng OI-004 và handoff final E2E trước đó.
+- Rà `reports/06_CURRENT.md`, client production shell, transport, regression tests và `H-20260906-020-03-SUPPORT-TARGETS`.
+- Thêm QA-only Playwright runner `qa/uiux-wave1-e2e.mjs` + workflow `.github/workflows/uiux-wave1-e2e.yml`; không thay gameplay/client/server production semantics.
+- Hai run đầu fail do runner assumptions và đã được phân loại là test-tooling defects, không phải product defects.
+- Final GitHub Actions run `34045789102` PASS; artifact `9993058844`, digest `sha256:ea19d392569df1eed39a9a0ebcc599d22bb9ea282dc820251339283307d09955`.
+- Final live E2E đạt 14/14 checks PASS trên Render.
 
 ### Source
 
-- `handoffs/H-20260906-017-07-OI004-E2E-EVIDENCE.md`
-- `handoffs/H-20260906-017-07-OI004-FINAL-QA.md`
-- `handoffs/H-20260906-015-07-OI004-FINAL-E2E.md`
-- `reports/03_CURRENT.md`
-- `reports/04_CURRENT.md`
+- `handoffs/H-20260906-021-07-UIUX-WAVE1-QA.md`
 - `reports/06_CURRENT.md`
-- `.github/workflows/live-client-e2e.yml`
-- `qa/live-client-e2e.mjs`
+- `client/src/main.ts`
+- `client/src/transport.ts`
+- `client/test/ui-shell.test.mjs`
 - `client/test/tutorial.test.mjs`
-- GitHub Actions run `34039901844`, head SHA `8facc98a38b654a30cad24aaf13667c78a529705`
-- Artifact `9991351341`
+- `handoffs/H-20260906-020-03-SUPPORT-TARGETS.md`
+- `qa/uiux-wave1-e2e.mjs`
+- `.github/workflows/uiux-wave1-e2e.yml`
 - Live URL `https://intergenerational-contract.onrender.com`
+- Successful run `34045789102`, head SHA `7865f3a182a6b5ebd08c83b3f0ffd99ebed55a8f`
+- Artifact `9993058844`
 
 ### Impact
 
-OI-004 không còn là release blocker. Các Open Issues OI-001–OI-006 hiện đều CLOSED/VERIFIED ở phạm vi đã định nghĩa. Project đạt release-ready ở cấp QA hiện tại, ngoại trừ maintenance debt đã được ghi rõ là non-blocking.
+Wave 1/P0 core player flow có bằng chứng live integration. Không có defect mới cần trả Chat 06/03. Support vẫn ở safe unavailable state cho tới khi Chat 03 hoàn thành authoritative target list. Wave 2–4 không được nâng trạng thái bởi QA này.
 
 ### Verified
 
-- Workflow job `live-e2e`: completed / success.
-- Runner checkout đúng head SHA `8facc98a38b654a30cad24aaf13667c78a529705`.
-- Artifact metadata khớp ID/name/digest và chưa expired.
-- `results.json`: 6/6 checks PASS.
-- Screenshot evidence đã kiểm trực tiếp cho Tutorial entry và help recap runtime.
-- Live page load: PASS.
-- Same-origin Socket.IO: PASS.
-- Tutorial room entry + T0 visible: PASS.
-- Help recap non-blocking: PASS, authoritative countdown tiếp tục `7s -> 6s`.
-- Live Birth unavailable state: PASS; không có `child:birth` action khi `canInitiateBirth=false`.
-- Normal multiplayer no Tutorial overlay: PASS.
-- Client deterministic regression: `canInitiateBirth=false` không unlock T7; `true` unlock T7; help recap non-modal.
-- Server release check/regression: Birth eligibility true/false và no-side-effect PASS theo Chat 03.
-- Compare runner head `8facc98...` → current `main`: chỉ handoff/report, không thay runtime client/server.
+- Landing production shell render: PASS.
+- Create Room -> Lobby: PASS.
+- Host Start presentation + start -> game shell: PASS.
+- Saved reconnect token -> `room:reconnect` + `room:get-state` -> restored Lobby: PASS.
+- Join Room -> Lobby; non-host không có Start: PASS.
+- Late join sau start -> Waiting Queue: PASS.
+- Waiting Queue không có gameplay action controls: PASS.
+- World HUD + map shell + Turn Track render live: PASS.
+- Tutorial entry isolated: PASS.
+- Help/feedback không dừng authoritative timer: PASS (`7s -> 6s`).
+- Normal room không có Tutorial overlay: PASS.
+- Support không expose raw Character ID; khi server field chưa có thì safe unavailable state: PASS.
+- Client local regression đã được Chat 06 báo PASS 8/8 gồm TypeScript build.
+- Incoming Birth accept/reject UI và host-only Replay presentation được deterministic regression/source kiểm tra.
 
 ### Unverified
 
-- Không có live run riêng cố tình ép `canInitiateBirth=true`; deterministic server/client tests bao phủ nhánh này.
-- Không có một browser session duy nhất chơi xuyên suốt T0–T11 đủ 32 vòng; trigger logic T0–T11 có deterministic coverage và live runner chứng minh integration/browser path trọng yếu.
-- Long-term usability/balance playtest vẫn là hoạt động hậu QA, không phải blocker OI-004.
+- Incoming Birth proposal accept/reject chưa được ép thành live browser state trong run Wave 1 vì cần proposal authoritative cụ thể.
+- Host-only Replay chưa được chạy qua một live game-ended state trong run Wave 1.
+- `eligibleSupportTargets` active selector chưa thể integration-test vì `H-20260906-020-03-SUPPORT-TARGETS` vẫn OPEN.
+- Wave 2–4, final art, animation, QR lobby và các hạng mục ngoài Wave 1/P0 chưa được QA hoàn tất.
 
 ### Handoff
 
-Không cần handoff sửa code mới. Chat 00 có thể tiếp tục điều phối release/publishing nếu muốn.
+Không tạo handoff defect mới. Chat 03 tiếp tục `H-20260906-020-03-SUPPORT-TARGETS`; Chat 06 tiếp tục Wave 2–4 theo `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`. Sau các wave tiếp theo cần quay lại Chat 07 cho QA tương ứng.
 
 ### Open Issues
 
-- OI-004: CLOSED — RELEASE QA VERIFIED.
-- OI-006: CLOSED — RELEASE QA VERIFIED.
-- Không còn Open Issue blocking trong `docs/OPEN_ISSUES.md`.
+- `H-20260906-021-07-UIUX-WAVE1-QA`: CLOSED — PASS WITH WARNINGS.
+- `H-20260906-020-03-SUPPORT-TARGETS`: OPEN — server dependency.
+- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION`: OPEN — Wave 2–4 còn việc.
