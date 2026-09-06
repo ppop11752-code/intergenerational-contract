@@ -4,55 +4,61 @@
 
 ### Status
 
-Hoàn thành kiểm định phát hành độc lập cho OI-006. OI-006 đủ bằng chứng để đóng; toàn Project vẫn chưa release-ready vì OI-004 và client chưa hoàn tất.
+Bị chặn — OI-004 client integration QA phát hiện deployment blocker và 2 client-spec defects. Chưa đủ điều kiện E2E/release gate.
 
 ### Changed
 
-- Kiểm tra handoff `H-20260906-005-07-OI006` và bằng chứng của Chat 03/04.
-- Xác nhận Render service `intergenerational-contract` vẫn hoạt động, branch `main`, auto-deploy, Docker root context `.` với `./Dockerfile`.
-- Xác nhận deploy hiện tại `dep-daemgcp42hec73cgduag` ở trạng thái `live`, commit `b33379595303f7f594184f8e1de468cdab853f7d`.
-- So sánh runtime đã live-smoke `bbd30f8c08d71903b99462c071f347eca33d042f` với deploy hiện tại: không có thay đổi ở `server/backend/server/src`, protocol canonical hay gameplay source; chỉ có tài liệu/handoff và smoke tooling/package script.
-- Kết luận OI-006 PASS ở cấp release QA.
+- Nhận và xử lý handoff `H-20260906-010-07-OI004-CLIENT-QA`.
+- Đối chiếu `client/` với `docs/UI_TUTORIAL_SPEC.md`, authoritative server và protocol hiện tại.
+- Xác nhận Tutorial entry dùng cùng transport `room:create` + `game:start`; server start với 1 Human tự bổ sung 9 NPC founder.
+- Xác nhận countdown client đọc trực tiếp `game.phaseDeadlineAt`; Tutorial không có code reset/pause/extend deadline và Mandatory không có nút skip.
+- Phát hiện deployment blocker: `GameTransport` dùng same-origin Socket.IO (`io(undefined, ...)`) nhưng Docker hiện chỉ copy/build backend, không copy/serve `client/` và không set `STATIC_DIR`; do đó chưa có canonical live client origin để chạy browser/server E2E.
+- Phát hiện client defect: Help recap mở bằng `showModal()` trong khi spec yêu cầu non-modal.
+- Phát hiện client defect: Birth/T7 chỉ gate bằng `financial.representative`, không có authoritative birth-eligibility gate; có thể hiện nút/hướng dẫn Birth trước state hợp lệ, trái spec yêu cầu defer khi unavailable.
 
 ### Source
 
-- `reports/03_CURRENT.md`
-- `reports/04_CURRENT.md`
-- `docs/OPEN_ISSUES.md`
-- `docs/RELEASE_STATUS.md`
-- `server/backend/MULTIPLAYER_PROTOCOL_V50.md`
+- `handoffs/H-20260906-010-07-OI004-CLIENT-QA.md`
+- `reports/06_CURRENT.md`
+- `docs/UI_TUTORIAL_SPEC.md`
+- `client/src/main.ts`
+- `client/src/tutorial.ts`
+- `client/src/transport.ts`
+- `client/test/tutorial.test.mjs`
+- `Dockerfile`
 - `server/backend/server/src/index.ts`
-- `server/backend/server/test/live-socket-smoke.mjs`
-- Live service: `https://intergenerational-contract.onrender.com`
-- Transport-tested runtime: `bbd30f8c08d71903b99462c071f347eca33d042f`
-- Smoke tooling commit: `a6e423e39c8b17dadb403d3e59a42d7ac63a3994`
-- Current live deploy commit checked: `b33379595303f7f594184f8e1de468cdab853f7d`
+- `server/backend/src/authoritative-room.ts`
 
 ### Impact
 
-Deployment/runtime blocker OI-006 được gỡ. Backend live có bằng chứng build, startup, health/transport smoke và source compatibility. Điều này không xác nhận client end-to-end hay trạng thái release-ready toàn Project.
+OI-004 chưa thể đóng. Browser/server integration và full Tutorial lifecycle chưa thể được chứng minh trên deployment hiện tại. Gameplay rule không thay đổi.
 
 ### Verified
 
-- Render service không suspended, URL chính xác và cấu hình Docker đúng repo/branch.
-- Deploy `b33379595303f7f594184f8e1de468cdab853f7d` đang `live`.
-- Log deploy hiện tại ghi server lắng nghe port 3001 và Render tuyên bố service live.
-- Chat 03 đã có external `/health` PASS (`ok: true`, version `5.0.0`) và live Socket.IO smoke PASS trên runtime `bbd30f8c08d71903b99462c071f347eca33d042f`.
-- So sánh commit từ runtime đã smoke đến deploy hiện tại không phát hiện thay đổi runtime server/protocol/gameplay; thay đổi chỉ ở tài liệu/handoff và smoke tooling/package script.
-- Vì vậy bằng chứng transport của runtime đã smoke vẫn tương thích với server source đang live hiện tại.
+- Static source review: normal multiplayer join đặt `tutorial.active=false`, nên Tutorial overlay không bật trong normal join flow.
+- Tutorial entry tạo room 1 Human rồi gọi `game:start` qua protocol hiện tại.
+- Server `start()` với <=10 connected Human không founder draw; với 1 Human tạo đúng 9 NPC founder.
+- Client timer tính từ authoritative `phaseDeadlineAt`; panel switching chỉ render lại client UI, không gửi action/timer-reset.
+- Mandatory panel không có skip action.
+- T0/T1/T2/T3/T4/T5/T6/T8/T9/T10/T11 trigger logic nhìn chung bám state; T7 có lỗi eligibility nêu trên.
+- Local regression suite hiện có 6 test cases và Chat 06 đã báo PASS 6/6 ở implementation commit range kết thúc `298884576a9d52fa2448f61672d475d83ae6e67b`.
+- Independent re-run của `npm test` trong Chat 07 chưa thực hiện được vì execution sandbox không resolve được GitHub để clone repository.
 
 ### Unverified
 
-- Môi trường thực thi của Chat 07 không resolve được DNS public URL nên không thể tự chạy lại HTTP `/health` hoặc Socket.IO smoke trực tiếp từ sandbox trong lượt này.
-- Chưa kiểm thử client end-to-end.
-- Chưa kiểm thử `game:replay` thành công sau một trận đủ 32 vòng; Chat 03 đã kiểm handler và precondition live.
+- Browser E2E với authoritative live backend.
+- Static client serving trên Render hoặc một canonical client origin.
+- Independent local `npm test`/TypeScript build từ fresh checkout trong Chat 07.
+- Full T0–T11 playthrough qua game thực tế 32 vòng.
+- T7/Birth eligibility behavior sau khi client được sửa.
 
 ### Handoff
 
-Không cần handoff mới cho OI-006. Chat 00 tiếp tục điều phối OI-004 và công việc client qua Chat 05/06, sau đó quay lại Chat 07 cho integration/E2E/release gate toàn hệ thống.
+- Chat 04: `H-20260906-011-04-CLIENT-STATIC-DEPLOY` — thiết lập/kiểm tra canonical static client serving hoặc explicit backend URL wiring.
+- Chat 06: `H-20260906-012-06-OI004-QA-DEFECTS` — sửa Help non-modal và authoritative Birth/T7 eligibility gating.
+- Sau khi cả hai PASS, quay lại Chat 07 để chạy integration/E2E/release QA lại.
 
 ### Open Issues
 
+- OI-004: OPEN — QA FAILED/BLOCKED pending Chat 04 + Chat 06 fixes.
 - OI-006: CLOSED — release QA verified.
-- OI-004: OPEN — Tutorial guidance/client scope gap.
-- Client integration/E2E tổng thể: chưa hoàn thành.
