@@ -1,0 +1,21 @@
+{
+  "name": "intergenerational-contract-engine",
+  "version": "5.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npm run build && node test/rule-ledger-v5.mjs && node test/scarcity-inflation-oi002.mjs && node test/marriage-proposal-oi001.mjs",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "smoke": "npm run build && node test/rule-ledger-v5.mjs && node test/scarcity-inflation-oi002.mjs && node test/marriage-proposal-oi001.mjs",
+    "simulate": "npm run build && node dist/run-simulation.js 100",
+    "diagnose": "npm run build && node dist/run-diagnostics.js 30 2026",
+    "test:final": "npm test && node dist/run-simulation.js 30",
+    "test:fuzz": "npm run build && node test/invariant-fuzz-v5.mjs",
+    "release:check": "npm run typecheck && npm test && npm run test:fuzz && npm run test:final"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}
