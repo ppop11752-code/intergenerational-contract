@@ -3,40 +3,39 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Hoàn thành rà soát toàn bộ UI/UX hiện tại. Client đang ở mức prototype chức năng, chưa sẵn sàng phát hành người chơi theo baseline UI/UX & ART đã khóa.
+Hoàn thành khóa asset contract cho Wave 4; final art binaries vẫn chưa có nên UI chưa art-complete.
 
 ### Changed
-- Tạo `docs/UI_UX_FULL_AUDIT_2026-09-06.md` với đánh giá toàn diện client hiện tại.
-- Xác nhận Tutorial OI-004 đã có logic/transport cơ bản, nhưng visual integration vẫn chỉ là prototype.
-- Phân loại gap theo P0/P1/P2 và khóa thứ tự triển khai Wave 1–4 cho Chat 06.
-- Kết luận các thiếu hụt lớn: Landing/Create/Join/Lobby, persistent World Map/HUD/Turn Track, reconnect/Waiting Queue, production Mandatory/Status/Voluntary, Market/Recovery/Support/Birth, marriage presentation, Niên sử, Residence/Government, Founder Draw/round transition, End Report, responsive, feedback states, art direction và animation.
-- Không thay gameplay, protocol hay `docs/RELEASE_STATUS.md`.
+- Xử lý `H-20260907-026-05-UIUX-ART-ASSETS`.
+- Tạo `docs/UI_ART_ASSET_CONTRACT_V1.md` làm contract authoritative cho asset-driven pixel-fantasy art.
+- Khóa root/version asset `client/public/assets/ui/v1/`, world grid 32 px, icon 24 px, portrait 96 px.
+- Khóa terrain atlas, Government landmark, Residence theo Status, fog/ambience, 9-slice frames, portrait strategy, icon set, transition assets, palette, typography roles và manifest contract.
+- Khóa acceptance criteria: Wave 4 không được gọi art-complete khi production map/landmark/residence/frame/portrait/icon vẫn là CSS geometry/placeholder.
+- Không thay gameplay, interaction semantics, protocol hay Release Status.
 
 ### Source
-- Handoff `H-20260906-018-05-FULL-UIUX-AUDIT` từ Chat 00.
-- `client/src/main.ts`, `client/src/transport.ts`, `client/src/tutorial.ts`, `client/src/types.ts`, `client/styles.css` trên branch `main`.
-- `docs/UI_TUTORIAL_SPEC.md`.
-- Locked UI/UX baseline từ Migration Pack: `04_UI_UX_SPEC.md`.
+- `handoffs/H-20260907-026-05-UIUX-ART-ASSETS.md`.
+- Locked Migration Pack `04_UI_UX_SPEC.md`: asset-driven top-down pixel map, anime/chibi portraits, timeless fantasy countryside, open mainland + fog, parchment/wood/dark-fantasy frames, no emoji-primary icons.
+- `reports/06_CURRENT.md` current client state.
 
 ### Impact
-- Chat 06 cần tiếp tục triển khai production client theo các Wave trong audit.
-- Chat 07 chỉ nên đánh giá final player-facing UX sau khi các P0/P1 chính đã được triển khai.
-- Có thể cần Chat 03 nếu Chat 06 xác minh rằng snapshot hiện tại thiếu dữ liệu authoritative cho selector gia đình hoặc rich UI; không được tự tính eligibility ở client.
+- Chat 06 không còn phải tự suy diễn asset naming/dimensions/atlas/visual tokens.
+- Chat 06 có thể tạo loader/manifest integration theo contract mà không đổi semantic DOM/gameplay.
+- Final Wave 4 vẫn phụ thuộc vào việc có raster PNG/WebP thật dưới asset root và visual verification.
+- Chat 07 cần visual/runtime regression sau khi asset binaries được tích hợp.
 
 ### Verified
-- Client hiện đã tồn tại thực tế trên GitHub, không còn là placeholder-only.
-- Tutorial T0–T11, local versioned progress, create/join/start/action/replay transport và các form hành động cốt lõi đã được kiểm tra trực tiếp từ source.
-- Current UI không có world map, Turn Track, Government/Residence drawers, normal Create/Lobby flow, reconnect UI, final End Report, production art system hoặc animation layer.
-- CSS hiện chỉ có responsive cơ bản cho grid/coach card, chưa đáp ứng mobile baseline.
+- Current client repo chưa có `client/public/assets/ui/v1/` final art package.
+- Current visual layer theo report Chat 06 vẫn dùng CSS/placeholders cho map/landmark/portrait.
+- Contract mới giữ nguyên các ràng buộc art direction authoritative và không thêm gameplay semantics.
 
 ### Unverified
-- Chưa kiểm tra trực tiếp bằng browser visual runtime trong Chat 05.
-- Chưa xác minh mọi dữ liệu cần cho production Support/Residence/Government/Niên sử có đủ trong actual server snapshots hay cần mở rộng contract.
-- Chưa đánh giá asset art thực tế vì client hiện chưa có final asset-driven art layer.
+- Chưa có final terrain/landmark/residence/frame/portrait/icon PNG/WebP để kiểm tra pixel quality, seams, nearest-neighbor scaling, mobile readability hoặc visual consistency runtime.
+- Chưa có browser visual QA sau asset integration.
 
 ### Handoff
-- Chat 06 — CLIENT IMPLEMENTATION: triển khai các hạng mục ưu tiên từ `docs/UI_UX_FULL_AUDIT_2026-09-06.md`, bắt đầu Wave 1 P0.
+- Chat 06: tích hợp asset loader/manifest theo `docs/UI_ART_ASSET_CONTRACT_V1.md`, nhưng không được tuyên bố art-complete khi binary assets còn thiếu.
 
 ### Open Issues
-- Không mở gameplay issue mới.
-- UI/UX release readiness: chưa đạt; cần triển khai tiếp trước final player-facing release.
+- UI/UX release readiness vẫn chưa đạt ở lớp art.
+- Cần production/import final raster asset binaries trước khi Wave 4 có thể đóng thật sự.
