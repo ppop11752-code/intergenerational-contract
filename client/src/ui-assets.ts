@@ -50,7 +50,7 @@ export async function initUiArt(){installAssetRules();let manifest:UiArtManifest
  const loaded:string[]=[];await Promise.all(Object.keys(manifest.assets).map(async key=>{const url=assetUrl(manifest,key);if(!url)return;if(await probe(url)){loaded.push(key);document.documentElement.style.setProperty(cssName(key),`url("${url}")`);document.documentElement.setAttribute(dataAttr(key),"ready")}}));currentManifest=manifest;document.documentElement.dataset.uiArt=loaded.length===Object.keys(manifest.assets).length?"ready":loaded.length?"partial":"fallback";decorateDom();return{manifest,loaded}}
 
 if(typeof window!=="undefined"&&typeof document!=="undefined"){
- document.addEventListener("click",e=>{const p=(e.target as Element|null)?.closest?.<HTMLElement>("[data-profile]");if(p?.dataset.profile)selectedProfileId=p.dataset.profile;queueMicrotask(decorateDom)});
+ document.addEventListener("click",e=>{const p=(e.target as Element|null)?.closest?.("[data-profile]") as HTMLElement|null;if(p?.dataset.profile)selectedProfileId=p.dataset.profile;queueMicrotask(decorateDom)});
  new MutationObserver(()=>queueMicrotask(decorateDom)).observe(document.body,{childList:true,subtree:true});
  void initUiArt();
 }
