@@ -1,42 +1,43 @@
 # 04 — DEPLOYMENT & DEVOPS — CURRENT REPORT
 
 ### Status
-Hoàn thành handoff H-20260906-011-04-CLIENT-STATIC-DEPLOY ở phạm vi DevOps; bàn giao browser/server E2E cho Chat 07.
+Hoàn thành H-20260906-016-04-OI004-E2E-RUNNER; network-capable browser E2E runner đã chạy PASS và bàn giao bằng chứng cho Chat 07.
 
 ### Changed
-- Established canonical same-origin client/server deployment on the existing Render service.
-- Updated root `Dockerfile` to build `client/src` with TypeScript, copy `client/index.html`, `client/styles.css`, and compiled `client/dist/` into the runtime image.
-- Set `STATIC_DIR=/app/client` so the authoritative backend serves the canonical client.
-- Preserved `client/src/transport.ts` same-origin Socket.IO behavior (`io(undefined, ...)`) and authoritative backend protocol.
+- Added repository-controlled Playwright runner `qa/live-client-e2e.mjs`.
+- Added GitHub Actions workflow `.github/workflows/live-client-e2e.yml` running on GitHub-hosted Ubuntu with Chromium and network access.
+- Corrected an initial runner-only defect that tried to inspect Birth UI before an active game phase; no product/runtime semantics were changed.
+- Final runner commit: `8facc98a38b654a30cad24aaf13667c78a529705`.
 
 ### Source
-- Handoff `H-20260906-011-04-CLIENT-STATIC-DEPLOY`
-- `client/index.html`
-- `client/src/transport.ts`
-- `client/tsconfig.json`
-- `Dockerfile`
-- `server/backend/server/src/index.ts`
-- Render service `srv-daem578u01pc73f35dbg`
+- Handoff `H-20260906-016-04-OI004-E2E-RUNNER`.
+- `qa/live-client-e2e.mjs`.
+- `.github/workflows/live-client-e2e.yml`.
+- Live URL `https://intergenerational-contract.onrender.com`.
+- Chat 07 blocked handoff `H-20260906-015-07-OI004-FINAL-E2E`.
 
 ### Impact
-The canonical browser client and authoritative backend now ship from one Render service and one origin. No separate backend URL configuration is required for the canonical deployment. OI-004 browser/server integration QA can now target the live URL directly.
+Chat 07 no longer depends on its local sandbox DNS. Browser/server evidence can be reproduced from GitHub Actions against the live Render service without changing gameplay, client semantics, or server protocol.
 
 ### Verified
-- Deployment commit: `79202809a8bfaf8a1ffd5667f6bf7c4ca44e16da`.
-- Render auto-deploy `dep-daen607avr4c73bbin2g` built the new image successfully and reached LIVE.
-- Client TypeScript build completed successfully with `tsc -p tsconfig.json`.
-- Runtime image copied `client/index.html`, `client/styles.css`, and compiled `/app/client/dist` successfully.
-- Backend process started successfully and Render declared the service LIVE.
-- Canonical live URL remains `https://intergenerational-contract.onrender.com`.
-- Static serving is enabled by `STATIC_DIR=/app/client` and server source serves that directory when present.
-- Client HTML loads `/socket.io/socket.io.js`; client transport uses same-origin Socket.IO, so deployed client and authoritative Socket.IO endpoint share the same origin.
+- GitHub Actions workflow: `Live Client E2E`.
+- Successful run ID: `34039901844` (run #2), head SHA `8facc98a38b654a30cad24aaf13667c78a529705`.
+- Browser: Playwright Chromium on GitHub-hosted Ubuntu runner.
+- Evidence artifact ID: `9991351341`, name `live-client-e2e-evidence`, digest `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2`.
+- Artifact contains `results.json` plus screenshots `tutorial-entry.png`, `help-recap.png`, `birth-gating.png`, `normal-room.png`.
+- PASS: live page load.
+- PASS: same-origin Socket.IO connection.
+- PASS: Tutorial room entry with T0 visible.
+- PASS: help recap is non-blocking; authoritative countdown observed `7s -> 6s` while recap open.
+- PASS: authoritative Birth UI gating observed in live Tutorial game with `canInitiateBirth=false`; no Birth proposal button shown and authoritative unavailable message rendered.
+- PASS: normal multiplayer room has no Tutorial coach overlay (`coach count=0`).
 
 ### Unverified
-- A real browser page-load/Socket.IO handshake was not independently executed from this Chat runtime because the available external HTTP sandbox could not resolve the new Render hostname and Render request logs contained no external test request during verification.
-- Browser-level interaction and OI-004 E2E remain for Chat 07.
+- The same E2E run did not deterministically force a `canInitiateBirth=true` live state; source/client regression coverage for false/true contract remains separate evidence for Chat 07.
+- Full T0–T11 progression was not forced because doing so reliably would require gameplay-state manipulation beyond this DevOps runner. Chat 07 must combine this browser evidence with deterministic client/server tests and any manual progression it deems necessary before closing OI-004.
 
 ### Handoff
-Chat 07 should run browser/server integration QA at `https://intergenerational-contract.onrender.com`, verify page render, Socket.IO connection, room create/join, and the OI-004 tutorial flow.
+Chat 07 should consume GitHub Actions run `34039901844` and artifact `9991351341`, reconcile it with existing false/true Birth contract tests and T0–T11 coverage, then finalize independent OI-004 release QA.
 
 ### Open Issues
-- No remaining DevOps blocker for canonical client static deployment.
+- No remaining Chat 04 DevOps blocker for OI-004 E2E execution infrastructure.
