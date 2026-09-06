@@ -18,8 +18,9 @@ const app=express();app.use(express.static(path.join(root,"client")));
 const http=app.listen(0,"127.0.0.1");await new Promise(r=>http.once("listening",r));
 const port=http.address().port;const origin=`http://127.0.0.1:${port}`;const io=new Server(http,{cors:{origin:"*"}});
 let joinCount=0;
+const lobby=(playerId,displayName)=>({code:"ABC123",started:false,hostPlayerId:playerId,initialPopulationTarget:10,initialNpcCount:0,founderDraw:[],players:[{playerId,displayName,host:true,connected:true,activeCharacterId:null,aiTakeoverCharacterId:null,queuePosition:null}],game:null});
 io.on("connection",socket=>{
- socket.on("room:create",({playerId,displayName},ack)=>ack({ok:true,code:"ABC123",reconnectToken:"rt-public-test"}));
+ socket.on("room:create",({playerId,displayName},ack)=>{ack({ok:true,code:"ABC123",reconnectToken:"rt-public-test"});queueMicrotask(()=>socket.emit("room:state",lobby(playerId,displayName)))});
  socket.on("room:join",({code},ack)=>{joinCount++;if(code==="ABC123")ack({ok:true,code:"ABC123",reconnectToken:"join-token"});else ack({ok:false,error:"ROOM_NOT_FOUND"})});
  socket.on("game:start",(_p,ack)=>ack({ok:true}));
  socket.on("room:get-state",(_p,ack)=>ack({ok:true,room:null,player:null}));
@@ -51,6 +52,6 @@ try{
 
  const failCtx=await browser.newContext();await failCtx.route("https://cdn.jsdelivr.net/**",route=>route.abort());const fail=await failCtx.newPage();await fail.goto(origin,{waitUntil:"domcontentloaded"});await fail.click('[data-screen="create"]');await fail.fill("#name","QR Fallback");await fail.click("#entry-go");await fail.waitForSelector(".lobby-screen");await fail.waitForSelector(".qr-fallback");check("renderer failure shows required fallback",(await fail.locator(".qr-fallback").textContent())?.trim()==="Không tạo được mã QR — hãy nhập mã phòng.",await fail.locator(".qr-fallback").textContent()||"");check("PIN remains visible on renderer failure",(await fail.locator(".room-pin").textContent())?.trim()==="ABC123",await fail.locator(".room-pin").textContent()||"");check("Host Start remains usable on renderer failure",await fail.locator("#start").isEnabled(),"start enabled");check("no fake QR canvas/image on renderer failure",await fail.locator(".qr-functional canvas,.qr-functional img").count()===0,"functional image count");await fail.screenshot({path:path.join(outDir,"qr-fallback.png"),fullPage:true});
 
- results.notes.push("QR decode uses jsQR on the actual browser-rendered QR screenshot. Server harness only provides existing room:create/room:join/game:start acknowledgements; QR behavior is production client code.");
+ results.notes.push("QR decode uses jsQR on the actual browser-rendered QR screenshot. Server harness mirrors existing room:create ACK + room:state behavior and normal room:join errors; QR behavior is production client code.");
  await failCtx.close();await ctx.close();
 }catch(e){results.error=e instanceof Error?`${e.name}: ${e.message}`:String(e);throw e}finally{results.finishedAt=new Date().toISOString();await writeFile(path.join(outDir,"results.json"),JSON.stringify(results,null,2));await browser.close();io.close();http.close()}
