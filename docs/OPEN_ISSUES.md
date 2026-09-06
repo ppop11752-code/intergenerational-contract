@@ -24,9 +24,13 @@ Long-term balance/playtest remains separate from OI-002 consistency closure.
 
 ## OI-003 — `SOCKET_EVENTS` helper missing `game:replay`
 
-**Status:** OPEN — LOW.
+**Status:** CLOSED — VERIFIED.
 
-Owner: 03 — MULTIPLAYER & SERVER.
+`SOCKET_EVENTS` now exposes `replayGame: "game:replay"` and a contract regression
+test locks the complete authoritative set of 9 transport events. Server
+typecheck, contract test, and build passed on 2026-09-06.
+
+Implementation commit: `e0e000ad9ec920ade3a73a4cf204b5e1954cd0b4`.
 
 ## OI-004 — Dedicated Tutorial guidance
 
