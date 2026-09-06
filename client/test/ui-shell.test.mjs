@@ -1,9 +1,14 @@
 import test from'node:test';import assert from'node:assert/strict';import{readFileSync}from'node:fs';
-const main=readFileSync(new URL('../src/main.ts',import.meta.url),'utf8');const transport=readFileSync(new URL('../src/transport.ts',import.meta.url),'utf8');
+const main=readFileSync(new URL('../src/main.ts',import.meta.url),'utf8');const transport=readFileSync(new URL('../src/transport.ts',import.meta.url),'utf8');const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
 test('transport exposes reconnect and get-state',()=>{assert.ok(transport.includes('room:reconnect'));assert.ok(transport.includes('room:get-state'))});
 test('landing/create/join/lobby flows exist',()=>{for(const token of['TẠO PHÒNG','THAM GIA PHÒNG','id="start"','room-pin'])assert.ok(main.includes(token))});
-test('support does not ask for raw Character ID',()=>{assert.ok(!main.includes('Character ID'));assert.ok(main.includes('eligibleSupportTargets'))});
+test('production world shell covers HUD, map, turn track and mobile sheets',()=>{for(const token of['world-hud','world-map','TURN TRACK','feature-sheet','map-controls'])assert.ok(main.includes(token));assert.ok(css.includes('@media(max-width:900px)'))});
+test('turn track is capped at six upcoming entries',()=>assert.ok(main.includes('.slice(0,6)')));
+test('government drawer has four locked tabs',()=>{for(const token of['TỔNG QUAN','NGÂN SÁCH','NỢ CÔNG','AN SINH'])assert.ok(main.includes(token))});
+test('residence and character profile surfaces exist',()=>{assert.ok(main.includes('HỒ SƠ NHÂN VẬT'));assert.ok(main.includes('← GIA ĐÌNH'));assert.ok(main.includes('THÀNH VIÊN'))});
+test('round and founder transitions are non-blocking presentation',()=>{assert.ok(main.includes('round-transition'));assert.ok(main.includes('founder-banner'));assert.ok(css.includes('pointer-events:none'))});
+test('end report has ranking journey world tabs and host-only replay',()=>{for(const token of['XẾP HẠNG','HÀNH TRÌNH','THẾ GIỚI','host()?`<button id="replay"'])assert.ok(main.includes(token))});
+test('tutorial spotlight zones exist without timer mutation',()=>{assert.ok(main.includes('data-tutorial-zone'));assert.ok(css.includes('data-tutorial-focus'));assert.ok(!main.includes('phaseDeadlineAt='))});
+test('support selector consumes authoritative targets without visible ids',()=>{assert.ok(main.includes('eligibleSupportTargets'));assert.ok(main.includes('id="support-target"'));assert.ok(main.includes('Cha/mẹ'));assert.ok(main.includes('Con'));assert.ok(!main.includes('Character ID'))});
 test('incoming birth proposal response UI exists',()=>{assert.ok(main.includes('child:respond'));assert.ok(main.includes('incomingBirthProposals'))});
 test('waiting queue is dedicated and actionless',()=>{assert.ok(main.includes('HÀNG CHỜ TÁI SINH'));assert.ok(main.includes('queue-card'))});
-test('host-only replay presentation exists',()=>{assert.ok(main.includes('host()?`<button id="replay"'))});
-test('support selector consumes authoritative targets without visible ids',()=>{assert.ok(main.includes('eligibleSupportTargets'));assert.ok(main.includes('id="support-target"'));assert.ok(main.includes('Cha/mẹ'));assert.ok(main.includes('Con'));assert.ok(!main.includes('placeholder="Character ID"'))});
