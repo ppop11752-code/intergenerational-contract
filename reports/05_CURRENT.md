@@ -3,52 +3,45 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Landing đã được user duyệt và khóa thành V1; Lobby / Room / HUD vẫn đang chờ thiết kế và duyệt trực tiếp.
+Đang làm — Landing đã được user duyệt và khóa thành V1; Lobby / Room / HUD vẫn đang chờ thiết kế và duyệt trực tiếp. Workflow thiết kế đã được nâng lên V2 với bước kiểm định lịch sử/source bắt buộc trước mỗi màn/cụm mới.
 
 ### Changed
-- User đã hoàn tất duyệt Landing sau các vòng direction + D1–D4.
-- Tạo `docs/UI_LANDING_APPROVED_V1.md` làm spec authoritative cho Landing đã được duyệt.
-- Landing approved direction:
-  - menu bên trái, key art bên phải;
-  - seal trên, wordmark `INTERGENERATIONAL / CONTRACT` dưới, không subtitle;
-  - seal ít nổi hơn wordmark;
-  - 5 nút dọc riêng biệt cùng style, căn trái;
-  - không có panel nền lớn bao toàn cột trái;
-  - reconnect card nằm trên menu;
-  - key art ưu tiên settlement/world hơn nhân vật;
-  - đúng 3 nhân vật Japanese anime/chibi pixel ở foreground;
-  - credit `Một trò chơi của QuacQuaz` ở góc phải dưới, low priority;
-  - bright/lively world + darker wood/parchment UI chrome;
-  - motion mức nhẹ-vừa, non-blocking;
-  - mobile dùng composition riêng, không thu nhỏ layout desktop.
-- Tạo `handoffs/H-20260907-038-06-LANDING-DESIGN-IMPLEMENTATION.md` → OPEN để Chat 06 triển khai đúng Landing đã được user duyệt.
-- Historical reconciliation A1–A28 và C1–C16 vẫn giữ hiệu lực cho phần còn lại của cụm Landing/Lobby/Room/HUD.
+- User bổ sung một bước bắt buộc vào workflow Chat 05: trước khi đưa phương án thiết kế mới, phải đọc lại phần liên quan của chat `Game mô phỏng nhân sinh`, Project Migration Pack và lịch sử thay đổi V5–V10.1, sau đó hỏi user để xác định các thông tin chưa được kiểm định trước khi đề xuất.
+- Tạo `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md` làm workflow active cho Chat 05.
+- Workflow V2 phân loại mỗi statement UI thành: `CURRENT_USER_CONFIRMED`, `HISTORICAL_USER_CONFIRMED`, `MIGRATION_NORMALIZED`, `PROTOTYPE_ONLY`, `REJECTED_OR_SUPERSEDED`, `CONFLICTING`, `UNVERIFIED`.
+- Chỉ các mục materially relevant thuộc nhóm chưa đủ xác nhận (`MIGRATION_NORMALIZED`, `PROTOTYPE_ONLY`, `CONFLICTING`, `UNVERIFIED`) mới được hỏi lại user; không hỏi lại các quyết định current-user-confirmed nếu không có mâu thuẫn thật.
+- Sau historical/source verification gate mới được mô tả implementation hiện tại, phân tích yếu điểm, đưa 2–3 phương án, recommendation và chờ user duyệt.
+- Migration Pack vẫn là nguồn reconstruction quan trọng nhưng không còn được coi là direct user approval khi provenance của một chi tiết UI không rõ.
+- Landing V1 đã trải qua reconciliation lịch sử A/B/C trước khi user duyệt nên vẫn giữ trạng thái approved; workflow V2 áp dụng bắt buộc từ Lobby trở đi và cho mọi revision mới.
 - Không thay gameplay, protocol, timer hoặc authoritative logic.
 
 ### Source
-- Quyết định trực tiếp của user trong Chat 05 ngày 2026-09-07.
-- `docs/UI_LANDING_APPROVED_V1.md`.
-- `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md`.
-- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_A_B.md`.
-- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_C.md`.
+- Quyết định trực tiếp mới nhất của user trong Chat 05 ngày 2026-09-07.
+- `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md`.
+- Project Migration Pack v1.0: `04_UI_UX_SPEC.md`, `06_DECISION_LOG.md`, `10_SOURCE_INDEX.md`, `PROJECT_MIGRATION_PACK_COMBINED.md`.
+- Historical conversation `Game mô phỏng nhân sinh`.
+- `docs/UI_LANDING_APPROVED_V1.md` và các reconciliation docs hiện tại.
 
 ### Impact
-- Chat 06 được phép triển khai **chỉ Landing V1 đã duyệt**.
-- Lobby / Room / HUD chưa được phép redesign/implement từ suy diễn; phải chờ Chat 05 trình và user duyệt riêng.
-- QA của Landing phải đánh giá theo spec user-approved mới, không theo prototype/baseline cũ khi có xung đột.
+- Lobby / Room / HUD không được đi thẳng từ baseline/spec sang mockup; phải qua source-validation questions trước.
+- Các chi tiết chuẩn hóa trong Migration Pack hoặc xuất hiện trong V5–V10.1 không được kế thừa ngầm khi chưa xác minh provenance.
+- Chat 06 chỉ được triển khai screen/cluster đã user-approved; QA PASS không thay user design approval.
+- Handoff Landing V1 vẫn hợp lệ vì Landing đã được historical reconciliation + direct approval trước khi workflow V2 được formalize.
 
 ### Verified
-- Landing composition, logo hierarchy, menu treatment, reconnect placement, key-art emphasis, credit placement, motion level và mobile direction đã được user xác nhận trực tiếp.
-- Landing spec không thay gameplay/protocol/timer/action semantics.
+- Migration Pack xác nhận V5–V10.1 là frozen/non-authoritative prototypes; `D-041` đánh dấu chúng rejected as final/authoritative UI.
+- `04_UI_UX_SPEC.md` là normalization phục vụ rebuild sau defer, nhưng provenance direct-user của từng chi tiết riêng lẻ không phải lúc nào cũng tự chứng minh; workflow V2 xử lý đúng khoảng trống này.
+- Landing V1 đã được user xác nhận trực tiếp sau nhiều vòng reconciliation và design review.
 
 ### Unverified
-- Chưa có client implementation của Landing V1 để visual-review.
 - Lobby / Room / HUD concrete compositions chưa được user duyệt.
+- Các historical/Migration-Pack statements riêng cho Lobby cần được source-validated theo workflow V2 trước khi đưa phương án Lobby.
 
 ### Handoff
 - Chat 06: `H-20260907-038-06-LANDING-DESIGN-IMPLEMENTATION` — implement Landing V1 only.
-- Chat 05 tiếp tục thiết kế Lobby để user duyệt; không chờ Chat 06 mới được thiết kế màn tiếp theo.
+- Chat 05: bước tiếp theo là chạy workflow V2 cho Lobby: historical/source sweep → user verification questions → design alternatives.
 
 ### Open Issues
 - Landing implementation/visual verification vẫn OPEN sau handoff.
 - User design approval cho Lobby / Room / HUD vẫn OPEN.
+- Lobby source-validation gate chưa chạy xong.
