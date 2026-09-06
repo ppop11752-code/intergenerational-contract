@@ -1,44 +1,44 @@
 # 06 — CLIENT IMPLEMENTATION — CURRENT REPORT
 
 ### Status
-Hoàn thành phần triển khai client canonical + OI-004; chờ QA tích hợp.
+Bị chặn một phần — client defects đã sửa; chờ Chat 03 expose authoritative Birth eligibility.
 
 ### Changed
-- Đã thiết lập client canonical dưới `client/` theo D-051.
-- Đã triển khai transport Socket.IO bám đúng protocol hiện tại: room create/join, start/replay, room/player state và `game:action`.
-- Đã triển khai Landing `HƯỚNG DẪN` tạo room 1 Human và start bằng transport hiện tại.
-- Đã triển khai Tutorial T0–T11 theo `docs/UI_TUTORIAL_SPEC.md` bằng authoritative state + client panel state.
-- Tutorial không pause/reset/extend timer, không tạo nút skip Mandatory, không tự gửi gameplay action.
-- Đã thêm local versioned Tutorial progress, seen/completed state và non-blocking help recap.
-- Normal multiplayer join đặt `tutorial.active=false`, không hiện Tutorial overlays.
-- Đã thêm build/test infrastructure và regression tests.
+- Đã sửa Tutorial help recap từ modal `showModal()` sang non-modal/non-blocking `<aside>`.
+- Đã bỏ suy diễn Birth/T7 từ `financial.representative`.
+- Client chỉ unlock T7 và hiển thị action `child:birth` khi private snapshot có `canInitiateBirth === true`.
+- Khi server chưa cung cấp fact này, Birth/T7 được defer theo `UI_TUTORIAL_SPEC.md` thay vì đoán eligibility.
+- Đã bổ sung type `canInitiateBirth?: boolean` và regression tests cho hai defect QA.
 
 ### Source
-- docs/DECISION_LOG.md — D-051
-- docs/UI_TUTORIAL_SPEC.md
-- server/backend/MULTIPLAYER_PROTOCOL_V50.md
-- server/backend/server/src/index.ts
-- server/backend/src/authoritative-room.ts
-- handoffs/H-20260906-009-06-CLIENT-BOOTSTRAP-OI004.md
+- handoffs/H-20260906-012-06-OI004-QA-DEFECTS.md
+- docs/UI_TUTORIAL_SPEC.md sections T7, 7, 9, 11
+- server/backend/src/engine.ts — `attemptBirth()`
+- server/backend/src/authoritative-room.ts — `privateSnapshot()`
+- client/src/main.ts
+- client/src/tutorial.ts
+- client/src/types.ts
 
 ### Impact
-- Client canonical nay đã tồn tại và có thể được dùng làm implementation target cho các UI/client work tiếp theo.
-- OI-004 đã có implementation phía client nhưng cần Chat 07 chạy integration/E2E với server thực tế và deployment/static serving.
-- Docker/static serving chưa bị Chat 06 thay đổi.
+- Help recap hiện không còn khóa tương tác/timer.
+- Client không còn phát action Birth dựa trên một điều kiện chưa đủ.
+- T7/Birth action sẽ chưa xuất hiện cho tới khi server expose authoritative eligibility.
+- Cần Chat 03 bổ sung fact private snapshot; không cần đổi gameplay rule.
 
 ### Verified
-- Local `npm test`: PASS 6/6.
-- `npm test` bao gồm `npm run build`; TypeScript build PASS.
-- Regression đã kiểm tra: normal multiplayer không unlock Tutorial, Mandatory state unlock T1 không có gameplay action, T4 chỉ mở khi Market được mở trong Voluntary, T7 yêu cầu representative, T9/T11 theo queue/end, T10 theo round transition.
-- Implementation commit range kết thúc tại `298884576a9d52fa2448f61672d475d83ae6e67b`.
+- Local `npm run build`: PASS.
+- Local `npm test`: PASS 7/7.
+- Regression mới xác nhận T7 không unlock khi thiếu/false eligibility và unlock khi `canInitiateBirth=true`.
+- Regression mới xác nhận client source không còn `showModal()`/`<dialog>` và dùng `help-recap` non-modal.
+- Đã đối chiếu actual eligibility trong `GameEngine.attemptBirth()`.
 
 ### Unverified
-- Chưa chạy browser E2E với authoritative server thật.
-- Chưa xác minh static serving/deployment wiring cho `client/`.
-- Chưa playtest toàn bộ T0–T11 qua một game 32 round thực tế.
+- Chưa thể E2E T7 với server thật vì private snapshot chưa expose authoritative Birth eligibility.
+- Chưa rerun browser E2E sau server integration.
 
 ### Handoff
-Chat 07 cần chạy integration/E2E QA cho client canonical và OI-004. Nếu static serving cần sửa, chuyển Chat 04.
+- Chat 03: `H-20260906-013-03-OI004-BIRTH-ELIGIBILITY` — expose authoritative `canInitiateBirth` từ luật hiện có, không side effect.
+- Sau khi Chat 03 hoàn thành, Chat 06 cần xác nhận field integration rồi trả lại Chat 07 để E2E rerun.
 
 ### Open Issues
-OI-004 — client implementation complete; pending integration/E2E QA.
+OI-004 — QA defect #1 fixed. QA defect #2 client-side fixed by safe deferral; full end-to-end resolution blocked on authoritative Birth eligibility exposure from Chat 03.
