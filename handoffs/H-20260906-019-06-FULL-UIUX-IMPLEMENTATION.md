@@ -10,121 +10,75 @@ Chat 05 đã hoàn thành full UI/UX audit tại `docs/UI_UX_FULL_AUDIT_2026-09-
 
 Current client started as a functional/integration prototype and has been rebuilt toward the locked UI/UX baseline.
 
-## Required work
-
-### Wave 1 — P0 shell and survivability
-- Landing / Create / Join / Lobby separation.
-- normal Create Room + Host Start.
-- reconnect/get-state recovery.
-- Waiting Queue.
-- loading/error/connection/success feedback.
-- authoritative Support selector.
-- incoming Birth response UI.
-
-### Wave 2 — production gameplay surfaces
-- World HUD + Turn Track + map shell.
-- Mandatory / Status / Voluntary production presentation.
-- Market six-card UI.
-- Recovery / Support / Birth / Marriage production surfaces.
-
-### Wave 3 — world/result surfaces
-- Residence/Family/Character Profile.
-- Government drawer.
-- Niên sử analysis view.
-- Founder Draw + round transition.
-- Full End Report; Replay host-only.
-
-### Wave 4 — visual completion
-- final pixel-fantasy art/frame system.
-- responsive/mobile sheets/HUD/Turn Track.
-- Tutorial spotlight integration.
-- non-blocking animation/ambient layer.
-
-## Source
-
-- `docs/UI_UX_FULL_AUDIT_2026-09-06.md`
-- `docs/UI_TUTORIAL_SPEC.md`
-- `docs/UI_ART_ASSET_CONTRACT_V1.md`
-- locked Migration Pack `04_UI_UX_SPEC.md`
-- current `client/`
-- authoritative server snapshots/protocol
-
 ## Progress — Chat 06
 
 ### Wave 1
-COMPLETE in client implementation:
-- separate Landing/Create/Join/Tutorial/Lobby;
-- normal room creation + Host Start;
-- reconnect/startup recovery via `room:reconnect` + `room:get-state`;
-- dedicated Waiting Queue;
-- standard connection/pending/success/error feedback;
-- authoritative Support selector from `eligibleSupportTargets`;
-- incoming Birth proposal response UI;
-- form-state loss defect H-20260906-024 fixed with immutable action payloads before busy render.
+COMPLETE:
+- Landing/Create/Join/Tutorial/Lobby;
+- Host Start;
+- reconnect/get-state recovery;
+- Waiting Queue;
+- feedback;
+- authoritative Support selector;
+- incoming Birth response UI;
+- H-024 form-state fix.
 
 ### Wave 2
-IMPLEMENTED with authoritative display contracts:
-- persistent HUD with Round/Year/Population/Inflation/Public debt + ceiling/phase timer/Niên sử;
-- World Event consumes authoritative `game.eventName`;
-- Turn Track capped to 6 upcoming entries with current/local states;
-- map semantic controls Government/Home/zoom;
-- Mandatory consumes authoritative `mandatoryQuote`, including charge breakdown and projected liquidation/bankruptcy facts, explicitly labeled projected;
-- Status consumes authoritative `statusQuote`: all fees/persons/affordability plus Noble competition/fallback/refund facts;
-- Market six cards with price/pool/return/failure/subsidy/out-of-supply context;
-- Recovery consumes authoritative `recoveryQuotes`: current pool/capacity/pending/cost-per-unit;
-- Support authoritative family selector;
-- Birth proposals/responses;
-- Marriage incoming/accepted presentation and player-facing labels.
-
-Display lifecycle defect found by Chat 07 was fixed in `H-20260907-030-06-RECOVERY-DISPLAY-DECORATION`:
-- latest authoritative snapshot cached in presentation layer;
-- local `data-panel` renders trigger re-decoration on the next tick;
-- Event/Mandatory/Recovery/Status remain server-derived without client economic recomputation.
-
-Final authoritative display QA is DONE in `H-20260907-029-07-UIUX-DISPLAY-QA`:
-- browser-authoritative checks 67/67 PASS;
-- clean client suite 27/27 PASS;
-- authoritative engine build PASS.
+IMPLEMENTED + AUTHORITATIVE DISPLAY QA PASS:
+- persistent HUD + World Event;
+- Turn Track;
+- Mandatory authoritative projected breakdown;
+- Status authoritative fee/Noble competition/fallback/refund;
+- Market six-card;
+- Recovery authoritative quote;
+- Support/Birth/Marriage.
+- H-030 late-render display decoration fixed.
+- H-029 browser-authoritative QA: 67/67 PASS; clean client suite 27/27 PASS; engine build PASS.
 
 ### Wave 3
 IMPLEMENTED structurally:
-- Residence/Family drawer;
-- Character Profile + `← GIA ĐÌNH`;
-- Government four tabs: Overview/Budget/Debt/Social Security;
-- Niên sử Journey + World views;
-- non-blocking Founder Draw banner;
-- 2.5s non-blocking Round Transition;
-- End Report Ranking/Journey/World + host-only Replay + extinction-safe failure presentation.
+- Residence/Family/Character Profile;
+- Government four tabs;
+- Niên sử Journey + World;
+- Founder Draw + non-blocking round transition;
+- End Report Ranking/Journey/World + host-only Replay.
+
+### Lobby QR closure
+IMPLEMENTED in `H-20260907-032-06-LOBBY-QR-INTEGRATION` from locked `docs/UI_QR_CONTRACT_V1.md`:
+- QR payload = same-origin `/?room=<ROOM_CODE>`;
+- valid query prefills Join code in uppercase;
+- no auto-join;
+- large room PIN remains independent fallback;
+- QR renderer failure gives plain-language manual-code fallback;
+- optional copy-link uses identical public payload;
+- no server/protocol change.
+
+QA handoff: `H-20260907-033-07-LOBBY-QR-QA`.
 
 ### Wave 4
 INTEGRATION-READY but NOT ART-COMPLETE:
-- responsive/mobile bottom/full-height sheets;
-- Tutorial spotlight hooks/zones;
-- non-blocking ambient cloud/fog/motion layer;
-- UI art contract integration scaffold completed in `H-20260907-027-06-UIUX-ART-INTEGRATION`;
-- canonical `client/public/assets/ui/v1/manifest.json` + async asset loader + graceful fallback + deterministic portrait mapping are in place.
+- responsive/mobile sheets;
+- Tutorial spotlight;
+- non-blocking ambient motion;
+- v1 asset manifest/loader/fallback/deterministic portrait scaffolding.
 
-Final raster binaries are still absent. Current fallback/CSS/placeholders remain development presentation only and do not satisfy art-complete acceptance.
+Final raster binaries are still absent. Current CSS/placeholders are development fallback only and do not satisfy `UI_ART_ASSET_CONTRACT_V1.md` Section 16.
 
 ## Verification
 
-- `H-20260907-029-07-UIUX-DISPLAY-QA`: PASS.
-- Browser-authoritative checks: 67/67 PASS.
-- Clean client suite: 27/27 PASS.
-- Authoritative engine build: PASS.
-- Recovery open-after-snapshot lifecycle case specifically PASS after H-030 fix.
+- Display QA: PASS 67/67 browser checks; clean client suite 27/27; engine build PASS.
+- QR modules independent TypeScript check: PASS.
+- QR regression added under `client/test/qr-contract.test.mjs`.
+- Full clean client suite after the newest QR integration is pending Chat 07 rerun.
 
 ## Remaining blockers
 
-1. Lobby baseline requires large room PIN + QR, but authoritative UI sources do not define the QR payload/navigation flow. Chat 06 will not invent whether QR encodes a join URL, room PIN text, or another flow.
-2. Real raster PNG/WebP binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` are still absent; Wave 4 cannot be called art-complete.
-3. After real assets are integrated, Chat 07 must run final visual/runtime regression.
-
-Created handoff:
-- `H-20260907-031-05-UIUX-QR-ART-CLOSURE` -> Chat 05 to lock Lobby QR payload/flow and provide/route final raster art binaries.
+1. `H-20260907-033-07-LOBBY-QR-QA` must verify browser scan/decode/prefill/no-auto-join/fallback.
+2. Real raster PNG/WebP binaries matching `docs/UI_ART_ASSET_CONTRACT_V1.md` are still absent.
+3. After real assets are integrated, Chat 07 must run final Section 16 visual/runtime regression.
 
 ## Blocked state
 
-This handoff is BLOCKED, not complete. There is no remaining safe independent Chat 06 implementation work for final closure until H-031 returns with QR UX contract and/or real art binaries.
+H-019 remains BLOCKED only on QR browser QA + real art binaries/final visual QA. QR semantics are no longer ambiguous and server display dependencies are resolved.
 
-Do not declare art-complete or player-facing release-ready until those blockers and final visual/runtime QA are resolved.
+Do not declare art-complete or player-facing release-ready until those remaining blockers pass.
