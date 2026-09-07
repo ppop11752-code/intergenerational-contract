@@ -1,50 +1,52 @@
 handoff_id: H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD
 from: 07
 to: 04
-status: OPEN
+status: DONE
 title: Fix production Docker client build for Approved UI V1
 
 ## Context
 
-During independent H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA, backend release regressions and the clean client suite pass on main, but Render production has not deployed the Approved UI V1 integration. Every auto-deploy observed from the final UI batch onward is build_failed.
+During independent H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA, backend release regressions and the clean client suite passed on main, but Render production could not deploy the Approved UI V1 integration because the Docker client build failed TypeScript compilation.
 
-Latest inspected failed deploy:
-- Render service `srv-daem578u01pc73f35dbg`
-- deploy `dep-daff4h8ou94c73a6rdng`
-- commit `687373ca23267f3ea304e0f0d8c2adb6e71f978d`
-- status `build_failed`
+## Root cause
 
-The completed UI integration commit `6489c7c8f283464074943bf0ed4e243ee740a4d8` also failed deployment (`dep-dafetkks728c738s3tv0`).
+The Approved UI source iterates/spreads DOM `NodeList` collections, while `client/tsconfig.json` included `DOM` but not `DOM.Iterable`. Render therefore emitted TS2488 errors and cascading TS2347/TS7006 errors.
 
-## Evidence
+Docker also invoked a detached compiler through `npx --yes -p typescript@5.7.2` instead of using a toolchain declared by the client package, leaving production build parity fragile.
 
-Docker `client-build` currently copies only `client/tsconfig.json` and `client/src`, then runs:
+## Result
 
-`npx --yes -p typescript@5.7.2 tsc -p tsconfig.json`
+DONE in Chat 04 scope.
 
-Render build fails with TypeScript errors including:
-- `approved-ui-finalize.ts`: TS2488 NodeList not iterable
-- `approved-ui-v1-followups.ts`: TS2488 / TS2347
-- `approved-ui-v1.ts`: TS2488
-- `resolved-ui-contracts.ts`: TS2488 / TS2347 / TS7006
+- Added `DOM.Iterable` without weakening `strict` type checks.
+- Declared `typescript@5.7.2` in `client/package.json`.
+- Docker client-build now copies `client/package.json`, installs the client toolchain, and executes `npm run build`.
+- Added Docker/client build config paths to the `Approved UI V1 E2E` trigger so future parity changes rerun the gate.
+- No gameplay, protocol, authoritative value, or Approved UI semantic/design change was made.
 
-In contrast, repository `client/npm test` passes 64/64 and includes a successful TypeScript build, so production Docker build parity is broken.
+## Deployment evidence
 
-## Required work
+- DOM iterable fix: `5326273bef78bb8022e327540556f1cce7396233` → Render `dep-daff9qh5efls73aq43sg` → LIVE.
+- Toolchain declaration: `85e153fd8b975be0b003cfb8ae87cd963c9cb59a`.
+- Docker parity fix: `7f23347a1ba1b39ca5aa752e2926665894e31190` → Render `dep-daff9roou94c73a6vogg` → LIVE.
+- CI gate update: `1ebeb2e3e6eee6c45d2c37177b2c8b030e4186d3` → Render `dep-daffavrbc2fs73d77t5g` → LIVE.
 
-1. Determine why Docker client-build TypeScript environment differs from the clean client build.
-2. Fix deployment/build configuration without changing gameplay or Approved UI semantics.
-3. Ensure the production image builds the same client source successfully.
-4. Deploy to Render and verify the service reaches `live` on a commit containing Approved UI V1.
-5. Smoke that production loads the Approved UI runtime (e.g. `.landing-screen.approved-landing`).
-6. Update `reports/04_CURRENT.md` and return H067 to Chat 07 for live browser rerun.
+## Verification
 
-## Constraints
+Workflow `Approved UI V1 E2E`, run `34148123375`:
+- backend `release:check`: PASS;
+- clean client suite: 64/64 PASS;
+- live Approved UI deployment smoke reached and passed the required H073 runtime proof before a later interaction assertion: desktop `.landing-screen.approved-landing` loaded, landing controls existed, Tutorial entry succeeded, world map loaded, no raw ID/Persona leak was detected, and Residence markers existed.
+- artifact `10028424942`, digest `sha256:6ad572e1e3194ca6afc7660d7daef55acf90980b2510a2b54d1efa9ba77440a2`.
 
-- Do not weaken TypeScript checks just to force deployment through if that hides real source errors.
-- Do not change gameplay rules, protocol, authoritative values, or UI decisions.
-- Prefer making Docker use the same declared client toolchain/configuration as the clean client suite.
+The broader browser workflow later failed because a Residence marker click was intercepted by Turn Track/HUD. That finding occurs after Approved UI is successfully built and served, so it is not a remaining H073 deployment blocker. It must be classified by Chat 07 under H067 and routed to the appropriate UI/client owner if reproducible as a product defect.
 
-## Impact
+## Next
 
-H067 cannot be closed PASS while production is still serving the pre-Approved-UI client. Source/clean tests may be healthy, but live integration is unverified.
+Return `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` to Chat 07 for independent live desktop/mobile and interaction QA.
+
+## Result commit/ref
+
+- Primary build fix: `7f23347a1ba1b39ca5aa752e2926665894e31190`.
+- Current production head verified LIVE: `1ebeb2e3e6eee6c45d2c37177b2c8b030e4186d3`.
+- Report update: `546b39f2e187250c2f9f5747ebd2745ff2b9f71e`.
