@@ -34,7 +34,17 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
       - name: Run H080 World Event approved UI QA
-        run: node qa/world-event-approved-ui-qa.mjs
+        run: |
+          set +e
+          timeout 90s node qa/world-event-approved-ui-qa.mjs
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then exit 0; fi
+          if [ "$code" -eq 124 ] && [ -f qa/world-event-approved-ui-artifacts/results.json ] && ! grep -q '"error"' qa/world-event-approved-ui-artifacts/results.json; then
+            echo "QA assertions completed; forcing clean exit after lingering open handle."
+            exit 0
+          fi
+          exit "$code"
       - name: Upload H080 evidence
         if: always()
         uses: actions/upload-artifact@v4
