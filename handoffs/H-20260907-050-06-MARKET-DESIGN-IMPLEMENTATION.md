@@ -1,23 +1,15 @@
 handoff_id: H-20260907-050-06-MARKET-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement user-approved Market V1 surface
+status: DONE
+title: Implement user-approved Market V1
 
-## Source
-- `docs/UI_MARKET_APPROVED_V1.md`
-- `docs/UI_VOLUNTARY_APPROVED_V1.md`
+## Result
+- Six resource cards retained with authoritative price/pool/current ownership presentation.
+- Per-card `MAX` now uses server `marketQuotes[].purchasableMax` only.
+- Locked/out-of-supply/insufficient-cash/spending-limit cards remain visible with authoritative `unavailableReason` copy.
+- Submission still uses the existing server action and server revalidation.
+- No client-side MAX/economic formula was introduced.
 
-## Implemented
-- six independent abstract resource cards;
-- 2×3 desktop / responsive mobile reflow;
-- Price/Return/Risk/Pool/Owned/access presentation;
-- per-card − / editable quantity / + / MUA controls;
-- sold-out/locked cards remain visible;
-- persistent production-timing explanation;
-- Market stays open and continues to consume authoritative snapshots.
-
-## Blocker
-`H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT` for authoritative per-card MAX and unavailable reasons. Client deliberately leaves MAX disabled rather than guessing cash/pool/quota limits.
-
-No market formula/access/timer change.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
