@@ -1,43 +1,47 @@
 # 04 — DEPLOYMENT & DEVOPS — CURRENT REPORT
 
 ### Status
-Hoàn thành `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`; production Docker build parity đã được khôi phục và Approved UI V1 hiện được serve trên Render. Bàn giao lại H067 cho Chat 07.
+Hoàn thành `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING`; production Docker hiện đóng gói và phục vụ đầy đủ CSS mà Approved UI V1 tham chiếu. Không còn blocker Deployment cho CSS stack. Một lỗi hit-area riêng của Mandatory panel đã được bàn giao cho Chat 06 qua H076.
 
 ### Changed
-- Added `DOM.Iterable` to `client/tsconfig.json`, matching Approved UI source use of iterable DOM collections without weakening strict TypeScript checks.
-- Declared the client TypeScript toolchain explicitly as `typescript@5.7.2` in `client/package.json`.
-- Changed Docker `client-build` to install the client package toolchain and run `npm run build` instead of invoking a detached `npx` compiler.
-- Expanded `Approved UI V1 E2E` workflow triggers to include Docker/client build configuration changes so build/runtime parity is automatically checked in future.
-- No gameplay, protocol, authoritative values, or Approved UI decisions were changed.
+- Root `Dockerfile` đổi từ copy riêng `client/styles.css` sang `COPY client/*.css /app/client/`, bảo đảm toàn bộ stylesheet root được đóng gói vào production image.
+- Production CSS smoke được tăng cường để kiểm tra 5 stylesheet tham chiếu bởi `client/index.html` phải trả response thành công, `Content-Type: text/css`, và không phải HTML fallback.
+- Không thay gameplay, protocol, timer, authoritative values, Residence coordinates hoặc Approved UI semantics.
 
 ### Source
-- Handoff `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`.
-- `client/tsconfig.json`.
-- `client/package.json`.
+- Handoff `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING`.
+- `client/index.html`.
 - root `Dockerfile`.
-- `.github/workflows/approved-ui-v1-e2e.yml`.
+- `qa/approved-ui-v1-live-smoke.mjs`.
 - Render service `srv-daem578u01pc73f35dbg`.
+- Upstream H074 Client source fix in `client/residence-pointer-fix.css`.
 
 ### Impact
-Production can now compile and deploy the Approved UI V1 client using the same declared TypeScript configuration/toolchain as the clean client suite. The prior Render build blocker is removed. Full interaction/browser acceptance remains Release/QA ownership.
+Source/clean tests và production image nay dùng cùng Approved UI V1 CSS stack. H074 pointer correction thực sự được serve trên production; lỗi packaging làm production bỏ sót stylesheet đã được loại bỏ. Remaining live pointer failure is a separate Client/UI interaction issue, not a deployment/static asset issue.
 
 ### Verified
-- Root cause reproduced in Render logs: TS2488 on iterable `NodeListOf`, followed by cascading TS2347/TS7006 errors.
-- `client/tsconfig.json` fix commit: `5326273bef78bb8022e327540556f1cce7396233`; Render deploy `dep-daff9qh5efls73aq43sg` reached LIVE, proving the compile blocker was removed.
-- Declared toolchain commit: `85e153fd8b975be0b003cfb8ae87cd963c9cb59a`.
-- Final Docker parity commit: `7f23347a1ba1b39ca5aa752e2926665894e31190`; Render deploy `dep-daff9roou94c73a6vogg` reached LIVE.
-- Current CI-gate commit: `1ebeb2e3e6eee6c45d2c37177b2c8b030e4186d3`; Render deploy `dep-daffavrbc2fs73d77t5g` reached LIVE.
-- Approved UI E2E run `34148123375`: backend `release:check` PASS and clean client suite PASS 64/64.
-- Live browser smoke passed the H073 deployment acceptance required to prove Approved UI runtime is served: desktop `.landing-screen.approved-landing` appeared, landing controls existed, Tutorial entry succeeded, world map loaded, privacy/Persona checks passed, and Residence markers were present.
-- Evidence artifact: `10028424942`, digest `sha256:6ad572e1e3194ca6afc7660d7daef55acf90980b2510a2b54d1efa9ba77440a2`.
+- Docker packaging commit: `fcc858e4ea58002f0814df4565f487011d56e406`.
+- Render deploy `dep-daffl23bc2fs73d7kad0` reached `live`.
+- Production verification commit: `ddaa117e76725a92b22b789aad647493aac454fd`.
+- Workflow `Approved UI V1 E2E` run `34149752398` passed backend release regressions and clean client suite **67/67**.
+- Run `34149752398` advanced past explicit CSS preflight, confirming successful non-HTML `text/css` responses for:
+  - `styles.css`
+  - `approved-ui-v1.css`
+  - `residence-pointer-fix.css`
+  - `residence-ui-v1.css`
+  - `resolved-ui-contracts.css`
+- After packaging, the old `.approved-turn-track` / `.hud-cluster` pointer interception is no longer the observed live blocker.
+- Run `34149561408` artifact `10028892877`, digest `sha256:91eedbe161bc90f354bf9396e9f4e1c44942fea09412dbe8bac7e5c925607d76`.
+- Run `34149752398` artifact `10028961500`, digest `sha256:906dbf8b00e8f84d1755163e718f1ab5d33c2f0644b3b1866fd99f8740acb310`.
 
 ### Unverified
-- The broader Approved UI workflow did not finish PASS: after the deployment/runtime checks above, Playwright timed out clicking a Residence marker because Turn Track/HUD intercepted pointer events. This is a post-deploy UI interaction finding, not a Docker/build blocker.
-- Mobile/deeper world-first navigation, responsive behavior, and final interaction acceptance remain for Chat 07 under H067; Chat 07 should classify/route the pointer-interception finding by ownership.
+- Full Approved UI V1 live browser acceptance remains blocked because `.approved-mandatory` currently intercepts pointer events over a visible/enabled Residence marker.
+- Desktop/mobile Residence navigation and downstream H067 acceptance should be rerun after H076 Client fix.
 
 ### Handoff
-Reopen `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` for Chat 07. Production now contains Approved UI V1; QA should rerun/finalize its live browser checks and route any genuine UI/client interaction defect to Chat 06 (or UI design issue to Chat 05) as appropriate.
+- Chat 06: `H-20260908-076-06-APPROVED-UI-V1-MANDATORY-POINTER-INTERCEPTION` — fix Mandatory presentation hit-area without changing Mandatory 5-second authority or gameplay/protocol semantics.
+- Chat 07: H067 remains Release/QA-owned; resume final live acceptance after H076 is fixed and deployed.
 
 ### Open Issues
-- No remaining Chat 04 deployment/build blocker for Approved UI V1.
-- Live Residence-marker pointer interception remains an independent QA finding pending Chat 07 classification.
+- No remaining Chat 04 deployment/static packaging blocker for Approved UI V1.
+- H076 is OPEN to Chat 06 for the separate Mandatory pointer-interception defect.
