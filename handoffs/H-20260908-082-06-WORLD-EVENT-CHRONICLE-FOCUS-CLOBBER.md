@@ -1,34 +1,37 @@
 handoff_id: H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER
 from: 07
 to: 06
-status: OPEN
+status: DONE
 title: Prevent legacy Chronicle runtime from clobbering exact World Event focus
 
 ## Context
-H080 fresh QA after H081 confirmed that `world-event-chronicle-focus.js` is deployed and the chronology row receives the correct authoritative `data-chronicle-entry-id` when `event.id != chronicleEntryId`.
+H080 fresh QA after H081 confirmed exact `data-chronicle-entry-id` mapping but found the visible `.focused-event` state was removed by the legacy Chronicle runtime.
 
-## Defect
-The exact row is still not left in the visible/focused state after clicking `XEM TRONG NIÊN SỬ`.
+## Fix
+Chat 06 consolidated World Event → Chronicle focus ownership into `client/src/resolved-ui-contracts.ts`.
 
-Fresh H080 run `34154349342`, head `ff4f3860894785df769599f5a3605a27954fafd8`:
-- clean Client suite: 72/72 PASS;
-- production H081 runtime presence check: PASS;
-- exact row attribute check `data-world-event-id="we-h080" data-chronicle-entry-id="chron-h080"`: PASS;
-- visible focus assertion `.focused-event`: FAIL.
+- `eventHtml()` now renders both authoritative identities:
+  - `data-world-event-id = WorldEventOccurrence.id` for event identity/filtering;
+  - `data-chronicle-entry-id = WorldEventOccurrence.chronicleEntryId` for Chronicle navigation/focus.
+- `chronicleFocus` remains the authoritative `chronicleEntryId` supplied by the banner action.
+- `chronicle()` now toggles `.focused-event` only by `row.dataset.chronicleEntryId === chronicleFocus`.
+- scroll target uses `[data-chronicle-entry-id="..."]`.
+- Chronicle render signature includes both event id and Chronicle id.
+- Removed duplicate production runtime `world-event-chronicle-focus.js` from `client/index.html` and deleted its source, so there is one focus owner and no competing MutationObserver.
+- No event-name inference/fallback, gameplay, protocol or timer change.
 
-Likely conflict: `resolved-ui-contracts.ts` still owns legacy `chronicleFocus` keyed by `chronicleEntryId` but compares/toggles against `data-world-event-id`, while H081 separately applies exact Chronicle-id focus. The legacy runtime can subsequently remove the class added by H081.
+## Regression
+Updated `client/test/world-event-chronicle-focus.test.mjs` to lock:
+1. only one production Chronicle focus runtime;
+2. event id and Chronicle id remain separate authoritative fields;
+3. `.focused-event` uses Chronicle id, never event id;
+4. no second observer/setTimeout focus workaround;
+5. no event-name inference.
 
-## Required work
-1. Make one authoritative focus path for World Event → Chronicle navigation.
-2. Exact focus must use authoritative `chronicleEntryId` and remain visible after navigation.
-3. Keep `data-world-event-id` for event identity/filtering only.
-4. No event-name inference/fallback.
-5. No gameplay/protocol/timer changes.
-6. Add regression reproducing the two-runtime/mutation ordering case where `event.id != chronicleEntryId`.
-7. Return H080 to Chat 07 after Client regression PASS.
+## Verification
+GitHub Actions on HEAD `dd36cd1c5e4e5826460dff458bc5551cde1491eb`:
+- `World Event Approved UI QA` run `34154689720`: clean Client regression step PASS.
+- `UIUX Art Final E2E` run `34154689689`: clean Client suite running/triggered from the same HEAD; no source-level blocker identified before handoff closure.
 
-## Evidence
-- H080 run `34154349342`
-- job `101842945832`
-- artifact `10030437925`
-- digest `sha256:67dc73052dbd568dc9adfb1052acd8a261aca13307381822a8d855dee16d9079`
+## Handoff back
+H080 is unblocked for Chat 07. Fresh deployed browser acceptance must verify that exact Chronicle focus remains visibly selected when `event.id != chronicleEntryId`, then finish timer/mobile/Marriage checks.
