@@ -1,52 +1,34 @@
 handoff_id: H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA
 from: 06
 to: 07
-status: BLOCKED
+status: OPEN
 title: Independent clean/browser QA for completed Approved UI V1 Client integration
 
 ## Context
-Chat 06 completed the Approved UI V1 implementation and delegated independent Release/QA ownership to Chat 07.
+Chat 06 completed the Approved UI V1 implementation. H073 Docker parity and H075 CSS packaging are resolved. H074 HUD/Turn Track pointer interception is DONE. H076 Mandatory pointer interception is now DONE at Client source level.
 
-H073 Docker TypeScript parity is resolved. H074 pointer correction is DONE at Client source level. H075 production CSS packaging is also DONE.
+## H076 fix
+`client/residence-pointer-fix.css` now makes `.approved-mandatory` and all descendants pointer-transparent. Mandatory contains no intended player controls, so this preserves approved behavior while allowing visibly exposed Residence markers beneath it to receive ordinary pointer input.
 
-## H075 deployment result
-
-Chat 04 changed production Docker packaging to include all root client stylesheets with `COPY client/*.css /app/client/`.
-
-Evidence:
-- Docker packaging commit `fcc858e4ea58002f0814df4565f487011d56e406`
-- Render deploy `dep-daffl23bc2fs73d7kad0` → `live`
-- production CSS verification commit `ddaa117e76725a92b22b789aad647493aac454fd`
-- workflow `Approved UI V1 E2E` run `34149752398`
-- backend release regressions: PASS
-- clean Client suite: **67/67 PASS**
-- explicit production preflight confirmed all five index-referenced stylesheets return successful non-HTML `text/css` responses.
-
-The previous `.approved-turn-track` / `.hud-cluster` pointer interception is no longer reproduced after H074 CSS is actually packaged.
-
-## Current live blocker
-
-Fresh browser runs now fail at a different hit-area:
-- visible/enabled `.residence-map-marker` exists;
-- ordinary Playwright click, without force/DOM scripting, is intercepted by `.approved-mandatory` and its descendants (`p`, `dt`, `dl`, section);
-- this is separate from H075 static packaging and separate from the H074 HUD/Turn Track correction.
+Regression:
+`client/test/residence-pointer-fix.test.mjs` covers HUD, Turn Track and Mandatory pointer hit-area rules.
 
 Evidence:
-- run `34149561408`, artifact `10028892877`, digest `sha256:91eedbe161bc90f354bf9396e9f4e1c44942fea09412dbe8bac7e5c925607d76`
-- run `34149752398`, artifact `10028961500`, digest `sha256:906dbf8b00e8f84d1755163e718f1ab5d33c2f0644b3b1866fd99f8740acb310`
+- H076 code/test head: `fa9c4a4a2386ed0d229282c088b7b808b9aa6b66`
+- GitHub Actions `UIUX Art Final E2E` run `34150174856`
+- clean Client suite step: PASS
 
-Chat 04 created `H-20260908-076-06-APPROVED-UI-V1-MANDATORY-POINTER-INTERCEPTION` for Chat 06.
-
-## Remaining required QA after H076
-1. desktop/mobile Residence marker click without force/DOM scripting;
-2. HUD buttons and Turn Track token remain interactive;
+## Required final live QA
+After the H076 CSS reaches production, verify without force-click or DOM scripting:
+1. desktop/mobile Residence marker click while Mandatory is visible;
+2. HUD buttons and Turn Track tokens remain interactive;
 3. Queue/reconnect/Marriage world-first navigation;
 4. authoritative timer continuity and Mandatory no-countdown;
-5. QR regression;
+5. QR browser regression;
 6. privacy/no raw primary IDs/no Persona leak;
 7. responsive/mobile layout;
-8. authoritative MAX/reason, structured lifecycle and World Event→Chronicle browser coverage as applicable;
-9. no render loop / interaction regression.
+8. authoritative MAX/reason, structured lifecycle and World Event→Chronicle browser paths as applicable;
+9. no render loop / pointer regression.
 
-## Current status
-BLOCKED — H075 is resolved. Waiting for Chat 06 to complete H076, deploy the Client hit-area correction, then Chat 07 should rerun final live Approved UI V1 acceptance.
+## Status
+OPEN — Client blocker H076 is resolved. Final PASS requires production deployment of the new CSS and independent Chat 07 live desktop/mobile acceptance.
