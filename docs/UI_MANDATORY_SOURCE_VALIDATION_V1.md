@@ -1,6 +1,6 @@
 # UI MANDATORY — SOURCE VALIDATION V1
 
-Status: CLOSED — USER VERIFIED (UI) / GAMEPLAY TIMING DEPENDENCY OPEN
+Status: CLOSED — USER VERIFIED (UI) / GAMEPLAY TIMING LOCKED
 Date: 2026-09-07
 Owner: 05 — UI/UX & ART
 Trigger: `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE`
@@ -14,7 +14,7 @@ Mandatory presentation at Character-turn start, including obligation breakdown, 
 - Mandatory is automatic/server-authoritative.
 - No gameplay decision and no skip button.
 - Reading duration is server-authoritative presentation timing, not a decision deadline.
-- Current canonical baseline remains 7 seconds unless gameplay authority changes it.
+- Current canonical Mandatory reading duration is **5 seconds**, server-authoritative.
 - Mandatory may include all authoritative due obligations from the Rule Ledger.
 - Status fee is not Mandatory.
 - Forced liquidation, where needed, uses `75% × current spot market value`.
@@ -30,20 +30,16 @@ Mandatory presentation at Character-turn start, including obligation breakdown, 
 - **M5 = A:** if forced liquidation occurs, include a clearly separated `THANH LÝ BẮT BUỘC` section inside the same card, including resources liquidated, the 75% basis and cash raised where authoritative data is available.
 - **M6 = A:** if bankruptcy occurs, transform the same card into a strong `PHÁ SẢN HỘ GIA ĐÌNH` result state with shortfall/consequence summary, then end the turn path.
 
-## Timing request outside Chat 05 authority
+## Timing decision
 
-The user additionally requested that Mandatory reading time be adjusted shorter so it does not feel too long.
+The user selected **B — 5 seconds** and Chat 01 locked it as D-052.
 
-This is **not** a UI-only decision because the reading duration is currently a server/gameplay timing value in the Rule Ledger. Chat 05 therefore does not change or invent a new duration.
-
-Until Chat 01 / user locks a new value:
-- UI must follow the authoritative server phase transition;
-- UI must not display a countdown;
-- implementation must not hardcode a shorter client-only delay;
-- current canonical 7-second timing remains in force.
-
-A gameplay handoff should evaluate a shorter reading duration without changing the presentation semantics above.
+- UI follows the authoritative server phase transition.
+- UI does not display a countdown/progress indicator.
+- Client must not hardcode a separate local delay.
+- Five seconds is presentation timing, not a gameplay decision deadline.
+- The approved presentation semantics above remain unchanged.
 
 ## Gate result
 
-Mandatory UI Source Validation Gate is CLOSED for presentation design. `docs/UI_MANDATORY_APPROVED_V1.md` is the implementation authority for the visual/interaction surface. Gameplay timing remains an external dependency and does not block implementing the approved no-countdown Mandatory UI against the current authoritative server timing.
+Mandatory UI Source Validation Gate is CLOSED for presentation design. `docs/UI_MANDATORY_APPROVED_V1.md` is the implementation authority for the visual/interaction surface. Gameplay timing is locked at 5 seconds; implementation and runtime QA remain downstream dependencies.

@@ -86,3 +86,10 @@ Verified runtime scope includes required raster loading/readiness, raster terrai
 ## Release claim rule
 
 Wave 4 art is complete and QA-verified at UI/UX scope. Do not infer project-wide release readiness solely from this document section; any broader release claim must still follow the Project's Release & QA / Project Control gates and account for any non-UI open work.
+
+## Mandatory reading-duration update — source locked
+
+- D-052 locks Mandatory presentation at **5 seconds**.
+- Source status: complete.
+- Current server default was inspected as 7 seconds, so implementation/deployment/integration QA are pending through H-20260907-048/049/050/051.
+- This does not reopen OI-001–OI-006 and does not change Mandatory calculations or UI interaction semantics.

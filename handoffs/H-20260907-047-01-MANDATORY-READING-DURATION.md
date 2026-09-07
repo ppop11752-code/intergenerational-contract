@@ -1,7 +1,7 @@
 handoff_id: H-20260907-047-01-MANDATORY-READING-DURATION
 from: 05
 to: 01
-status: OPEN
+status: DONE
 title: Re-evaluate Mandatory reading duration requested by user
 
 ## Context
@@ -32,3 +32,20 @@ Evaluate readability versus turn pacing, especially when Mandatory contains many
 ## Handoff back
 
 If the user locks a new duration, update canonical gameplay sources/decision log as required and hand off to Chat 02/03/06/07 as appropriate for engine/server/client/tests. Chat 05 only needs notification if the duration creates a presentation-readability conflict.
+
+## Decision
+
+Người dùng chọn **B — 5 giây** ngày 2026-09-07.
+
+Mandatory vẫn automatic/server-authoritative, không skip/confirm, không countdown/progress và không phải gameplay decision timer.
+
+## Result
+
+- Rule Ledger cập nhật thành 5 giây.
+- D-052 được thêm vào Decision Log.
+- Implementation/QA được chuyển tới Chat 03/04/06/07.
+- Không có code change trong Chat 01.
+
+## Result commit/ref
+
+`main` — cùng commit source-lock và handoff.

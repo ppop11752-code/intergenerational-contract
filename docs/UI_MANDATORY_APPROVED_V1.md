@@ -67,13 +67,14 @@ If the Household still cannot pay after valid liquidation:
 
 ## Timing dependency
 
-The user requested a shorter Mandatory reading duration than the current canonical baseline because it should not feel too long.
+The user selected and Chat 01 locked the Mandatory reading duration at **5 seconds**.
 
-This exact duration is outside Chat 05 authority and remains pending gameplay decision. Until changed by the authoritative gameplay source:
+Implementation requirements:
+- the 5-second duration is server-authoritative;
 - client follows the server phase transition;
-- current canonical duration remains effective;
-- UI displays no countdown;
-- client must not hardcode a shorter local duration.
+- UI displays no countdown/progress;
+- client must not hardcode a separate local duration;
+- the duration is presentation timing, not a gameplay decision deadline.
 
 ## Responsive/mobile
 

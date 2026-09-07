@@ -21,6 +21,7 @@ This file records decisions that are known to be current at the GitHub migration
   - successful settlement => `executed`, inactive but retained in history;
   - first valid accept in authoritative server processing order wins.
 - D-051 — Because no prior canonical client implementation exists in the available Project sources, Chat 06 is authorized to establish a new canonical client implementation under `client/` from the locked UI/UX specs and authoritative server protocol. This authorization does not permit gameplay-rule changes or protocol invention for client convenience.
+- D-052 — Mandatory reading presentation duration is **5 seconds**, server-authoritative. Mandatory remains automatic, has no skip/confirm control, displays no countdown/progress, and is not a gameplay decision timer.
 
 ## Explicit baseline confirmations by user
 

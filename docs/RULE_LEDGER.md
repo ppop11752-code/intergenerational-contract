@@ -84,7 +84,7 @@ Trong cùng Status: Turn Card unique cao hơn đi trước. Lower Status không 
 
 - Mandatory obligations là automatic/server-authoritative.
 - Mandatory panel không có manual skip.
-- Mandatory chỉ lưu trên màn hình trong configured reading duration; mặc định server v5.0 là 7 giây.
+- Mandatory chỉ lưu trên màn hình trong **5 giây** theo authoritative server timing.
 - Mandatory không có gameplay decision timer.
 - Status max 15s.
 - Voluntary max 60s TOTAL, shared giữa Market/Recovery/Support/Birth.
