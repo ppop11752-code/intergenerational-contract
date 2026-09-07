@@ -1,19 +1,25 @@
 import test from"node:test";import assert from"node:assert/strict";import fs from"node:fs";
-const ui=fs.readFileSync(new URL("../src/world-event-chronicle-focus.ts",import.meta.url),"utf8");
+const ui=fs.readFileSync(new URL("../src/resolved-ui-contracts.ts",import.meta.url),"utf8");
 const html=fs.readFileSync(new URL("../index.html",import.meta.url),"utf8");
 
-test("H081 exact Chronicle focus runtime loads after resolved World Event runtime",()=>{
-  assert.match(html,/dist\/resolved-ui-contracts\.js[\s\S]*dist\/world-event-chronicle-focus\.js[\s\S]*dist\/approved-ui-finalize\.js/);
+test("H082 has one Chronicle focus runtime",()=>{
+  assert.match(html,/dist\/resolved-ui-contracts\.js[\s\S]*dist\/approved-ui-finalize\.js/);
+  assert.doesNotMatch(html,/world-event-chronicle-focus\.js/);
 });
 
-test("H081 maps event id to authoritative chronicleEntryId and focuses by Chronicle id",()=>{
-  assert.match(ui,/occurrences\.find\(x=>x\.id===row\.dataset\.worldEventId\)/);
-  assert.match(ui,/row\.dataset\.chronicleEntryId=ev\.chronicleEntryId/);
-  assert.match(ui,/row\.dataset\.chronicleEntryId===pendingChronicleEntryId/);
-  assert.match(ui,/data-chronicle-entry-id/);
-  assert.match(ui,/occurrence\?\.chronicleEntryId/);
+test("H082 renders separate authoritative event and Chronicle ids",()=>{
+  assert.match(ui,/data-world-event-id=\"\$\{esc\(e\.id\)\}\" data-chronicle-entry-id=\"\$\{esc\(e\.chronicleEntryId\|\|\"\"\)\}\"/);
+  assert.match(ui,/row\.dataset\.chronicleEntryId===chronicleFocus/);
+  assert.match(ui,/\[data-chronicle-entry-id=\"\$\{CSS\.escape\(chronicleFocus\)\}\"\]/);
+  assert.doesNotMatch(ui,/row\.dataset\.worldEventId===chronicleFocus/);
 });
 
-test("H081 does not infer Chronicle target from event name",()=>{
-  assert.doesNotMatch(ui,/\.name\s*===|includes\([^)]*name|textContent.*name/i);
+test("H082 preserves focus through mutation ordering without a second observer",()=>{
+  assert.match(ui,/chronicleFocus=ev\.chronicleEntryId/);
+  assert.match(ui,/row\.classList\.toggle\("focused-event",!!chronicleFocus&&row\.dataset\.chronicleEntryId===chronicleFocus\)/);
+  assert.doesNotMatch(ui,/setTimeout\(schedule/);
+});
+
+test("H082 does not infer Chronicle target from event name",()=>{
+  assert.doesNotMatch(ui,/eventName\s*===|includes\([^)]*eventName|\.name\s*===\s*chronicleFocus/i);
 });
