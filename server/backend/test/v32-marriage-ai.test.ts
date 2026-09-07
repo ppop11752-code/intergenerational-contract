@@ -4,17 +4,16 @@ import {GameEngine} from "../src/engine.js";
 function toVoluntary(g:GameEngine){
   g.startRound();g.buildTurnOrder(()=>.5);g.beginMandatoryPhase();
   while(g.phase()==="mandatory")g.resolveCurrentMandatory();
-  while(g.phase()==="marriage")g.completeMarriageTurn();
+  if(g.phase()==="status")g.autoSelectStatusForCurrent();
 }
-describe("v3.2 marriage and reproduction rules",()=>{
+describe("legacy marriage and reproduction coverage",()=>{
   it("blocks close-family marriage and remarriage while spouse is alive",()=>{
     const g=new GameEngine();
     const a=g.createNpc(null,"moderate"),b=g.createNpc(null,"moderate");
-    a.ageStage=3;b.ageStage=3;
-    g.startRound();g.buildTurnOrder(()=>.5);g.beginMandatoryPhase();
-    while(g.phase()==="mandatory")g.resolveCurrentMandatory();
-    g.proposeMarriage(a,b);const p=Object.values(g.state.marriageProposals)[0]!;
-    g.respondMarriage(p.id,true);
+    a.ageStage=3;b.ageStage=3;g.state.round=1;
+    const p=g.proposeMarriage(a,b);g.respondMarriage(p.id,true);
+    expect(g.isMarried(a)).toBe(false);
+    g.executeAcceptedMarriages();
     expect(g.isMarried(a)).toBe(true);
     const outsider=g.createNpc(null,"moderate");outsider.ageStage=3;
     expect(()=>g.proposeMarriage(a,outsider)).toThrow();
