@@ -4,70 +4,72 @@
 
 ### Status
 
-Bị chặn — `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` đã qua blocker deploy H073 nhưng hiện còn một defect tương tác Client ở Residence marker.
+Bị chặn — `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` hiện bị chặn bởi production CSS packaging, không còn bởi H074 Client source.
 
 ### Changed
 
-- Kiểm tra lại H067 sau khi Chat 04 hoàn tất `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`.
-- Production hiện đã chạy Approved UI V1.
-- Workflow `Approved UI V1 E2E` run `34148123375`, head `1ebeb2e3e6eee6c45d2c37177b2c8b030e4186d3` xác nhận:
+- Xác nhận `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION` DONE ở source Client.
+- Tăng cường live H067 gate để kiểm Residence click, Turn Track/HUD interaction và responsive desktop/mobile.
+- Fresh workflow `Approved UI V1 E2E` run `34149188131`, head `84b5a0309bc889ce6c3520657e965f3c6ff32473`:
   - backend `release:check`: PASS;
-  - clean client suite: **64/64 PASS**;
-  - live `.landing-screen.approved-landing`: PASS;
-  - landing controls và Tutorial entry/world map: PASS;
-  - no raw ID / Persona leak trong phần live đã quan sát: PASS;
-  - Residence markers được render: PASS.
-- Live browser sau đó fail khi click Residence marker vì `.approved-turn-track` và `.hud-cluster.hud-round-year` chặn pointer events.
-- Phân loại đây là Client interaction/layering defect, không phải deployment defect và không cần thay gameplay/design rule.
-- Tạo `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION` cho Chat 06.
-- H067 giữ BLOCKED cho tới khi H074 được sửa và final live QA được rerun.
+  - clean Client suite: **67/67 PASS**;
+  - H074 pointer source regressions: PASS;
+  - live browser: FAIL tại Residence marker click; Turn Track/HUD vẫn intercept.
+- Kiểm tra Dockerfile xác định runtime image chỉ copy `client/index.html`, `client/styles.css`, `client/public` và compiled `client/dist`.
+- Các stylesheet Approved UI được `index.html` tham chiếu nhưng không được đóng gói: `approved-ui-v1.css`, `residence-pointer-fix.css`, `residence-ui-v1.css`, `resolved-ui-contracts.css`.
+- Tái phân loại finding thành Deployment/static packaging defect.
+- Tạo `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING` cho Chat 04.
 
 ### Source
 
 - `handoffs/H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA.md`
-- `handoffs/H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD.md`
 - `handoffs/H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION.md`
-- `client/residence-ui-v1.css`
-- `client/approved-ui-v1.css`
-- workflow `Approved UI V1 E2E` run `34148123375`
-- artifact `10028424942`
-- digest `sha256:6ad572e1e3194ca6afc7660d7daef55acf90980b2510a2b54d1efa9ba77440a2`
+- `handoffs/H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING.md`
+- `client/index.html`
+- `client/residence-pointer-fix.css`
+- `Dockerfile`
+- workflow run `34149188131`
+- artifact `10028775419`
+- digest `sha256:8f8064804243926bb2cc6e809a32fea2dfeaa7229add3b623717574634d4fa6d`
 
 ### Impact
 
-Approved UI V1 đã live và source/clean regression state đang khỏe, nhưng world-first Residence navigation chưa đạt acceptance vì vùng overlay đang nuốt click. Chưa được gọi H067 PASS hoặc coi toàn bộ Approved UI V1 browser interaction đã hoàn tất. Không có gameplay/protocol/timer rule nào bị thay đổi bởi Chat 07.
+Approved UI runtime/source và clean regression đều khỏe, nhưng production chưa chứa đầy đủ stylesheet Approved UI V1. Vì thế UI live có thể mang class/runtime mới nhưng hành vi layout/hit-area vẫn theo CSS thiếu. H067 chưa thể PASS. Không có gameplay/protocol/timer rule nào bị thay đổi.
 
 ### Verified
 
-- Backend release regression: PASS.
-- Clean client suite: 64/64 PASS.
-- Approved UI V1 production landing/runtime: live.
-- Landing/Tutorial/world map smoke: PASS.
-- Residence authoritative markers: present.
-- Privacy smoke hiện tại: không thấy raw ID/Persona leak ở phần đã kiểm.
-- Pointer interception được tái hiện bằng browser automation trên live production; target marker visible/enabled nhưng click bị Turn Track/HUD intercept.
+- Backend full release regression trên current QA head: PASS.
+- Clean Client suite: 67/67 PASS.
+- H074 source pointer tests: PASS.
+- Production Approved UI landing/runtime tồn tại.
+- Residence marker live tồn tại, visible/enabled.
+- Residence live click vẫn fail vì Turn Track/HUD intercept.
+- Dockerfile hiện không copy bốn stylesheet bổ sung mà production index tham chiếu.
 
 ### Unverified
 
-Chờ H074 rồi rerun:
+Chờ H075 rồi rerun:
 - desktop/mobile Residence click/navigation;
+- HUD/Turn Track interaction;
 - Queue/reconnect/Marriage world-first navigation;
-- final timer continuity + Mandatory no-countdown;
-- final QR browser regression trên Approved UI V1;
-- final responsive/mobile acceptance;
-- remaining authoritative MAX/reason, lifecycle, World Event→Chronicle browser coverage;
-- final no-render-loop / no interaction regression closure.
+- timer continuity + Mandatory no-countdown;
+- QR regression;
+- final privacy/raw-ID/Persona check;
+- responsive/mobile acceptance;
+- authoritative MAX/reason, lifecycle, World Event→Chronicle browser coverage;
+- no-render-loop closure.
 
 ### Handoff
 
-- Chat 06: `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION` — sửa hit-area/pointer interception của Turn Track/HUD mà không đổi layout/gameplay contract.
-- Sau H074 DONE, trả H067 về Chat 07 để rerun final browser QA.
+- Chat 04: `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING` — package/deploy toàn bộ CSS được `client/index.html` tham chiếu và smoke live.
+- Sau H075 DONE, trả H067 về Chat 07 để rerun final browser QA.
 
 ### Open Issues
 
 - `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: BLOCKED.
 - `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`: DONE.
-- `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION`: OPEN.
+- `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION`: DONE source-level.
+- `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING`: OPEN.
 - Previous Mandatory 5s QA chain remains DONE / PASS.
 - `H-20260907-038-07-UIUX-ART-FINAL-QA`: CLOSED / PASS.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
