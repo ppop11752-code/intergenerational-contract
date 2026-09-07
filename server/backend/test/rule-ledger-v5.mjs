@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {GameEngine} from '../dist/engine.js';
-import {AuthoritativeRoom} from '../dist/authoritative-room.js';
+import {AuthoritativeRoom,DEFAULT_MANDATORY_PRESENTATION_MS} from '../dist/authoritative-room.js';
 import {statusFee} from '../dist/economy.js';
 
 let passed=0;
@@ -145,11 +145,17 @@ test('Noble downgrade refund reduces shared quota charge to actual Middle cost',
 
 
 
-test('room timeout pipeline: Mandatory presentation -> Status -> Voluntary -> next turn',()=>{
-  const r=new AuthoritativeRoom('TMO123','P1','Host','s1');assert.equal(r.start('P1',()=>.5).ok,true);const e=r.engine;assert.ok(e);assert.equal(r.phaseDeadlineKind,'mandatory');
-  r.phaseDeadlineAt=Date.now()-1;assert.equal(r.enforceTurnTimeout(()=>.5),true);assert.equal(e.phase(),'status');assert.equal(r.phaseDeadlineKind,'status');
-  r.phaseDeadlineAt=Date.now()-1;assert.equal(r.enforceTurnTimeout(()=>.5),true);assert.equal(e.phase(),'voluntary');assert.equal(r.phaseDeadlineKind,'voluntary');
-  const before=e.currentTurnCharacter()?.id,beforeRound=e.state.round;r.phaseDeadlineAt=Date.now()-1;assert.equal(r.enforceTurnTimeout(()=>.5),true);assert.ok(e.state.round>beforeRound||e.currentTurnCharacter()?.id!==before,'Voluntary timeout must advance beyond the current turn');
+test('room timeout pipeline: Mandatory is an automatic 5-second presentation with no manual skip',()=>{
+  const originalNow=Date.now;let now=1_000_000;Date.now=()=>now;
+  try{
+    const r=new AuthoritativeRoom('TMO123','P1','Host','s1');assert.equal(DEFAULT_MANDATORY_PRESENTATION_MS,5_000);assert.equal(r.mandatoryPresentationMs,5_000);assert.equal(r.start('P1',()=>.5).ok,true);const e=r.engine;assert.ok(e);assert.equal(r.phaseDeadlineKind,'mandatory');assert.equal(r.phaseDeadlineAt,now+5_000);
+    const currentOwner=e.currentTurnCharacter()?.ownerId;assert.ok(currentOwner);assert.deepEqual(r.act(currentOwner,{type:'turn:complete'},()=>.5),{ok:false,error:'NO_PLAYER_INPUT_EXPECTED'});assert.equal(e.phase(),'mandatory');
+    now+=4_999;assert.equal(r.enforceTurnTimeout(()=>.5),false);assert.equal(e.phase(),'mandatory');
+    now+=1;assert.equal(r.enforceTurnTimeout(()=>.5),true);assert.equal(e.phase(),'status');assert.equal(r.phaseDeadlineKind,'status');
+    r.phaseDeadlineAt=now-1;assert.equal(r.enforceTurnTimeout(()=>.5),true);assert.equal(e.phase(),'voluntary');assert.equal(r.phaseDeadlineKind,'voluntary');
+    const before=e.currentTurnCharacter()?.id,beforeRound=e.state.round;r.phaseDeadlineAt=now-1;assert.equal(r.enforceTurnTimeout(()=>.5),true);assert.ok(e.state.round>beforeRound||e.currentTurnCharacter()?.id!==before,'Voluntary timeout must advance beyond the current turn');
+    const override=new AuthoritativeRoom('OVR123','P2','Override','s2',{mandatoryPresentationMs:8_000});assert.equal(override.mandatoryPresentationMs,8_000);assert.equal(override.start('P2',()=>.5).ok,true);assert.equal(override.phaseDeadlineAt,now+8_000);
+  }finally{Date.now=originalNow}
 });
 
 test('marriage can be answered during own turn but cannot be sent during sender own turn',()=>{

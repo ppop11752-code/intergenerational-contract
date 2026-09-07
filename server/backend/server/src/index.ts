@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { Server } from "socket.io";
-import { AuthoritativeRoom, type ClientAction } from "../../src/authoritative-room.js";
+import { AuthoritativeRoom, DEFAULT_MANDATORY_PRESENTATION_MS, type ClientAction } from "../../src/authoritative-room.js";
 
 const app = express();
 const allowedOrigins=(process.env.CORS_ORIGINS??"*").split(",").map(x=>x.trim()).filter(Boolean);
@@ -24,7 +24,7 @@ const maxRooms=Math.max(1,Number(process.env.MAX_ROOMS??100));
 const inactiveRoomTtlMs=Math.max(60_000,Number(process.env.ROOM_TTL_MS??7_200_000));
 const endedRoomTtlMs=Math.max(60_000,Number(process.env.ENDED_ROOM_TTL_MS??1_800_000));
 const roomTiming={
-  mandatoryPresentationMs:Math.max(1_000,Number(process.env.MANDATORY_PRESENTATION_MS??7_000)),
+  mandatoryPresentationMs:Math.max(1_000,Number(process.env.MANDATORY_PRESENTATION_MS??DEFAULT_MANDATORY_PRESENTATION_MS)),
   statusTimeoutMs:Math.max(1_000,Number(process.env.STATUS_TIMEOUT_MS??15_000)),
   voluntaryTimeoutMs:Math.max(1_000,Number(process.env.VOLUNTARY_TIMEOUT_MS??60_000))
 };

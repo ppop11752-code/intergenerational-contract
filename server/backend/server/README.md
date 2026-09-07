@@ -17,7 +17,8 @@ Mỗi room giữ đúng một `GameEngine` authoritative. Client chỉ gửi int
 - Late join sau khi game bắt đầu: vào cuối Hàng chờ.
 
 ## Timers
-- `MANDATORY_PRESENTATION_MS` mặc định 7000.
+- `MANDATORY_PRESENTATION_MS` mặc định 5000; đây chỉ là thời gian trình bày
+  server-authoritative, tự chuyển phase và không có manual skip.
 - `STATUS_TIMEOUT_MS` mặc định 15000.
 - `VOLUNTARY_TIMEOUT_MS` mặc định 60000.
 

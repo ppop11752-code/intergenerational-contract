@@ -41,7 +41,9 @@ Every economic action is revalidated by the authoritative engine for phase, turn
 
 Server environment variables:
 
-- `MANDATORY_PRESENTATION_MS` — default 7000. Mandatory itself is already resolved authoritatively; this deadline is presentation time only and has no player decision.
+- `MANDATORY_PRESENTATION_MS` — default 5000. This is a server-authoritative
+  presentation deadline only: Mandatory advances automatically at expiry, has no
+  manual skip and is not a player decision timer.
 - `STATUS_TIMEOUT_MS` — default 15000. Timeout applies automatic current-tier/lower-tier fallback ending at free Poor.
 - `VOLUNTARY_TIMEOUT_MS` — default 60000. One shared timer across Market, Recovery, Family Support and Birth.
 

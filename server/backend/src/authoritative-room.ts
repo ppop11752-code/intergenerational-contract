@@ -24,6 +24,7 @@ export type FounderDrawResult={playerId:string;displayName:string;card:number;fo
 
 type DeadlineKind="mandatory"|"status"|"voluntary"|null;
 export type RoomTimingConfig={mandatoryPresentationMs:number;statusTimeoutMs:number;voluntaryTimeoutMs:number};
+export const DEFAULT_MANDATORY_PRESENTATION_MS=5_000;
 
 export class AuthoritativeRoom{
   readonly code:string;
@@ -42,7 +43,7 @@ export class AuthoritativeRoom{
 
   constructor(code:string,hostPlayerId:string,displayName:string,socketId:string,timing:Partial<RoomTimingConfig>={}){
     this.code=code;this.hostPlayerId=hostPlayerId;
-    this.mandatoryPresentationMs=Math.max(1_000,timing.mandatoryPresentationMs??7_000);
+    this.mandatoryPresentationMs=Math.max(1_000,timing.mandatoryPresentationMs??DEFAULT_MANDATORY_PRESENTATION_MS);
     this.statusTimeoutMs=Math.max(1_000,timing.statusTimeoutMs??15_000);
     this.voluntaryTimeoutMs=Math.max(1_000,timing.voluntaryTimeoutMs??60_000);
     this.players.set(hostPlayerId,{playerId:hostPlayerId,displayName,host:true,socketId,connected:true,reconnectToken:crypto.randomUUID(),joinedAt:Date.now(),aiTakeoverCharacterId:null});
