@@ -1,7 +1,7 @@
 handoff_id: H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT
 from: 06
 to: 03
-status: OPEN
+status: DONE
 title: Expose structured World Event impact and Chronicle linkage
 
 ## Source
@@ -24,3 +24,25 @@ Chronicle may continue using authoritative history snapshots for indicators. No 
 
 ## Handoffs blocked/partial
 H043 World Event banner detail, H060, H061 deep-link/filter structure.
+
+## Result
+
+Completed by Chat 03.
+
+- Public `game.worldEvent` exposes the current structured occurrence or null.
+- Each occurrence has a stable ID, Round/Year, display name, optional ambience
+  key and only the systems actually affected.
+- Impact rows expose stable system/key/label key plus authoritative value, delta
+  and unit for all nine event types.
+- Epidemic exposes its Mandatory medical fee per Character explicitly.
+- `chronicleEntryId` is the exact occurrence ID stored in
+  `game.worldEventOccurrences`, enabling direct Chronicle focus with no fuzzy
+  matching against event name or chronology strings.
+- Event mechanics, timers and formulas were unchanged.
+
+Regression `ui-world-event-contract.mjs`: PASS across all nine events, exact
+Chronicle linkage, epidemic amount, null inactive state and snapshot no-side-effect.
+
+## Result commit/ref
+
+`0d43bd8f73db9fce53617d36bb793a05aed2fcf7`

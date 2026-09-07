@@ -4,46 +4,58 @@
 
 ### Status
 
-Hoàn thành `H-20260907-048-03-MANDATORY-5S-SERVER`; default authoritative của
-Mandatory presentation đã đổi từ 7 giây thành đúng 5 giây theo D-052.
+- `H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT`: **BLOCKED**.
+- `H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT`: **DONE**.
+- `H-20260907-065-03-UI-LIFECYCLE-RESULT-CONTRACT`: **DONE**.
+- `H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT`: **DONE**.
 
 ### Changed
 
-- Thêm một nguồn default duy nhất `DEFAULT_MANDATORY_PRESENTATION_MS=5_000`
-  trong authoritative room.
-- `AuthoritativeRoom` và Socket.io bootstrap cùng dùng default này, tránh drift.
-- Giữ nguyên server environment override `MANDATORY_PRESENTATION_MS` và minimum
-  clamp hiện có; client không có timing authority.
-- Cập nhật protocol/README: Mandatory tự chuyển khi hết 5 giây, không manual
-  skip, không countdown/progress semantics và không phải decision timer.
-- Khóa behavior bằng fake-clock regression chính xác tại 4.999/5.000 ms, kiểm
-  tra từ chối `turn:complete` trong Mandatory và kiểm tra override 8 giây.
+- H064: private snapshot now exposes authoritative Market purchase maximums,
+  Recovery limits, Support transfer maximums, Birth proposal slots and Status
+  affordability, with stable reason codes. Every submitted action is still
+  revalidated by the server.
+- H065: canonical state now records structured elderly-medical, death,
+  inheritance, Government transfer, joint-spouse death, queue-entry and
+  new-life-assignment results. Public/private snapshots expose bounded result
+  data suitable for exact client rendering.
+- H066: every World Event occurrence now has a stable ID, round/year, ambience
+  key, typed affected-system rows and an exact Chronicle linkage. The snapshot
+  does not require fuzzy parsing of event prose.
+- H063: no server contract was invented. The current model has Economic
+  Household/family links but no Residence identity, occupancy, lifecycle or
+  authoritative map placement. `householdId` and `parentsHouseholdId` are not
+  valid substitutes across childhood, marriage, remarriage, orphan retention
+  and Stage2→3 transitions. Opened H068 to Chat 01 for the missing rule decision.
 
 ### Source
 
-- `docs/RULE_LEDGER.md` — Mandatory presentation 5 giây.
-- `docs/DECISION_LOG.md` — D-052.
+- `docs/RULE_LEDGER.md`
+- Approved UI specifications referenced by H063–H066.
+- `server/backend/src/model.ts`
+- `server/backend/src/engine.ts`
 - `server/backend/src/authoritative-room.ts`
-- `server/backend/server/src/index.ts`
-- `server/backend/test/rule-ledger-v5.mjs`
 - `server/backend/MULTIPLAYER_PROTOCOL_V50.md`
-- `server/backend/server/README.md`
-- Implementation commit `5213e871cfa8210985a7772e2e0de50f32080820`
+- Implementation commit `0d43bd8f73db9fce53617d36bb793a05aed2fcf7`
 
 ### Impact
 
-Phòng mới không có environment override sẽ phát deadline Mandatory tại server
-time `now + 5.000 ms`. Sau deadline server tự resolve Mandatory và chuyển phase;
-không có action bỏ qua. Các phép tính Mandatory và thứ tự phase không đổi.
+Chat 06 can render H064–H066 from typed snapshot fields without recomputing
+limits, guessing eligibility, or parsing narrative strings. Gameplay formulas,
+phase order, timers and action authority were not changed. Residence/map client
+work remains blocked until a canonical Residence model and lifecycle are locked.
 
 ### Verified
 
 - Backend `npm run release:check`: PASS.
 - Typecheck: PASS.
-- Rule Ledger: PASS 42/42, gồm deterministic 5-second timer regression.
+- Rule Ledger: PASS 42/42.
 - OI-002 regression: PASS 6/6.
 - OI-001 regression: PASS 9/9.
-- Birth eligibility, Support target và UI display regressions: PASS.
+- Birth eligibility, Support target and UI display regressions: PASS.
+- H064 action-limit/reason contract: PASS.
+- H065 lifecycle-result contract: PASS.
+- H066 World Event/Chronicle contract: PASS for all nine events.
 - Fuzz: PASS 20 games.
 - Final simulation: PASS 30 games.
 - Nested server typecheck/build: PASS.
@@ -51,35 +63,42 @@ không có action bỏ qua. Các phép tính Mandatory và thứ tự phase khô
 
 ### Audit
 
-- Authoritative source: lựa chọn B của người dùng, Rule Ledger và D-052.
-- Blast radius checked: room default, server bootstrap environment resolution,
-  deadline scheduling, timeout transition, protocol, deployment override và QA.
-- Falsification cases checked: 4.999 ms chưa chuyển, 5.000 ms tự chuyển,
-  `turn:complete` bị từ chối trong Mandatory, server override vẫn được tôn trọng.
-- `docs/OPEN_ISSUES.md`: không có OI-001–OI-006 nào bị mở lại.
-- Mandatory calculations, phase order, actions và UI design: unchanged.
-- Verification level: source + deterministic server integration complete; deployed
-  runtime timing/readability pending.
+- Authoritative source: Rule Ledger, approved H063–H066 UI contracts and
+  existing canonical engine mutations; no client-supplied calculation accepted.
+- Blast radius checked: model serialization, engine mutations, public/private
+  room snapshots, reconnect snapshots, multiplayer protocol and client consumers.
+- Dependencies checked: Rule Ledger precedence, current household/family model,
+  action revalidation, Chronicle identity and queue/new-life transitions.
+- Falsification checked: H064 quote/action parity plus insufficient/locked/cap
+  reasons; H065 joint death, no-heir Government transfer, queue and new life;
+  H066 all nine events, unaffected-system omission, inactive null snapshot and
+  snapshot no-side-effects.
+- `docs/OPEN_ISSUES.md`: no OI-001–OI-006 issue was reopened.
+- Other specialist impact: Chat 06 may consume H064–H066; Chat 01 must decide
+  H068 before Chat 02/03/06 can complete Residence work.
+- Regression impact: gameplay formulas, eligibility rules, timers and phase
+  ordering are unchanged for H064–H066. H063 has no implementation change.
+- Verification level: source, deterministic contract tests and full local server
+  regression complete; deployed runtime and live browser integration unverified.
 
 AUDIT: PASS WITH WARNINGS
 
 ### Warning / Unverified
 
-- `server/backend/docker-compose.yml` vẫn explicit
-  `MANDATORY_PRESENTATION_MS: 7000`; thuộc handoff triển khai Chat 04.
-- Chat 04 đã báo production environment được đặt 5.000 ms nhưng env deploy chưa
-  được xác nhận LIVE/effective ở lần kiểm tra gần nhất.
-- Chưa có live-browser timing/readability evidence cho normal, liquidation và
-  bankruptcy Mandatory states.
+- H063 is blocked by missing authoritative Residence identity/lifecycle rules;
+  see `H-20260907-068-01-RESIDENCE-IDENTITY-LIFECYCLE-RULE`.
+- Client integration, reconnect rendering in a deployed room and live-browser QA
+  for the new H064–H066 fields have not yet been verified.
 
 ### Handoff
 
-- Chat 04 tiếp tục `H-20260907-049-04-MANDATORY-5S-DEPLOY`: xử lý explicit
-  deployment override và xác minh effective runtime.
-- Chat 06 xử lý `H-20260907-050-06-MANDATORY-5S-CLIENT`.
-- Chat 07 xử lý `H-20260907-051-07-MANDATORY-5S-QA` sau deployment/client gates.
+- Chat 01: decide H068 without collapsing Residence into Economic Household.
+- Chat 02: implement canonical Residence transitions after H068 is locked.
+- Chat 03: resume H063 snapshot/protocol work after the canonical state exists.
+- Chat 06: integrate H064–H066 now; consume server fields/reason codes verbatim.
+- Chat 07: perform deployed reconnect and live-browser regression afterward.
 
 ### Open Issues
 
-- Không mở lại OI-001–OI-006.
-- Release gate vẫn mở cho deployment/client/live QA của Mandatory 5 giây.
+- No OI-001–OI-006 issue reopened.
+- H063 remains blocked on H068; H064–H066 await client/deployed QA gates.
