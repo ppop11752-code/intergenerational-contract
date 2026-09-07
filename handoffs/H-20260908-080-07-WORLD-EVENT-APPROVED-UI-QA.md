@@ -1,45 +1,48 @@
 handoff_id: H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA
 from: 06
 to: 07
-status: OPEN
+status: BLOCKED
 title: Verify direct World Event banner semantics on production
 
 ## Source
 - `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`
 - H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT
 - H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID
+- H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER
 
 ## Client fix under QA
 H079 removed the separate desktop `CHI TIẾT` / `.world-event-detail-panel` path and renders structured authoritative `WorldEventOccurrence.impacts` directly inside the temporary World Event banner. Optional `XEM TRONG NIÊN SỬ` remains when exact `chronicleEntryId` exists.
 
 Secondary Marriage fidelity was also corrected: an authoritative eligible profile candidate remains visible with a disabled `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN` affordance when `canSendMarriage=false`.
 
-## Previous H080 evidence
-Run `34153570608` verified the direct banner/no-detail-surface changes but found one blocker: exact Chronicle focus failed when `event.id != chronicleEntryId`.
+## H081 status
+H081 is DONE and production deploy contains its runtime. The exact chronology row now receives authoritative `data-chronicle-entry-id`.
 
-## H081 correction
-H081 is DONE.
+## Fresh H080 evidence after H081
+Workflow `World Event Approved UI QA` run `34154349342`, head `ff4f3860894785df769599f5a3605a27954fafd8`:
+- clean Client suite **72/72 PASS**;
+- deployed `dist/world-event-chronicle-focus.js` presence/semantics check PASS;
+- direct World Event banner and no legacy detail surface checks PASS;
+- exact row mapping `event.id=we-h080` → `chronicleEntryId=chron-h080` PASS;
+- final visible focus `.focused-event` FAIL.
 
-Chat 06 added `client/src/world-event-chronicle-focus.ts`:
-- chronology rows retain `data-world-event-id`;
-- rows additionally receive authoritative `data-chronicle-entry-id` from the matching `WorldEventOccurrence`;
-- the World Event banner Chronicle action resolves/focuses by exact `chronicleEntryId`;
-- no event-name inference/fallback.
+Artifact `10030437925`, digest `sha256:67dc73052dbd568dc9adfb1052acd8a261aca13307381822a8d855dee16d9079`.
 
-Regression: `client/test/world-event-chronicle-focus.test.mjs`.
+The prior run `34154207203` was invalid for H081 behavior because the H080 fixture had not loaded the new runtime; Chat 07 corrected the QA harness before run `34154349342`.
 
-GitHub Actions `UIUX Art Final E2E` run `34153987711`, HEAD `befa279bc6fa61fe6e283e7afe14a83b23b94bc8`:
-- clean Client suite step: PASS.
+## Current blocker
+The H081 runtime correctly adds the exact Chronicle id, but the visible focus is subsequently lost. Source/runtime ordering indicates the legacy Chronicle focus path in `resolved-ui-contracts.ts` can still toggle `.focused-event` using `data-world-event-id` and clobber the exact-id focus applied by H081.
 
-## Fresh QA required
-Rerun/finalize on deployed build containing H081:
+H082 has been opened for Chat 06 to make one authoritative focus path and cover the mutation/runtime ordering case.
+
+## Remaining acceptance after H082
 1. direct World Event banner content remains correct;
 2. no separate desktop detail surface;
-3. exact Chronicle focus PASS when `event.id != chronicleEntryId`;
+3. exact Chronicle focus remains visibly selected when `event.id != chronicleEntryId`;
 4. timer continuity / no pause-reset;
 5. no event-name inference;
 6. mobile same-content responsive reflow;
 7. targeted Marriage visible-but-disabled browser assertion.
 
 ## Completion
-OPEN — H081 removed the known blocker. Chat 07 owns fresh production/browser acceptance.
+BLOCKED — wait for H082, then Chat 07 must perform a fresh production/browser rerun.
