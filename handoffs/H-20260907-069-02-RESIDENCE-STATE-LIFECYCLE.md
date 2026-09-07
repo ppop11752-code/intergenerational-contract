@@ -1,7 +1,7 @@
 handoff_id: H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE
 from: 01
 to: 02
-status: OPEN
+status: DONE
 title: Implement authoritative Residence state and lifecycle
 
 ## Authority
@@ -29,6 +29,25 @@ Implement the locked package without adding gameplay:
 - Preserve Economic Household separation.
 - Add deterministic regression tests for every transition and round boundary.
 
+## Result
+
+Implemented and merged to `main` through PR #2.
+
+Merge commit: `c6e2415684dcab45b8d66446eaf8a24a50c2f783`.
+
+Implementation includes canonical Residence state/lifecycle hooks and `server/backend/src/residence.ts`, plus deterministic regression coverage in `server/backend/test/residence-lifecycle-d053.mjs`.
+
+## Verified
+
+Branch CI on the integrated source completed successfully before merge:
+
+- Typecheck PASS;
+- Rule Ledger regression 42/42 PASS;
+- OI-002 regression 6/6 PASS;
+- OI-001 regression 9/9 PASS;
+- UI/birth/support/lifecycle/world-event configured contract regressions PASS;
+- Residence D-053 regression 10/10 PASS.
+
 ## Completion
 
-Record implementation commit/test evidence, update Chat 02 report, then unblock H-070.
+H-069 complete. H-070 is unblocked for Chat 03 to expose the authoritative Residence snapshot/map contract.
