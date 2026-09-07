@@ -1,0 +1,26 @@
+name: H087 Legacy Vitest Maintenance
+
+on:
+  push:
+    branches:
+      - chat02/h087-legacy-vitest-maintenance
+
+jobs:
+  backend-maintenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/backend/package-lock.json
+      - name: Install backend dependencies
+        working-directory: server/backend
+        run: npm ci --no-audit --no-fund
+      - name: Run legacy Vitest suite
+        working-directory: server/backend
+        run: npm run test:legacy
+      - name: Run backend release gate
+        working-directory: server/backend
+        run: npm run release:check
