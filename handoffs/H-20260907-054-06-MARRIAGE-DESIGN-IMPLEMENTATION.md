@@ -1,22 +1,15 @@
 handoff_id: H-20260907-054-06-MARRIAGE-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement user-approved Marriage UI V1
+status: DONE
+title: Implement user-approved Marriage V1
 
-## Source
-- `docs/UI_MARRIAGE_APPROVED_V1.md`
-- `docs/RULE_LEDGER.md`
+## Result
+- Marriage discovery/proposal is world-first: eligible Residence profile gets `GỬI LỜI MỜI KẾT HÔN` only when target is in authoritative `marriageCandidates` and `canSendMarriage` is true.
+- Proposal uses existing `marriage:propose`; pending cancel still uses existing `marriage:cancel`.
+- Incoming `ĐẾN NHÀ` focuses proposer authoritative Residence.
+- Accepted pairs render presentation-only dotted Residence relationship line from authoritative coordinates.
+- Pending/accepted lifecycle semantics remain server authoritative; no timeout or local settlement rule added.
 
-## Implemented
-- pending incoming Accept/Reject remains independent per proposal;
-- outgoing pending card now exposes Cancel through existing server `marriage:cancel` action;
-- no pending expiry/countdown;
-- accepted binding notice retains end-round settlement wording;
-- no Reject/Cancel is added to accepted state;
-- no protocol invention.
-
-## Blocker
-`H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT` is required for world-first Residence/Profile discovery, correct navigation to target Residence and accepted-pair Residence relationship line without inferring location.
-
-No marriage eligibility/race/invalidation/settlement rule is inferred locally.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
