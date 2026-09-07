@@ -45,17 +45,21 @@ describe("turn order engine legacy coverage",()=>{
     expect(()=>g.buyResource(c,"low",1)).toThrow("invalid phase");
   });
 
-  it("converts resources before mandatory obligations",()=>{
+  it("converts eligible resource lots after turn order and before mandatory obligations",()=>{
     const g=new GameEngine();
+    g.setRandomSource(()=>0.99);
     g.joinPlayer("a");
     const c=Object.values(g.state.characters)[0]!;
     const h=g.household(c);
     h.sharedResources.low=1;
+    h.sharedResourceCostBasis.low=10;
+    h.investmentLots=[{type:"renewable",grade:"low",units:1,costBasis:10,purchaseRound:0,buyerCharacterId:c.id,purchaseAgeStage:c.ageStage}];
     const before=h.sharedCash;
     g.startRound();
     g.buildTurnOrder(()=>0.5);
     g.beginMandatoryPhase();
     expect(h.sharedResources.low).toBe(0);
+    expect(h.investmentLots).toHaveLength(0);
     expect(h.sharedCash).toBeGreaterThan(before);
   });
 
