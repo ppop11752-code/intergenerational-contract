@@ -13,3 +13,6 @@ export function supportAction(targetCharacterId:string,amountValue:string|number
 export function marriageAction(targetCharacterId:string){
   return{type:"marriage:propose" as const,targetCharacterId};
 }
+export function marriageCancelAction(proposalId:string){
+  return{type:"marriage:cancel" as const,proposalId};
+}
