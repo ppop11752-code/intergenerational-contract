@@ -1,12 +1,17 @@
 handoff_id: H-20260908-090-00-OFFICIAL-RELEASE-TAG-DECISION
 from: 07
 to: 00
-status: OPEN
+status: DONE
 title: Choose official release version/tag and publish verified release candidate
 
-## Context
-H-20260908-089-07-OFFICIAL-RELEASE-PREPARATION is DONE / PASS.
+## Decision
+User locked the canonical official release version/tag as:
 
+`v1.0.0`
+
+This decision supersedes any suggestion to continue internal V5/V10.x numbering for the first official product release.
+
+## Verified release candidate
 Exact verified release SHA:
 `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`
 
@@ -20,17 +25,11 @@ Final release gate:
 
 Render deploy `dep-dafi0rfavr4c73c63d5g` was live on the exact verified SHA before final browser/runtime acceptance completed.
 
-## Required decision/action
-1. Choose the canonical official version/tag name. No version/tag is currently locked in project docs, so Chat 07 did not invent one.
-2. Create the tag on the exact verified SHA above, not a later documentation-only commit.
-3. Create the GitHub Release from that tag using H089 release notes.
-4. Update project/release status to record the published tag/release.
+## Publication rule
+- Official tag: `v1.0.0`.
+- Tag MUST point to exact verified SHA `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`, not a later documentation-only commit.
+- GitHub Release must be created from that tag using H089 release notes.
+- Publication status is handled by follow-up H-20260908-091-07-PUBLISH-V1.0.0.
 
-Suggested command pattern after `<TAG>` is decided:
-```bash
-git fetch origin
-git tag -a <TAG> e959cdd25a05e2f61345295b505ef6ee5c8e3dc2 -m "Intergenerational Contract <TAG>"
-git push origin <TAG>
-```
-
-No product defect or specialist corrective handoff remains before publication.
+## Completion
+Version/tag decision is complete. H090 is DONE.
