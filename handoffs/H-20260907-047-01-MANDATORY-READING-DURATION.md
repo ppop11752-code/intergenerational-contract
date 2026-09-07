@@ -27,7 +27,7 @@ Evaluate readability versus turn pacing, especially when Mandatory contains many
 - Do not change the UI design decisions from `docs/UI_MANDATORY_APPROVED_V1.md`.
 - Mandatory remains automatic, no skip, no gameplay decision timer.
 - No client-only timing workaround.
-- Until a new value is locked, 7 seconds remains authoritative.
+- Before the decision recorded below, 7 seconds remained authoritative.
 
 ## Handoff back
 
