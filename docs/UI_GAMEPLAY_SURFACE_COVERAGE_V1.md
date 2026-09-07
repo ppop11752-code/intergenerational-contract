@@ -30,9 +30,9 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 | 3b | Recovery | **USER-APPROVED V1** — `docs/UI_RECOVERY_APPROVED_V1.md` | Chat 06 implement |
 | 3c | Support | **USER-APPROVED V1** — `docs/UI_SUPPORT_APPROVED_V1.md` | Chat 06 implement |
 | 3d | Birth | **USER-APPROVED V1** — `docs/UI_BIRTH_APPROVED_V1.md` | Chat 06 implement via `H-20260907-053-06-BIRTH-DESIGN-IMPLEMENTATION` |
-| 4 | Marriage lifecycle / proposals / notices | **SOURCE VALIDATION ACTIVE** — `docs/UI_MARRIAGE_SOURCE_VALIDATION_V1.md` | Obtain direct Marriage presentation approval |
-| 5 | Residence / Family / child-orphan-current Residence semantics | PARTIAL — shell interaction approved only | Source validate after Marriage |
-| 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate |
+| 4 | Marriage lifecycle / proposals / notices | **USER-APPROVED V1** — `docs/UI_MARRIAGE_APPROVED_V1.md` | Chat 06 implement via `H-20260907-054-06-MARRIAGE-DESIGN-IMPLEMENTATION` |
+| 5 | Residence / Family / child-orphan-current Residence semantics | **SOURCE VALIDATION ACTIVE** — `docs/UI_RESIDENCE_FAMILY_SOURCE_VALIDATION_V1.md` | Obtain direct RF1–RF8 approval |
+| 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate after Residence |
 | 7 | Government / ASXH / PAYG / reserves / support/crisis explanation | PARTIAL — Government access approved, detail UX not approved | Source validate |
 | 8 | Elderly medical / mortality / Grief / inheritance results | NOT DIRECTLY APPROVED | Source validate |
 | 9 | Immigration / NPC takeover communication | NOT DIRECTLY APPROVED | Source validate |
@@ -49,10 +49,11 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 - Voluntary V1 uses a persistent desktop right-edge action dock below/clear of minimap and mobile bottom action rail.
 - Market, Recovery, Support and Birth use authoritative state/results and no independent timers.
 - Birth default-Accept warning appears only in the final <10s of the responder's Voluntary window; accepted Birth executes end round.
+- Marriage pending proposals have no expiry countdown; accepted proposals are binding and settle end acceptedRound.
 - Residence/Government/Niên sử/marriage notifications do not pause Voluntary timer.
-- Marriage actions are social actions outside the sender's own economic turn for sending, while recipients may Accept/Reject pending proposals; Marriage must not create or pause a gameplay phase timer.
+- Residence focus must resolve to current authoritative Residence, including survivor/orphan/Stage2→3 rules; map proximity never defines household/kinship.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
-- Chat 06 must never invent missing gameplay semantics, eligibility or economic limits.
+- Chat 06 must never invent missing gameplay semantics, eligibility, kinship, residence assignment or economic limits.
 
 ## Active external dependency from Mandatory
 
