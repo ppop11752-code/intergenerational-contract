@@ -1,3 +1,4 @@
+// H067 fresh production rerun after H076 Mandatory pointer pass-through deployment.
 import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 const liveUrl=process.env.LIVE_URL||'https://intergenerational-contract.onrender.com';const out='qa/approved-ui-v1-artifacts';await mkdir(out,{recursive:true});
