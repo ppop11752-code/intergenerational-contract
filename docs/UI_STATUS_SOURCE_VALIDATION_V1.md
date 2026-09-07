@@ -1,6 +1,6 @@
 # UI STATUS PURCHASE — SOURCE VALIDATION V1
 
-Status: USER VERIFICATION REQUIRED
+Status: CLOSED — USER VERIFIED
 Date: 2026-09-07
 Owner: 05 — UI/UX & ART
 Trigger: `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE`
@@ -9,9 +9,7 @@ Trigger: `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE`
 
 Status Purchase surface after Mandatory, including 15s authoritative decision timer, next-round effect, Household representative semantics, timeout fallback, married fee handling, Noble cap/competition/refund and transition into Voluntary.
 
-## CURRENT / AUTHORITATIVE BEHAVIOR — DO NOT RE-ASK
-
-From latest Rule Ledger and current server display contract:
+## CURRENT / AUTHORITATIVE BEHAVIOR
 
 - Status Purchase occurs after Mandatory and before Voluntary for the Household representative only.
 - Maximum decision time = **15 seconds**, authoritative server deadline.
@@ -32,86 +30,26 @@ From latest Rule Ledger and current server display contract:
 - At end-round marriage merge, next-round Status targets/paid fees reconcile by authoritative rule; UI must not precompute the outcome client-side.
 - Server exposes a private `statusQuote` only to the current Household representative during Status, containing authoritative fees/affordability and Noble competition/fallback/refund facts.
 
-## CURRENT CLIENT / HISTORICAL UX GAP
+## USER-VERIFIED PRESENTATION — 2026-09-07
 
-Current client baseline exposes only three raw `poor/middle/noble` buttons. Previous UI audit explicitly identified missing:
-- current Status;
-- authoritative fee detail;
-- affordability;
-- next-round effect;
-- married fee context;
-- Noble competition/cap/refund explanation;
-- timeout fallback explanation;
-- production-quality card treatment.
+- **S1 — Placement: A.** Use a large centered three-card chooser over the persistent World Map.
+- **S2 — Timer: B.** The authoritative 15s countdown appears only in the approved HUD phase/timer cluster. Do not duplicate the countdown inside the Status panel. The panel itself communicates `CHỌN ĐỊA VỊ CHO VÒNG SAU`.
+- **S3 — Card contents: A.** Every tier card always shows tier name, authoritative fee, affordability, main access/unlocks and `HIỆU LỰC VÒNG SAU`. Noble also has competition/cap communication, subject to S6 timing.
+- **S4 — Married Household: A.** Keep the same three-card layout; show `CHỌN CHO HỘ GIA ĐÌNH` and display the authoritative married fee directly. Do not foreground the single-person base fee.
+- **S5 — Timeout fallback: B.** Do not show the fallback explanation persistently. Surface the automatic fallback rule only when the authoritative timer is below 5 seconds.
+- **S6 — Noble competition: B.** During the initial selection, Noble may visually align with the other tier cards. Explain that Noble is subject to end-round competition immediately **after the player selects Noble**, including the waiting-for-resolution state. Do not imply guaranteed Noble activation.
+- **S7 — Successful selection: A.** Briefly transform the same panel into `ĐÃ CHỌN — HIỆU LỰC VÒNG SAU`, then auto-transition to Voluntary with no second confirmation.
 
-Historical V10.1 explored three Status cards and a 15-second timed phase, but exact card composition remains non-authoritative unless reconfirmed.
+## Interaction / wording constraints
 
-## Cross-surface constraints
-
-- Approved HUD phase/timer treatment applies here as a **real decision timer**; unlike Mandatory, remaining time must be visibly actionable.
-- Status surface opens over the persistent World Map and must not pause/extend the 15s server deadline.
-- After a valid selection, UI must not imply immediate current-round Status/Market-access change.
-- Noble selection must not be presented as guaranteed final Noble if end-round competition remains unresolved.
+- Status is a real decision phase, so the HUD timer remains actionable and visually prominent according to approved HUD V1.
+- Panel itself does not duplicate the timer.
+- Below 5s, show a concise fallback warning such as: `HẾT GIỜ: hệ thống sẽ ưu tiên giữ địa vị hiện tại nếu hợp lệ; nếu không sẽ tự hạ bậc.`
+- If Noble is selected, confirmation must explicitly communicate that selection/payment creates a Noble candidate for end-round resolution rather than guaranteed final Noble.
+- If Noble later loses the cap resolution, later result communication must state Middle fallback + authoritative refund difference.
 - No client-side fee, affordability, slot, priority, fallback or refund calculation.
+- No immediate Residence architecture or current-round Market access change is implied.
 
-## USER VERIFICATION QUESTIONS
+## Gate result
 
-### S1 — Surface placement
-
-A. Large centered three-card chooser over the persistent World Map.
-B. Middle-right floating panel with three stacked cards.
-C. Wide lower-third three-card chooser.
-
-Recommendation: **A** — Status is a short, explicit timed choice and benefits from direct comparison between all three tiers.
-
-### S2 — 15-second timer treatment
-
-A. Large numeric countdown integrated at the top of the Status chooser, with a shrinking progress accent.
-B. Medium countdown in the approved HUD phase/timer cluster only; Status panel itself only shows `CHỌN ĐỊA VỊ CHO VÒNG SAU`.
-C. Timer appears both in HUD and panel with equal prominence.
-
-Recommendation: **A**, while the HUD can still mirror the same authoritative time at lower prominence. The panel should make clear that this is a real decision deadline.
-
-### S3 — Tier card information density
-
-A. Every card always shows: tier name, authoritative fee, affordability, main access/unlocks, `HIỆU LỰC VÒNG SAU`; Noble adds competition/cap note.
-B. Cards show tier + fee + affordability; access/effect detail appears on hover/tap.
-C. Minimal tier + fee cards; details move to a shared side explanation panel.
-
-Recommendation: **A** — 15 seconds is short, so core consequences should not require exploratory hover.
-
-### S4 — Married Household representation
-
-A. Same three-card layout, but top context explicitly says `CHỌN CHO HỘ GIA ĐÌNH`; cards show the authoritative married fee directly, without emphasizing the single-person base fee.
-B. Show both `PHÍ 1 NGƯỜI` and `PHÍ HỘ GIA ĐÌNH ×2` on every card.
-C. Split spouse identities/fees into two subrows on each card.
-
-Recommendation: **A** — player needs the amount actually payable, not formula clutter.
-
-### S5 — Timeout fallback communication
-
-A. Persistent short footer: `HẾT GIỜ: HỆ THỐNG SẼ ƯU TIÊN GIỮ ĐỊA VỊ HIỆN TẠI NẾU HỢP LỆ, NẾU KHÔNG SẼ TỰ HẠ BẬC.`
-B. Only show this rule when timer drops below 5s.
-C. Hide fallback rule during the choice and only explain what happened if timeout occurs.
-
-Recommendation: **A** — timeout has meaningful automatic behavior and should be known before the deadline.
-
-### S6 — Noble competition presentation
-
-A. Noble card is explicitly marked `ỨNG VIÊN QUÝ TỘC`; show current authoritative slot/competition context. After selection, show `ĐANG CHỜ XẾP HẠNG CUỐI VÒNG`; if unsuccessful, later result communication states Middle fallback + refund difference.
-B. Present Noble like other tiers during selection and explain competition only after selection.
-C. Hide cap/competition detail entirely unless the player loses the Noble resolution.
-
-Recommendation: **A** — prevents the player from reading payment as guaranteed Noble status.
-
-### S7 — Successful selection transition
-
-A. Brief confirmation state inside the same card/panel: `ĐÃ CHỌN — HIỆU LỰC VÒNG SAU`, then auto-transition to Voluntary without extra confirmation.
-B. Immediately close Status and show a small toast while Voluntary opens.
-C. Require a second `XÁC NHẬN` button after selecting a tier.
-
-Recommendation: **A** — confirms the delayed effect without adding another gameplay action.
-
-## Gate
-
-Do not create the final Status design spec or Chat 06 implementation handoff until S1–S7 are directly approved by the user.
+Source Validation Gate is CLOSED. Status Purchase V1 may be specified and handed to Chat 06 using these directly approved presentation decisions.
