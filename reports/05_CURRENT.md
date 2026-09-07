@@ -3,53 +3,63 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN và đang được xử lý theo coverage sequence. Mandatory UX V1 đã được user duyệt; Status Purchase hiện ở Source Validation Gate với S1–S7 chờ direct approval.
+Đang làm — Handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN. Landing/Lobby/Room/HUD, Mandatory và Status Purchase đã có direct user-approved V1. Chat 05 hiện chuyển sang Source Validation Gate cho Voluntary shell trước khi thiết kế Market/Recovery/Support/Birth.
 
 ### Changed
-- Đã đọc lại `reports/05_CURRENT.md` và coverage matrix khi user nói `tiếp theo`.
-- Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn là task chủ động của Chat 05; không có handoff khác gửi 05 làm thay đổi ưu tiên.
-- Tạo `docs/UI_STATUS_SOURCE_VALIDATION_V1.md` cho Status Purchase.
-- Status authoritative semantics được giữ nguyên: representative-only after Mandatory; max 15s real decision deadline; selection/pay current round but effect next round; current Status still controls current-round order/Market access; Poor fee 0; married fee exactly 2× single fee; timeout fallback tries to keep current tier then recursively downgrades; Noble cap resolves end round and may fallback to Middle with refund difference; married Noble consumes 2 slots; no client-side pricing/eligibility/competition calculation.
-- Current server display contract already exposes authoritative private `statusQuote` to the current Household representative, so UI can present fees, affordability, Noble context, fallback/refund facts without recomputing gameplay rules client-side.
-- Current client baseline remains insufficient: raw poor/middle/noble buttons without current status, fee/affordability, next-round effect, married context, Noble competition/refund or timeout explanation.
-- Updated `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`: Status = SOURCE VALIDATION ACTIVE.
-- No gameplay, Rule Ledger, protocol, authoritative calculation or timer changed.
+- User chốt Status Purchase S1–S7.
+- S1 A: large centered three-card chooser over persistent World Map.
+- S2 B: authoritative 15s countdown **chỉ hiển thị ở HUD phase/timer**, không lặp lại trong Status panel.
+- S3 A: mỗi tier card luôn hiện tier name, authoritative fee, affordability, main access/unlocks và `HIỆU LỰC VÒNG SAU`.
+- S4 A: married representative thấy `CHỌN CHO HỘ GIA ĐÌNH`; cards hiển thị authoritative household fee trực tiếp, không foreground single fee.
+- S5 B: timeout fallback explanation chỉ xuất hiện khi authoritative timer <5s.
+- S6 B: Noble competition/cap được giải thích ngay sau khi player chọn Noble; không front-load full competition detail trước click, nhưng UI không được imply guaranteed Noble.
+- S7 A: valid selection → brief `ĐÃ CHỌN — HIỆU LỰC VÒNG SAU` state → authoritative transition sang Voluntary, không second confirmation.
+- `docs/UI_STATUS_SOURCE_VALIDATION_V1.md` chuyển sang `CLOSED — USER VERIFIED`.
+- Tạo `docs/UI_STATUS_APPROVED_V1.md` làm authoritative user-approved Status design spec.
+- Tạo handoff `H-20260907-048-06-STATUS-DESIGN-IMPLEMENTATION` → OPEN cho Chat 06.
+- Cập nhật `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`: Status = USER-APPROVED V1; Voluntary shell = SOURCE VALIDATION ACTIVE.
+- Tạo `docs/UI_VOLUNTARY_SOURCE_VALIDATION_V1.md` cho shared 60s Voluntary shell trước detailed Market/Recovery/Support/Birth passes.
+- Không thay gameplay, Rule Ledger, protocol, timers, fees, fallback, Noble resolution hoặc authoritative calculations.
 
 ### Source
-- Latest direct user instruction `tiếp theo` in Chat 05.
-- `docs/RULE_LEDGER.md`.
+- Latest direct user decisions in Chat 05.
+- `docs/UI_STATUS_APPROVED_V1.md`.
 - `docs/UI_STATUS_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_VOLUNTARY_SOURCE_VALIDATION_V1.md`.
 - `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
-- `docs/UI_UX_FULL_AUDIT_2026-09-06.md`.
-- Existing authoritative server status display contract from prior Chat 03/06 handoff evidence.
+- `docs/RULE_LEDGER.md`.
+- `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md`.
 - `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
 
 ### Impact
-- Chat 06 must not design Status cards from raw buttons or invent pricing/fallback/Noble semantics before direct approval.
-- Approved HUD phase/timer is a real actionable countdown during Status, unlike Mandatory.
-- Status UX must make `hiệu lực vòng sau` explicit and must not imply Noble selection guarantees final Noble status.
-- Full gameplay UX coverage remains incomplete until Status and later surfaces are closed.
+- Chat 06 may implement Status V1 but must keep timer only in approved HUD and must not duplicate it inside Status chooser.
+- Noble selection must remain pending end-round resolution until server confirms result.
+- Voluntary design now becomes the next user-approval gate; Chat 06 must not invent final Voluntary/Market/Recovery/Support/Birth layout before approval.
+- Full-game UX coverage remains incomplete.
 
 ### Verified
-- Status rules were cross-checked against current Rule Ledger.
-- Current client Status gap is documented in the full UI/UX audit.
-- Authoritative statusQuote/data contract exists for presentation.
-- No new gameplay decision is required for S1–S7; these are presentation/interaction choices only.
+- Status S1–S7 are direct user decisions.
+- Status V1 preserves current-round vs next-round semantics.
+- No client-side fee/affordability/fallback/Noble/refund calculation is authorized.
+- Voluntary authoritative constraints cross-checked: one 60s total timer; switching surfaces does not reset/pause; only Market/Recovery/Support/Birth are Voluntary action groups.
 
 ### Unverified
-- Status final presentation choices S1–S7.
-- Exact new Mandatory reading duration requested earlier remains external dependency under Chat 01.
-- Voluntary and remaining gameplay surfaces #3–#12 remain not directly approved.
+- Client implementation/visual fidelity for Status V1.
+- Voluntary shell choices V1–V6.
+- Detailed Market/Recovery/Support/Birth surface approvals.
+- Remaining gameplay surfaces #4–#12 in coverage matrix.
+- Mandatory exact reading duration remains external gameplay dependency under Chat 01.
 
 ### Handoff
+- Chat 06: `H-20260907-048-06-STATUS-DESIGN-IMPLEMENTATION` — OPEN.
 - Chat 06: `H-20260907-046-06-MANDATORY-DESIGN-IMPLEMENTATION` — OPEN.
 - Chat 01: `H-20260907-047-01-MANDATORY-READING-DURATION` — OPEN.
-- Chat 05: resolve Status S1–S7, then create approved Status spec/handoff and continue to Voluntary.
-- Parent `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN until coverage matrix exit criteria are met.
+- Chat 05: resolve Voluntary V1–V6, then continue Market/Recovery/Support/Birth.
+- Parent `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN.
 
 ### Open Issues
 - Mandatory exact reading duration gameplay decision OPEN.
-- Mandatory implementation/visual verification OPEN.
-- Status direct design approval OPEN.
-- Voluntary + Market/Recovery/Support/Birth direct design approval OPEN.
+- Mandatory/Status implementation and visual verification OPEN.
+- Voluntary shell direct design approval OPEN.
+- Market/Recovery/Support/Birth direct design approval OPEN.
 - Marriage/Residence/Queue/Government/event/Niên sử/end-report and other gameplay surface approvals OPEN.
