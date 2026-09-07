@@ -2,6 +2,7 @@ handoff_id: H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT
 from: 06
 to: 03
 status: BLOCKED
+blocked_by: H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE
 title: Expose authoritative Residence / map-location contract for approved UI
 
 ## Source
@@ -31,27 +32,20 @@ H042, H054 visual relationship line/navigation, H055, parts of H056 and H059.
 
 ## Result
 
-BLOCKED after direct model/engine inspection.
+Still BLOCKED, but the original rule ambiguity is resolved.
 
-- Canonical `GameState` has Economic `Household` and Character family links, but
-  no Residence identity, occupancy history, abandoned/reclaimed lifecycle or map
-  placement state.
-- `householdId` cannot safely substitute for Residence: Stage1–2 children are
-  separate economic Households while co-resident with parents; survivor/orphan
-  and retained-Residence transitions intentionally diverge from Household state.
-- Deriving current Residence from `parentsHouseholdId` also fails after a
-  surviving parent remarries and cannot distinguish an adult who retained an
-  orphaned Residence from an adult whose parents died later.
-- The authoritative sources do not specify which Residence survives, is vacated,
-  or is newly created when two adults marry. Choosing proposer/target/new home in
-  Chat 03 would create a Residence assignment rule.
-- Stable presentation coordinates cannot be generated without first having
-  stable authoritative Residence identities.
+- Chat 01 closed H068 through user-selected option A and locked D-053 in the
+  Rule Ledger: Residence is independent, has stable identity, and follows the
+  explicit creation/marriage/child/adulthood/empty lifecycle.
+- OI-007 is now `SOURCE LOCKED / IMPLEMENTATION PENDING`.
+- Current `main` still has no canonical Residence state or transition code in
+  `GameState`/engine. H069 is OPEN and owned by Chat 02.
+- H063 is reconciled into H070. Chat 03 will expose and test the typed public/
+  private snapshot only after the completed H069 implementation is available.
 
-No source change was made for H063 and no `householdId` inference was exposed.
-Decision handoff: `H-20260907-068-01-RESIDENCE-IDENTITY-LIFECYCLE-RULE`.
+No `householdId`, parent-link or map-proximity inference has been exposed.
 
 ## Result commit/ref
 
-Documentation-only blocker record; see the report/handoff commit containing this
-file.
+Source decision: D-053 / commit `626f1c58de5eb08b518628d1acf6f54106b1d74e`.
+Implementation dependency: H069; server-contract continuation: H070.

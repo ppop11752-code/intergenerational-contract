@@ -5,6 +5,7 @@
 ### Status
 
 - `H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT`: **BLOCKED**.
+- `H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT`: **BLOCKED BY H069**.
 - `H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT`: **DONE**.
 - `H-20260907-065-03-UI-LIFECYCLE-RESULT-CONTRACT`: **DONE**.
 - `H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT`: **DONE**.
@@ -22,15 +23,15 @@
 - H066: every World Event occurrence now has a stable ID, round/year, ambience
   key, typed affected-system rows and an exact Chronicle linkage. The snapshot
   does not require fuzzy parsing of event prose.
-- H063: no server contract was invented. The current model has Economic
-  Household/family links but no Residence identity, occupancy, lifecycle or
-  authoritative map placement. `householdId` and `parentsHouseholdId` are not
-  valid substitutes across childhood, marriage, remarriage, orphan retention
-  and Stage2→3 transitions. Opened H068 to Chat 01 for the missing rule decision.
+- H063/H070: Chat 01 has closed H068 after the user selected option A and locked
+  D-053. The current `main` model/engine still has no Residence state or lifecycle;
+  H069 remains OPEN under Chat 02. Chat 03 made no speculative snapshot change.
 
 ### Source
 
 - `docs/RULE_LEDGER.md`
+- `docs/DECISION_LOG.md` — D-053.
+- `docs/OPEN_ISSUES.md` — OI-007.
 - Approved UI specifications referenced by H063–H066.
 - `server/backend/src/model.ts`
 - `server/backend/src/engine.ts`
@@ -43,7 +44,7 @@
 Chat 06 can render H064–H066 from typed snapshot fields without recomputing
 limits, guessing eligibility, or parsing narrative strings. Gameplay formulas,
 phase order, timers and action authority were not changed. Residence/map client
-work remains blocked until a canonical Residence model and lifecycle are locked.
+work remains blocked until H069 implements the locked Residence model/lifecycle.
 
 ### Verified
 
@@ -63,7 +64,7 @@ work remains blocked until a canonical Residence model and lifecycle are locked.
 
 ### Audit
 
-- Authoritative source: Rule Ledger, approved H063–H066 UI contracts and
+- Authoritative source: D-053, Rule Ledger, approved H063–H066 UI contracts and
   existing canonical engine mutations; no client-supplied calculation accepted.
 - Blast radius checked: model serialization, engine mutations, public/private
   room snapshots, reconnect snapshots, multiplayer protocol and client consumers.
@@ -73,9 +74,10 @@ work remains blocked until a canonical Residence model and lifecycle are locked.
   reasons; H065 joint death, no-heir Government transfer, queue and new life;
   H066 all nine events, unaffected-system omission, inactive null snapshot and
   snapshot no-side-effects.
-- `docs/OPEN_ISSUES.md`: no OI-001–OI-006 issue was reopened.
-- Other specialist impact: Chat 06 may consume H064–H066; Chat 01 must decide
-  H068 before Chat 02/03/06 can complete Residence work.
+- `docs/OPEN_ISSUES.md`: OI-007 is OPEN — SOURCE LOCKED / IMPLEMENTATION
+  PENDING; OI-001–OI-006 remain closed.
+- Other specialist impact: Chat 02 must complete H069 before Chat 03 can execute
+  H070; Chat 06 may consume H064–H066 immediately.
 - Regression impact: gameplay formulas, eligibility rules, timers and phase
   ordering are unchanged for H064–H066. H063 has no implementation change.
 - Verification level: source, deterministic contract tests and full local server
@@ -85,20 +87,20 @@ AUDIT: PASS WITH WARNINGS
 
 ### Warning / Unverified
 
-- H063 is blocked by missing authoritative Residence identity/lifecycle rules;
-  see `H-20260907-068-01-RESIDENCE-IDENTITY-LIFECYCLE-RULE`.
+- Residence rules are source-complete, but H063/H070 remain blocked by the OPEN
+  H069 engine/state implementation.
 - Client integration, reconnect rendering in a deployed room and live-browser QA
   for the new H064–H066 fields have not yet been verified.
 
 ### Handoff
 
-- Chat 01: decide H068 without collapsing Residence into Economic Household.
-- Chat 02: implement canonical Residence transitions after H068 is locked.
-- Chat 03: resume H063 snapshot/protocol work after the canonical state exists.
+- Chat 01: H068/D-053 complete; no further rule decision is pending.
+- Chat 02: implement H069 canonical Residence state/transitions.
+- Chat 03: execute H070 and close/reconcile H063 after H069 is complete.
 - Chat 06: integrate H064–H066 now; consume server fields/reason codes verbatim.
 - Chat 07: perform deployed reconnect and live-browser regression afterward.
 
 ### Open Issues
 
-- No OI-001–OI-006 issue reopened.
-- H063 remains blocked on H068; H064–H066 await client/deployed QA gates.
+- OI-007 is open at implementation stage; OI-001–OI-006 remain closed.
+- H063/H070 remain blocked on H069; H064–H066 await client/deployed QA gates.
