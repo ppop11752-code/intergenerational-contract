@@ -4,61 +4,66 @@
 
 ### Status
 
-Hoàn thành — `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` **DONE / PASS WITH WARNINGS**. Không còn blocker sản phẩm trong phạm vi H067.
+Bị chặn — `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` đang BLOCKED bởi lỗi exact World Event → Chronicle focus. H067 trước đó vẫn DONE / PASS WITH WARNINGS.
 
 ### Changed
 
-- Xác nhận H075 CSS packaging và H076 Mandatory pointer correction đã deploy production.
-- Harden H067 browser gate để phân biệt đúng Tutorial coach hợp lệ, marker bị phần tử tương tác thật che khuất và pointer defect thực tế.
-- Sửa QA authoritative fixture thiếu UTF-8 charset; lỗi này từng làm `KHÔNG TÁI TẠO` bị mojibake và khiến Market quote bị phân loại sai trong harness, không phải Client.
-- Bổ sung deployed Lobby/QR smoke vào H067.
-- Final workflow `Approved UI V1 E2E` run `34151689731`, head `1bb6b443868abefee06e4242b9ef377129460341`: backend PASS, clean Client **68/68 PASS**, live desktop/mobile/QR PASS, authoritative fixture PASS.
-- Artifact `10029604545`, digest `sha256:1db5dee80dc4120205b927d237e4eb80209dff3ef765b54a757da622ae794e70`.
-- Supporting fixture run `34151580895`: PASS; artifact `10029539264`, digest `sha256:9c0984481d1462301a2a0b62e57007c62f7dfd57da3d6f6b9be76f118bc1c4b8`.
+- Xác nhận H079 đã lên production; Render live deployment quan sát tại commit `a9e95b3a02751d468ca83e4ddc47003a5039284a`.
+- Tạo targeted H080 gate: `qa/world-event-approved-ui-qa.mjs` + workflow `World Event Approved UI QA`.
+- Fresh run `34153570608`, job `101840631652`:
+  - clean Client regression **69/69 PASS**;
+  - production runtime check PASS cho direct `.world-event-banner-detail`;
+  - legacy `CHI TIẾT` / `.world-event-detail-panel` không còn trên deployed runtime;
+  - structured impacts, only-affected-system rows và Chronicle button xuất hiện đúng trong authoritative fixture;
+  - FAIL tại exact Chronicle focus.
+- Root cause xác minh từ source: `worldEvent()` lưu `chronicleFocus = ev.chronicleEntryId`, nhưng `chronicle()` lại so sánh/select theo `data-world-event-id`, giá trị này lấy từ `WorldEventOccurrence.id`.
+- Tạo `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID` cho Chat 06.
 
 ### Source
 
-- `handoffs/H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA.md`
-- H073/H074/H075/H076 resolved handoffs
-- `.github/workflows/approved-ui-v1-e2e.yml`
-- `qa/approved-ui-v1-live-smoke.mjs`
-- `qa/approved-ui-v1-fixture.mjs`
-- workflow runs `34151689731`, `34151580895`
+- `handoffs/H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA.md`
+- `handoffs/H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT.md`
+- `handoffs/H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID.md`
+- `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`
+- `client/src/resolved-ui-contracts.ts`
+- `client/src/approved-ui-finalize.ts`
+- workflow run `34153570608`
+- artifact `10030187563`
+- digest `sha256:57a25f81878b298d784a1325bc50fe26c45f4086d1b1d392bb83198f6ad9acb3`
 
 ### Impact
 
-Approved UI V1 Client integration đã qua release/QA gate H067 trên production. Không thay gameplay, protocol, timer rule hoặc authoritative calculation. Queue/reconnect/Marriage rare-state paths chưa được dựng thành một dedicated live multi-client scenario trong H067 nên verdict là PASS WITH WARNINGS thay vì tuyên bố exhaustive E2E.
+World Event approved banner semantics đã phần lớn đúng trên production, nhưng `XEM TRONG NIÊN SỬ` chưa đảm bảo focus đúng entry khi `chronicleEntryId` khác `event.id`. Đây là presentation/navigation defect, không phải gameplay/protocol defect. H080 chưa thể PASS.
 
 ### Verified
 
-- Backend release regression PASS.
-- Clean Client suite 68/68 PASS.
-- Production Approved UI CSS delivery.
-- Desktop/mobile landing + responsive layout.
-- Residence ordinary pointer navigation và panel close.
-- HUD + Turn Track interaction.
-- Timer continuity + Mandatory no visible local countdown.
-- Live privacy smoke: không thấy raw primary IDs / Persona leak.
-- Status fee, Market MAX/reason, Recovery MAX, Support MAX, Birth reason authoritative display.
-- Structured lifecycle.
-- Residence contract.
-- World Event detail → exact Chronicle linkage.
-- No render loop dưới repeated snapshots.
-- Production Lobby room PIN + QR/deep-link contract + payload privacy.
+- H079 deployed production runtime tồn tại.
+- Clean Client suite 69/69 PASS.
+- Desktop direct event detail nằm trong temporary banner.
+- Không còn separate desktop `CHI TIẾT` / detail sheet path.
+- Event name + concrete authoritative structured impact rows render trực tiếp.
+- Fixture chỉ render systems thực sự bị ảnh hưởng; không thêm fixed extra systems.
+- Chronicle button chỉ xuất hiện khi `chronicleEntryId` có dữ liệu.
+- Deployed Marriage approved disabled-affordance copy có mặt.
+- Exact focus defect được tái hiện bằng `event.id = we-h080`, `chronicleEntryId = chron-h080` và xác minh trực tiếp trong source.
 
 ### Unverified
 
-- Dedicated live production multi-client reproduction cho mọi rare Queue/reconnect/Marriage state chưa chạy trong H067. Các đường này có clean Client contract/regression coverage.
+Sau H081 cần rerun phần còn lại của H080:
+- exact Chronicle focus PASS;
+- timer continuity / không pause-reset;
+- no event-name inference;
+- mobile same-content responsive reflow;
+- targeted Marriage visible-but-disabled browser assertion.
 
 ### Handoff
 
-Không có handoff blocker mới từ H067.
+Chat 06: `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID` — sửa mapping exact `chronicleEntryId` → corresponding World chronology entry, thêm regression với hai ID khác nhau, rồi trả H080 về Chat 07.
 
 ### Open Issues
 
+- `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA`: BLOCKED.
+- `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID`: OPEN.
+- `H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT`: DONE source/deployed; exact Chronicle acceptance remains blocked by H081.
 - `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: DONE / PASS WITH WARNINGS.
-- `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`: DONE.
-- `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION`: DONE.
-- `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING`: DONE.
-- `H-20260908-076-06-APPROVED-UI-V1-MANDATORY-POINTER-INTERCEPTION`: DONE.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
