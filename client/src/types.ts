@@ -7,161 +7,47 @@ export type ResourceGrade="low"|"mid"|"high";
 export type ResourceType="renewable"|"nonrenewable";
 
 export interface RoomPlayer{
-  playerId:string;
-  displayName:string;
-  host:boolean;
-  connected:boolean;
-  activeCharacterId:string|null;
-  aiTakeoverCharacterId?:string|null;
-  queuePosition:number|null;
+  playerId:string;displayName:string;host:boolean;connected:boolean;activeCharacterId:string|null;currentResidenceId?:string|null;aiTakeoverCharacterId?:string|null;queuePosition:number|null;
 }
-
 export interface PublicCharacter{
-  characterId:string;
-  ownerId:string|null;
-  npc:boolean;
-  immigrant?:boolean;
-  ageStage:number;
-  ageLabel:string;
-  status:string;
-  pendingStatus?:string|null;
-  householdId:string;
-  householdAssets:number;
-  cash:number;
-  fundedSocialSecurity?:number;
-  married:boolean;
-  spouseCharacterIds:string[];
-  childCharacterIds:string[];
-  parentHouseholdId:string|null;
-  renewableResources?:Record<string,number>;
-  nonRenewableResources?:Record<string,number>;
-  taxPaidThisRound?:number;
-  elderlyMedicalDue?:number;
-  elderlyMedicalPaid?:number;
-  mortalityRisk?:number;
+  characterId:string;ownerId:string|null;npc:boolean;immigrant?:boolean;ageStage:number;ageLabel:string;status:string;pendingStatus?:string|null;householdId:string;currentResidenceId?:string|null;
+  householdAssets:number;cash:number;fundedSocialSecurity?:number;married:boolean;parentCharacterIds?:string[];spouseCharacterIds:string[];childCharacterIds:string[];parentHouseholdId:string|null;
+  renewableResources?:Record<string,number>;nonRenewableResources?:Record<string,number>;taxPaidThisRound?:number;elderlyMedicalDue?:number;elderlyMedicalPaid?:number;mortalityRisk?:number;
 }
 
-export interface MandatoryBreakdown{
-  living:number;
-  socialContribution:number;
-  tax:number;
-  childSupport:number;
-  parentSupport:number;
-  grief:number;
-  medical:number;
-  total:number;
-}
-export interface MandatoryQuote{
-  breakdown:MandatoryBreakdown;
-  netIncome:number;
-  cashBefore:number;
-  liquidationRequired:boolean;
-  liquidationProceeds:number;
-  cashAfterLiquidation:number;
-  projectedBankruptcy:boolean;
-  shortfall:number;
-  dominantCost:keyof Omit<MandatoryBreakdown,"total">;
-}
-export interface RecoveryQuote{
-  grade:ResourceGrade;
-  currentPool:number;
-  carryingCapacity:number;
-  pendingNextRound:number;
-  capacityRemaining:number;
-  costPerUnit:number;
-}
-export interface StatusCardQuote{status:Status;fee:number;personsCharged:number;affordable:boolean}
-export interface NobleCompetitionQuote{
-  slotsTotal:number;
-  slotsRequired:number;
-  pendingNobleSlots:number;
-  incumbent:boolean;
-  householdAssets:number;
-  turnCard:number|null;
-  priority:readonly string[];
-  allocationTiming:"end_of_round";
-  fallbackStatus:"middle";
-  middleFallbackFee:number;
-  potentialRefund:number;
-}
-export interface StatusQuote{
-  roundAverageAssets:number;
-  priceIndex:number;
-  cards:StatusCardQuote[];
-  nobleCompetition:NobleCompetitionQuote;
-}
+export interface MandatoryBreakdown{living:number;socialContribution:number;tax:number;childSupport:number;parentSupport:number;grief:number;medical:number;total:number}
+export interface MandatoryQuote{breakdown:MandatoryBreakdown;netIncome:number;cashBefore:number;liquidationRequired:boolean;liquidationProceeds:number;cashAfterLiquidation:number;projectedBankruptcy:boolean;shortfall:number;dominantCost:keyof Omit<MandatoryBreakdown,"total">}
+export interface MarketQuote{resourceType:ResourceType;grade:ResourceGrade;price:number;purchasableMax:number|null;unavailableReason:string|null}
+export interface RecoveryQuote{grade:ResourceGrade;currentPool:number;carryingCapacity:number;pendingNextRound:number;capacityRemaining:number;costPerUnit:number;acceptedMax?:number|null;unavailableReason?:string|null}
+export interface StatusCardQuote{status:Status;fee:number;personsCharged:number;affordable:boolean;unavailableReason?:string|null}
+export interface NobleCompetitionQuote{slotsTotal:number;slotsRequired:number;pendingNobleSlots:number;incumbent:boolean;householdAssets:number;turnCard:number|null;priority:readonly string[];allocationTiming:"end_of_round";fallbackStatus:"middle";middleFallbackFee:number;potentialRefund:number}
+export interface StatusQuote{roundAverageAssets:number;priceIndex:number;cards:StatusCardQuote[];nobleCompetition:NobleCompetitionQuote}
+export interface SupportTarget{characterId:string;relation:"parent"|"child";ageLabel:string;status:string;displayName?:string|null;transferableMax?:number|null;unavailableReason?:string|null}
+export interface BirthSlot{index:number;proposalId:string|null;status:string;available:boolean;unavailableReason:string|null}
+export interface BirthQuote{maxProposals:number;promotionalThirdSlot:boolean;canInitiate:boolean;unavailableReason:string|null;slots:BirthSlot[];outgoingProposals:any[]}
 
-export interface RankingEntry{
-  playerId:string;
-  average:number;
-  cumulativeAssets:number;
-  activeRounds:number;
-  lives:number;
-}
+export interface LifecycleBeneficiary{characterId:string;householdId:string;relation:"spouse"|"child";amount:number}
+export interface LifecycleResult{id:string;round:number;year:number;type:"elderly_medical"|"death"|"inheritance"|"queue_entry"|"new_life_assignment";characterIds:string[];householdId:string|null;cause:string|null;joint:boolean;medicalDue:number|null;medicalPaid:number|null;estateTotal:number|null;beneficiaries:LifecycleBeneficiary[];governmentTransfer:number;playerId:string|null;queuePosition:number|null;assignmentReason:"birth"|"death"|"bankruptcy"|null}
+export interface WorldEventImpact{system:"MARKET"|"RECOVERY"|"BIRTH"|"GOVERNMENT"|"MANDATORY";key:string;labelKey:string;value:number;delta:number|null;unit:"currency"|"ratio"|"count"}
+export interface WorldEventOccurrence{id:string;round:number;year:number;name:string;ambienceKey:string|null;impacts:WorldEventImpact[];chronicleEntryId:string}
+export type ResidenceStatus="occupied"|"empty"|"abandoned"|"reclaimed";
+export interface ResidenceOccupant{characterId:string;roleKeys:string[];parentCharacterIds:string[];spouseCharacterIds:string[];childCharacterIds:string[]}
+export interface ResidenceRecord{residenceId:string;status:ResidenceStatus;origin:"founder"|"immigrant"|"marriage"|"adult_transition";createdRound:number;coordinates:{x:number;y:number};activeOnMap:boolean;currentNavigationAllowed:boolean;emptySinceRound:number|null;abandonedRound:number|null;reclaimedRound:number|null;parentResidenceIds:string[];occupants:ResidenceOccupant[]}
+export interface ResidenceTransition{id:string;round:number;year:number;characterId:string;kind:"adult_move"|"adult_retained";fromResidenceId:string;toResidenceId:string}
+export interface RankingEntry{playerId:string;average:number;cumulativeAssets:number;activeRounds:number;lives:number}
 
 export interface RoomSnapshot{
-  code:string;
-  started:boolean;
-  hostPlayerId:string;
-  initialPopulationTarget?:number;
-  initialNpcCount?:number;
-  founderDraw?:Array<{playerId:string;displayName:string;card:number;founder:boolean;queuePosition:number|null}>;
-  players:RoomPlayer[];
+  code:string;started:boolean;hostPlayerId:string;initialPopulationTarget?:number;initialNpcCount?:number;founderDraw?:Array<{playerId:string;displayName:string;card:number;founder:boolean;queuePosition:number|null}>;players:RoomPlayer[];
   game:null|{
-    round:number;
-    year:number;
-    phase:Phase;
-    ended:boolean;
-    endingReason:string|null;
-    eventName:string|null;
-    currentTurnCharacterId:string|null;
-    currentTurnPlayerId:string|null;
-    phaseDeadlineAt:number|null;
-    phaseDeadlineKind:string|null;
-    debt:number;
-    government:any;
-    population:{total:number;humanControlled:number;npc:number;immigrantsAlive?:number};
-    policy:{
-      inflationRate:number;
-      priceIndex:number;
-      economicIncomeFactor?:number;
-      economicIncomeReasons?:string[];
-      noblePopulationShare?:number;
-      roundAverageAssetsSnapshot?:number;
-    };
-    market:any;
-    pool?:Record<ResourceGrade,number>;
-    nonRenewablePool?:Record<ResourceGrade,number>;
-    waitingQueue?:string[];
-    characters:PublicCharacter[];
-    marriageProposals:any[];
-    birthProposals:any[];
-    statusPurchases?:any[];
-    turnOrder?:any[];
-    historySnapshots:any[];
-    rankings:RankingEntry[];
-    chronology:string[];
-    socialSecurity?:any;
+    round:number;year:number;phase:Phase;ended:boolean;endingReason:string|null;eventName:string|null;worldEvent?:WorldEventOccurrence|null;currentTurnCharacterId:string|null;currentTurnPlayerId:string|null;phaseDeadlineAt:number|null;phaseDeadlineKind:string|null;debt:number;
+    government:any;population:{total:number;humanControlled:number;npc:number;immigrantsAlive?:number};policy:{inflationRate:number;priceIndex:number;economicIncomeFactor?:number;economicIncomeReasons?:string[];noblePopulationShare?:number;roundAverageAssetsSnapshot?:number};
+    market:any;pool?:Record<ResourceGrade,number>;nonRenewablePool?:Record<ResourceGrade,number>;waitingQueue?:string[];characters:PublicCharacter[];marriageProposals:any[];birthProposals:any[];statusPurchases?:any[];turnOrder?:any[];
+    residenceDirectory?:Record<string,ResidenceRecord>;activeMapResidenceIds?:string[];residenceTransitions?:ResidenceTransition[];historySnapshots:any[];worldEventOccurrences?:WorldEventOccurrence[];lifecycleResults?:LifecycleResult[];rankings:RankingEntry[];chronology:string[];socialSecurity?:any;
   };
 }
 
 export interface PlayerSnapshot{
-  playerId:string;
-  character:any|null;
-  household:any|null;
-  history:any|null;
-  queuePosition:number|null;
-  financial:any|null;
-  incomingMarriageProposals:any[];
-  outgoingMarriageProposals:any[];
-  incomingBirthProposals:any[];
-  marriageCandidates:any[];
-  canSendMarriage:boolean;
-  canInitiateBirth:boolean;
-  currentPhase?:Phase;
-  phaseDeadlineAt?:number|null;
-  eligibleSupportTargets:Array<{characterId:string;relation:"parent"|"child";ageLabel:string;status:string;displayName?:string|null}>;
-  mandatoryQuote:MandatoryQuote|null;
-  recoveryQuotes:RecoveryQuote[];
-  statusQuote:StatusQuote|null;
+  playerId:string;character:any|null;currentResidenceId?:string|null;household:any|null;history:any|null;recentLifecycleResults?:LifecycleResult[];queuePosition:number|null;financial:any|null;
+  incomingMarriageProposals:any[];outgoingMarriageProposals:any[];incomingBirthProposals:any[];marriageCandidates:any[];canSendMarriage:boolean;canInitiateBirth:boolean;currentPhase?:Phase;phaseDeadlineAt?:number|null;
+  eligibleSupportTargets:SupportTarget[];supportUnavailableReason?:string|null;marketQuotes?:MarketQuote[];mandatoryQuote:MandatoryQuote|null;recoveryQuotes:RecoveryQuote[];birthQuote?:BirthQuote|null;statusQuote:StatusQuote|null;
 }
