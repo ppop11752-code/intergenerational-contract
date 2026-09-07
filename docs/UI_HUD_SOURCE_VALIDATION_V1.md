@@ -1,6 +1,6 @@
 # UI HUD — SOURCE VALIDATION V1
 
-Status: USER VERIFICATION REQUIRED
+Status: CLOSED — USER VERIFIED
 Date: 2026-09-07
 Owner: 05 — UI/UX & ART
 
@@ -11,8 +11,6 @@ This document applies `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md` before concrete H
 Persistent/adaptive in-game HUD only. Room / World shell spatial structure is already approved separately in `docs/UI_ROOM_APPROVED_V1.md`.
 
 ## CURRENT_USER_CONFIRMED
-
-Do not re-ask unless a real contradiction appears:
 
 - HUD remains top-oriented but is split into meaningful visual clusters rather than a dense full-width dashboard strip.
 - Default HUD is compact/adaptive.
@@ -28,61 +26,42 @@ Do not re-ask unless a real contradiction appears:
 
 Recovered direct user decisions from the original `Game mô phỏng nhân sinh` conversation that remain compatible unless superseded:
 
-- The user accepted the core macro HUD direction containing Round/Year, Population, Inflation and Public Debt information.
-- The user explicitly required the **right-side persistent utility to be Settings (gear)** rather than a cluster of miscellaneous utility buttons.
+- Core macro HUD direction contains Round/Year, Population, Inflation and Public Debt information.
+- The right-side persistent utility is Settings (gear), not a miscellaneous utility cluster.
 - Niên sử is accessed from the HUD.
-- The separate Player Bar was explicitly removed; player information is accessed contextually, including through the player's Residence.
-- Historical World Event behavior requested an event name plus detailed explanation on hover.
+- Separate Player Bar is removed; player information is accessed contextually, including through the player's Residence.
+- Historical World Event behavior requested event detail access on hover/focus.
 
 ## SUPERSEDED HISTORICAL DECISION
 
-Historical user decision once kept `World Event` as an always-present HUD cell and showed `KHÔNG` when no event.
-
-This is superseded by the newer direct decision:
+Historical always-on `World Event` HUD cell is superseded by the newer direct decision:
 - important World Events use a **separate compact temporary banner**.
 
-Carry forward the old intent for detail access where compatible:
-- when a World Event banner is present, hover/focus/tap may reveal more event detail;
-- do not restore an always-on World Event HUD cell unless the user explicitly changes the newer decision.
+When a World Event banner is present, hover/focus/tap may reveal more event detail. Do not restore an always-on World Event HUD cell unless the user explicitly changes this newer decision.
 
-## MIGRATION_NORMALIZED / NOT DIRECTLY VERIFIED
+## USER-VERIFIED SOURCE VALIDATION — 2026-09-07
 
-Migration Pack `04_UI_UX_SPEC.md` normalizes the HUD as:
-- Round;
-- Year;
-- Population **+ trend**;
-- Inflation **+ trend**;
-- Public debt / ceiling;
-- World Event;
-- Niên sử button;
-- Settings gear;
-- no permanent Music/SFX icons;
-- mobile HUD compact/scrollable.
+The user resolved the five remaining HUD ambiguities:
 
-Current implementation additionally shows:
-- phase + timer as a persistent HUD segment;
-- a Help `?` button;
-- event placeholder/value.
+- **H1 — Population / Inflation trends:** use persistent small trend arrows in compact HUD; detailed numeric delta appears on hover/tap rather than always occupying space.
+- **H2 — Public debt / ceiling:** compact HUD shows **both current public debt and debt ceiling directly**.
+- **H3 — Phase/timer outside the local player's turn:** all players still see current authoritative phase + remaining time, but it is visually reduced while waiting; when it is the local player's turn, phase/timer becomes much more prominent. Waiting state should also emphasize the current acting player/person where appropriate.
+- **H4 — Connection/network state:** normal healthy connection is not persistently displayed. Show warning/banner/icon only for degraded connection, disconnect or reconnect states.
+- **H5 — Mobile HUD:** use a two-level mobile model: a primary row always shows important information; secondary/less urgent HUD information appears through an expand interaction. Do not use a pure horizontally scrollable desktop-like HUD as the default mobile treatment.
 
-Not every presentation detail above has direct-user provenance.
+## Resolved historical / implementation assumptions
 
-## Resolved without another question
-
-- Persistent World Event cell: rejected by the newer temporary-banner decision.
-- Permanent Player Bar/personal cash/HHA strip: rejected by direct user decision.
+- Persistent World Event cell: rejected by newer temporary-banner decision.
+- Permanent Player Bar/personal cash/HHA strip: rejected.
 - Permanent Music/SFX buttons: rejected.
-- Persistent Help `?` button from the current implementation is **not authoritative** and conflicts with the older direct preference that the right-side persistent utility be Settings only. Do not carry it forward as a default HUD control; tutorial/help guidance can remain contextual or be reached through an approved non-HUD route.
-- Niên sử stays reachable from HUD, but its exact button visual treatment is a later concrete-design choice.
-- Settings remains a HUD utility control, but exact pixel placement may shift to coexist with the approved upper-right minimap.
+- Persistent Help `?` button from current implementation is not authoritative and should not be part of the default HUD.
+- Settings remains the persistent utility control, but exact placement must coexist with the approved upper-right minimap.
+- Population/Inflation trends are retained in compact form with detail-on-demand.
+- Public debt and ceiling both remain directly readable.
+- Phase/timer remains globally visible but adaptively emphasized.
+- Network state is exception-only rather than always-on.
+- Mobile HUD uses primary + expandable secondary layers.
 
-## User verification questions still open
+## Gate result
 
-1. **Population / Inflation trend indicators:** should the HUD preserve the Migration-Pack `+ trend` information, and how persistently?
-2. **Public debt / ceiling visibility:** should both current debt and ceiling remain directly visible in compact HUD, or should the ceiling become secondary detail?
-3. **Phase/timer outside the local player's turn:** should every player always see the authoritative current phase + remaining time, or should the timer become less prominent/hidden while waiting?
-4. **Connection/network state:** should the in-game HUD carry a normal connection indicator, or only surface a warning when connection becomes problematic?
-5. **Mobile HUD overflow model:** Migration Pack says compact/scrollable, but the user has since required layout-specific mobile design rather than simply shrinking desktop. Need direct approval for the compact-mobile behavior.
-
-## Gate
-
-Do not propose final HUD composition alternatives until the five remaining materially relevant presentation ambiguities are resolved by the user.
+Source Validation Gate is CLOSED. Chat 05 may now audit the current implementation and present concrete HUD composition alternatives. No HUD design may be handed to Chat 06 until the user selects and approves a concrete HUD composition.
