@@ -1,40 +1,43 @@
 # 04 — DEPLOYMENT & DEVOPS — CURRENT REPORT
 
 ### Status
-Hoàn thành `H-20260907-049-04-MANDATORY-5S-DEPLOY`; production deployment đã được cấu hình và redeploy thành công với Mandatory 5 giây. Bàn giao live timing QA cho Chat 07.
+Hoàn thành `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`; production Docker build parity đã được khôi phục và Approved UI V1 hiện được serve trên Render. Bàn giao lại H067 cho Chat 07.
 
 ### Changed
-- Set Render production environment variable `MANDATORY_PRESENTATION_MS=5000` using merge semantics, preserving unrelated production variables.
-- Aligned `server/backend/docker-compose.yml` from `7000` to `5000` to remove deployment-config drift.
-- No gameplay calculations, protocol semantics, client timing workaround, or UI behavior were changed by Chat 04.
+- Added `DOM.Iterable` to `client/tsconfig.json`, matching Approved UI source use of iterable DOM collections without weakening strict TypeScript checks.
+- Declared the client TypeScript toolchain explicitly as `typescript@5.7.2` in `client/package.json`.
+- Changed Docker `client-build` to install the client package toolchain and run `npm run build` instead of invoking a detached `npx` compiler.
+- Expanded `Approved UI V1 E2E` workflow triggers to include Docker/client build configuration changes so build/runtime parity is automatically checked in future.
+- No gameplay, protocol, authoritative values, or Approved UI decisions were changed.
 
 ### Source
-- `docs/RULE_LEDGER.md`.
-- `docs/DECISION_LOG.md` D-052.
-- Handoff `H-20260907-049-04-MANDATORY-5S-DEPLOY`.
-- Completed upstream handoff `H-20260907-048-03-MANDATORY-5S-SERVER`.
-- Server implementation commit `5213e871cfa8210985a7772e2e0de50f32080820`.
+- Handoff `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`.
+- `client/tsconfig.json`.
+- `client/package.json`.
+- root `Dockerfile`.
+- `.github/workflows/approved-ui-v1-e2e.yml`.
 - Render service `srv-daem578u01pc73f35dbg`.
 
 ### Impact
-Source default, production Render override, and repository Docker Compose configuration now all resolve Mandatory presentation to 5,000 ms. Server-side timing authority remains intact. Remaining work is independent live timing verification, not a deployment blocker.
+Production can now compile and deploy the Approved UI V1 client using the same declared TypeScript configuration/toolchain as the clean client suite. The prior Render build blocker is removed. Full interaction/browser acceptance remains Release/QA ownership.
 
 ### Verified
-- Chat 03 completed H-048 and changed canonical authoritative default to `5_000` with deterministic fake-clock coverage.
-- Chat 03 verification confirms: no advance at 4,999 ms; automatic advance at 5,000 ms; `turn:complete` rejected during Mandatory; server override remains supported.
-- Render production environment update API accepted `MANDATORY_PRESENTATION_MS=5000`.
-- `server/backend/docker-compose.yml` aligned to `MANDATORY_PRESENTATION_MS: 5000` in commit `f6e145093e76bd6ecac228eb7e61df180b2a326f`.
-- Render auto-deploy for that commit: `dep-daf9m217lnhs73ffcqpg`.
-- Deploy status: `live`.
-- Runtime log: `Intergenerational Contract server listening on :3001`.
-- Render declared service live at `https://intergenerational-contract.onrender.com`.
-- Previous transient GitHub clone connectivity issue is no longer blocking current production deployment.
+- Root cause reproduced in Render logs: TS2488 on iterable `NodeListOf`, followed by cascading TS2347/TS7006 errors.
+- `client/tsconfig.json` fix commit: `5326273bef78bb8022e327540556f1cce7396233`; Render deploy `dep-daff9qh5efls73aq43sg` reached LIVE, proving the compile blocker was removed.
+- Declared toolchain commit: `85e153fd8b975be0b003cfb8ae87cd963c9cb59a`.
+- Final Docker parity commit: `7f23347a1ba1b39ca5aa752e2926665894e31190`; Render deploy `dep-daff9roou94c73a6vogg` reached LIVE.
+- Current CI-gate commit: `1ebeb2e3e6eee6c45d2c37177b2c8b030e4186d3`; Render deploy `dep-daffavrbc2fs73d77t5g` reached LIVE.
+- Approved UI E2E run `34148123375`: backend `release:check` PASS and clean client suite PASS 64/64.
+- Live browser smoke passed the H073 deployment acceptance required to prove Approved UI runtime is served: desktop `.landing-screen.approved-landing` appeared, landing controls existed, Tutorial entry succeeded, world map loaded, privacy/Persona checks passed, and Residence markers were present.
+- Evidence artifact: `10028424942`, digest `sha256:6ad572e1e3194ca6afc7660d7daef55acf90980b2510a2b54d1efa9ba77440a2`.
 
 ### Unverified
-- Exact observed live Mandatory phase elapsed time in browser/network runtime has not yet been independently measured by Chat 07.
+- The broader Approved UI workflow did not finish PASS: after the deployment/runtime checks above, Playwright timed out clicking a Residence marker because Turn Track/HUD intercepted pointer events. This is a post-deploy UI interaction finding, not a Docker/build blocker.
+- Mobile/deeper world-first navigation, responsive behavior, and final interaction acceptance remain for Chat 07 under H067; Chat 07 should classify/route the pointer-interception finding by ownership.
 
 ### Handoff
-Chat 07 should run `H-20260907-050-07-MANDATORY-5S-LIVE-QA`: verify live Mandatory presentation is approximately 5 seconds according to authoritative server transition, remains automatic/no-skip, and does not behave as a player decision timer.
+Reopen `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` for Chat 07. Production now contains Approved UI V1; QA should rerun/finalize its live browser checks and route any genuine UI/client interaction defect to Chat 06 (or UI design issue to Chat 05) as appropriate.
 
 ### Open Issues
-- No remaining Chat 04 deployment blocker for D-052 Mandatory 5-second timing.
+- No remaining Chat 04 deployment/build blocker for Approved UI V1.
+- Live Residence-marker pointer interception remains an independent QA finding pending Chat 07 classification.
