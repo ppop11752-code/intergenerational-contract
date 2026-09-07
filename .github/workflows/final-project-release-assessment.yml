@@ -6,6 +6,7 @@ on:
     paths:
       - "qa/final-release-multiplayer-smoke.mjs"
       - "qa/approved-ui-v1-live-smoke.mjs"
+      - "qa/approved-ui-v1-fixture.mjs"
       - "qa/world-event-approved-ui-qa.mjs"
       - ".github/workflows/final-project-release-assessment.yml"
 
@@ -38,6 +39,8 @@ jobs:
         run: node qa/final-release-multiplayer-smoke.mjs
       - name: Approved UI V1 live compatibility
         run: node qa/approved-ui-v1-live-smoke.mjs
+      - name: Maintained Approved UI V1 authoritative fixture
+        run: node qa/approved-ui-v1-fixture.mjs
       - name: Align H080 Marriage fixture with stable current World Event snapshot
         run: |
           python - <<'PY'
@@ -66,7 +69,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: h085-final-project-release-evidence
+          name: h089-official-release-evidence
           path: |
             qa/final-release-artifacts
             qa/approved-ui-v1-artifacts
