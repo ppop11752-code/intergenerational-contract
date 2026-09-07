@@ -2,37 +2,38 @@
 
 ## Status
 
-Hoàn thành phần chuẩn hóa luật liên quan OI-001/OI-002.
+Rule Ledger đã chốt và bản đầy đủ đã được đồng bộ lên GitHub ngày 2026-09-07.
 
 ## Changed
 
-- Chuẩn hóa winner theo HHA-based `AverageLifeAssetScore`.
-- Xác nhận không còn private debt.
-- Xác nhận married household dùng shared finances; Tax/ASXH tính per Character rồi trừ shared cash.
-- Xác nhận Child được mua/giữ Resource nhưng chỉ produce từ Stage3.
-- OI-002 được khóa với công thức Combined exact.
-- OI-001 được khóa theo A1+B1+C1 / D-050.
+- Thay `docs/RULE_LEDGER.md` overlay rút gọn bằng full authoritative Rule Ledger từ Migration Pack v3.
+- Bản đầy đủ giữ nguyên OI-001 A1+B1+C1 / D-050 và công thức OI-002 Combined.
+- Không thay đổi gameplay rule, engine, server hoặc client trong lần đồng bộ này.
 
 ## Source
 
-Latest user decisions + Rule Ledger / Migration Pack v3 handoff.
+- Full `01_RULE_LEDGER.md` trong Migration Pack v3.
+- Latest explicit user decisions.
+- GitHub `docs/DECISION_LOG.md` và `docs/OPEN_ISSUES.md` để kiểm tra trạng thái sau triển khai.
 
 ## Impact
 
-Engine/server phải bám đúng OI-001 lifecycle và OI-002 formula; không được suy diễn thêm gameplay.
+GitHub không còn phụ thuộc vào Rule Ledger overlay; `docs/RULE_LEDGER.md` là bản gameplay baseline đầy đủ.
 
 ## Verified
 
-Source-level rule completeness theo handoff Chat 01.
+- Source completeness: verified.
+- OI-001 và OI-002: CLOSED — VERIFIED theo `docs/OPEN_ISSUES.md` và báo cáo kiểm toán hiện hành.
+- Full Rule Ledger SHA-256 trước khi upload: `0a38111f565b757d617f04d5a9238829f7b12de89a5b91e57f1fce54315e4c06`.
 
 ## Unverified
 
-Runtime implementation thuộc Chat 02/08.
+Không có kiểm thử runtime mới trong lần đồng bộ tài liệu này; không có code change.
 
 ## Handoff
 
-OI-001: Chat 02 implementation -> Chat 08 independent re-audit.
+Chat 00 và các Chat chuyên môn sử dụng `docs/RULE_LEDGER.md` trên nhánh `main` làm nguồn luật đầy đủ.
 
 ## Open Issues
 
-OI-001 remains open until independent verification. OI-002 is closed/verified.
+Không có open issue gameplay mới được tạo bởi lần đồng bộ này.
