@@ -10,16 +10,19 @@ test("H082 has one Chronicle focus runtime",()=>{
 test("H082 renders separate authoritative event and Chronicle ids",()=>{
   assert.match(ui,/data-world-event-id=\"\$\{esc\(e\.id\)\}\" data-chronicle-entry-id=\"\$\{esc\(e\.chronicleEntryId\|\|\"\"\)\}\"/);
   assert.match(ui,/row\.dataset\.chronicleEntryId===chronicleFocus/);
-  assert.match(ui,/\[data-chronicle-entry-id=\"\$\{CSS\.escape\(chronicleFocus\)\}\"\]/);
+  assert.ok(ui.includes('[data-chronicle-entry-id="${CSS.escape(chronicleScrollPending)}"]'));
   assert.doesNotMatch(ui,/row\.dataset\.worldEventId===chronicleFocus/);
 });
 
-test("H082 preserves focus through mutation ordering without a second observer",()=>{
+test("H082/H083 preserve focus through mutation ordering without a second observer",()=>{
   assert.match(ui,/chronicleFocus=ev\.chronicleEntryId/);
+  assert.match(ui,/chronicleScrollPending=ev\.chronicleEntryId/);
   assert.match(ui,/row\.classList\.toggle\("focused-event",!!chronicleFocus&&row\.dataset\.chronicleEntryId===chronicleFocus\)/);
+  const chronicleBody=ui.slice(ui.indexOf("function chronicle()"),ui.indexOf("function immigration()"));
+  assert.doesNotMatch(chronicleBody,/chronicleFocus=null/);
   assert.doesNotMatch(ui,/setTimeout\(schedule/);
 });
 
-test("H082 does not infer Chronicle target from event name",()=>{
+test("H082/H083 do not infer Chronicle target from event name",()=>{
   assert.doesNotMatch(ui,/eventName\s*===|includes\([^)]*eventName|\.name\s*===\s*chronicleFocus/i);
 });
