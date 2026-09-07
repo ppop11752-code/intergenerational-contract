@@ -1,21 +1,15 @@
 handoff_id: H-20260907-051-06-RECOVERY-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
+status: DONE
 title: Implement user-approved Recovery V1
 
-## Source
-- `docs/UI_RECOVERY_APPROVED_V1.md`
-- `docs/UI_VOLUNTARY_APPROVED_V1.md`
+## Result
+- Three recovery grades keep authoritative pool/capacity/pending/cost display.
+- `MAX` uses server `recoveryQuotes[].acceptedMax` only.
+- Capacity/Cash/spending-limit unavailable reasons are shown from server quote.
+- Existing server recovery action and revalidation remain unchanged.
+- No ownership requirement or local capacity formula was added.
 
-## Implemented
-- three Low/Mid/High recovery cards;
-- authoritative Pool / Carrying Capacity / Pending / Capacity Remaining / Cost per unit;
-- gauge + per-card − / editable quantity / + / PHỤC HỒI controls;
-- cash/quota footer and next-round explanation;
-- persistent shared Voluntary timer semantics.
-
-## Blocker
-`H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT` for authoritative accepted MAX/unavailable reason. Client does not derive MAX from capacity/cash/quota.
-
-No recovery economics/timer change.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
