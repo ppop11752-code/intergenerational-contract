@@ -1,57 +1,50 @@
 handoff_id: H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA
 from: 06
 to: 07
-status: OPEN
+status: BLOCKED
 title: Independent clean/browser QA for completed Approved UI V1 Client integration
 
 ## Context
 Chat 06 completed the Approved UI V1 implementation and delegated independent Release/QA ownership to Chat 07.
 
-The previous production Docker blocker was resolved by Chat 04 under `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`.
+The previous Docker TypeScript blocker H073 is resolved. H074 pointer correction is also DONE at Client source level.
 
-## Previous live QA evidence
-Workflow `Approved UI V1 E2E`, run `34148123375`, head `1ebeb2e3e6eee6c45d2c37177b2c8b030e4186d3`:
+## Fresh QA after H074
+Workflow `Approved UI V1 E2E`, run `34149188131`, head `84b5a0309bc889ce6c3520657e965f3c6ff32473`:
 - backend `release:check`: PASS;
-- clean client suite: **64/64 PASS**;
-- desktop `.landing-screen.approved-landing`: PASS;
-- landing controls: PASS;
-- Tutorial entry/world map: PASS;
-- no raw ID / Persona leak in observed live world: PASS;
-- Residence markers present: PASS.
+- clean Client suite: **67/67 PASS**, including H074 pointer regressions;
+- live Approved UI landing/runtime: available;
+- live Residence marker: visible/enabled;
+- live marker click: FAIL because `.approved-turn-track` / `.hud-cluster` still intercept pointer events.
 
-Evidence artifact: `10028424942`, digest `sha256:6ad572e1e3194ca6afc7660d7daef55acf90980b2510a2b54d1efa9ba77440a2`.
+Artifact `10028775419`, digest `sha256:8f8064804243926bb2cc6e809a32fea2dfeaa7229add3b623717574634d4fa6d`.
 
-## H074 pointer defect — RESOLVED IN CLIENT
-`H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION` is DONE.
+## Root cause classification
 
-Client fix:
-- `client/residence-pointer-fix.css` makes transparent HUD/Turn Track presentation hit areas pass pointer events through to the world map;
-- real HUD buttons and Turn Track tokens remain interactive;
-- no Residence coordinate/layout/gameplay/protocol/timer changes.
+This is no longer classified as an unresolved H074 Client source defect.
 
-Relevant commits:
-- `51d287b3aa40bc8b3561c007bf0a40d9ce2a145c`;
-- `4b137c792d2f010095947981eafb99789e084009`;
-- `e76b58f8ef767ef4341ffb1c6abd7acfdf958474`.
+`client/residence-pointer-fix.css` contains the intended pointer correction and `client/index.html` references the Approved UI CSS stack. However the current Docker runtime stage copies only `client/index.html`, `client/styles.css`, `client/public`, and compiled `client/dist`.
 
-Client validation on `UIUX Art Final E2E` run `34148830915`:
-- TypeScript build: PASS;
-- clean Client suite: **67/67 PASS**;
-- H074 pointer regression tests: PASS.
+It does not package the additional CSS files referenced by `index.html`:
+- `client/approved-ui-v1.css`
+- `client/residence-pointer-fix.css`
+- `client/residence-ui-v1.css`
+- `client/resolved-ui-contracts.css`
 
-The run's live art stage hit the deployed site's old `home.png` raster state before the new commit was available, so it is not live H074 acceptance evidence.
+Therefore clean/source tests see H074 while production does not receive the stylesheet correction.
 
-## Remaining required QA
-On the deployed build containing H074, rerun/finalize:
-1. desktop/mobile world-first Residence interaction — visible marker click must work without force/DOM scripting;
-2. HUD buttons and Turn Track token interaction after pointer fix;
+Created `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING` for Chat 04.
+
+## Remaining required QA after H075
+1. desktop/mobile Residence marker click without force/DOM scripting;
+2. HUD buttons and Turn Track token remain interactive;
 3. Queue/reconnect/Marriage world-first navigation;
 4. authoritative timer continuity and Mandatory no-countdown;
-5. QR browser regression on deployed Approved UI V1;
+5. QR regression;
 6. privacy/no raw primary IDs/no Persona leak;
 7. responsive/mobile layout;
 8. authoritative MAX/reason, structured lifecycle and World Event→Chronicle browser coverage as applicable;
 9. no render loop / interaction regression.
 
 ## Current status
-OPEN — no longer blocked by Chat 06 implementation. Await deployed-build independent live QA by Chat 07.
+BLOCKED — waiting for H075 to package/deploy the complete Approved UI V1 CSS stack, then return to Chat 07 for final live QA.
