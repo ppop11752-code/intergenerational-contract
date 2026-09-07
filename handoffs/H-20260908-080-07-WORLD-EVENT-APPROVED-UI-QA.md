@@ -1,7 +1,7 @@
 handoff_id: H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA
 from: 06
 to: 07
-status: OPEN
+status: DONE
 title: Verify direct World Event banner semantics on production
 
 ## Source
@@ -12,27 +12,35 @@ title: Verify direct World Event banner semantics on production
 - H-20260908-083-06-WORLD-EVENT-CHRONICLE-FOCUS-RERENDER
 - H-20260908-084-06-MARRIAGE-PROFILE-RERENDER-LOOP
 
-## Current state
-H079/H081/H082/H083 remain accepted for the World Event/Chronicle path. H084 has now fixed the separate Marriage profile MutationObserver rerender loop that blocked the tail of H080.
+## Final QA
+PASS.
 
-## H084 evidence
-- `client/src/approved-ui-finalize.ts` Marriage profile rendering is now signature-idempotent and avoids repeated identical text/state writes.
-- Dedicated `Marriage Profile Rerender Loop QA` run `34156898583`: SUCCESS.
-  - clean Client regression PASS;
-  - real integrated browser runtime PASS under repeated identical authoritative snapshots;
-  - candidate remains visible;
-  - `canSendMarriage=false` remains disabled;
-  - exact copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN` preserved;
-  - event loop remains responsive.
-- Existing `World Event Approved UI QA` run `34156855982` on the H084 implementation commit also completed SUCCESS.
+Accepted evidence: `World Event Approved UI QA` run `34156855982`, head `ac2affa621b68cf0021830412a772153d61c9b79`, conclusion SUCCESS.
 
-## Required Chat 07 action
-Record final QA ownership/acceptance for H080, retaining checks for:
-1. Marriage candidate visible-but-disabled with exact approved copy and no render loop under repeated snapshot;
-2. mobile same-content World Event reflow/no horizontal overflow;
-3. exact Chronicle focus survives rerender;
-4. timer continuity/no pause-reset;
-5. no event-name inference.
+Artifact:
+- ID `10031262501`
+- digest `sha256:b7504e49547fdd7ff25c042e6132d3b4c43d162738ad6e31ba9849eb36fca28f`
+
+Clean Client regression and browser gate both completed successfully. Artifact `results.json` contains 24/24 PASS checks.
+
+## Verified
+- production loads authoritative World Event direct-banner runtime;
+- no separate desktop `CHI TIẾT` / detail surface;
+- event name and concrete structured impacts render directly;
+- only affected systems render;
+- exact `chronicleEntryId` row identity is preserved when event id differs;
+- exact Chronicle row remains `.focused-event` through Approved UI rerender;
+- timer continuity is preserved (`20s -> 18s` in fixture), with no pause/reset;
+- no event-name inference;
+- Marriage candidate remains visible and disabled when `canSendMarriage=false` with exact copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN`;
+- H084 eliminates the repeated-snapshot MutationObserver render loop;
+- mobile renders the same World Event content with no extra detail surface;
+- mobile width check passes: `scrollWidth=390`, `clientWidth=390`.
+
+Production subsequently remained live on main with the H084 fix included.
+
+## Impact
+Presentation/QA acceptance only. No gameplay, protocol, World Event mechanics, Marriage rule or timer rule changed by Chat 07.
 
 ## Completion
-OPEN — unblocked and returned to Chat 07 after H084. Client-side blocker is resolved; Chat 07 owns final acceptance status.
+DONE — PASS. H080 final production/browser acceptance is complete.
