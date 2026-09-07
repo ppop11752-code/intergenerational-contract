@@ -1,0 +1,47 @@
+name: Mandatory 5s E2E
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/mandatory-5s-e2e.mjs"
+      - ".github/workflows/mandatory-5s-e2e.yml"
+      - "server/backend/src/authoritative-room.ts"
+      - "server/backend/test/**"
+      - "client/src/display-contract.ts"
+      - "client/test/display-contract.test.mjs"
+
+jobs:
+  mandatory-5s-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LIVE_URL: https://intergenerational-contract.onrender.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run backend release regressions
+        working-directory: server/backend
+        run: |
+          npm install
+          npm run release:check
+      - name: Run clean client suite
+        working-directory: client
+        run: |
+          npm install
+          npm test
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run live Mandatory 5s browser QA
+        run: node qa/mandatory-5s-e2e.mjs
+      - name: Upload Mandatory evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mandatory-5s-e2e-evidence
+          path: qa/mandatory-5s-artifacts
+          if-no-files-found: warn
