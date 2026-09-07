@@ -1,21 +1,14 @@
 handoff_id: H-20260907-053-06-BIRTH-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement user-approved Birth UX V1
+status: DONE
+title: Implement user-approved Birth V1
 
-## Source
-- `docs/UI_BIRTH_APPROVED_V1.md`
-- `docs/UI_VOLUNTARY_APPROVED_V1.md`
+## Result
+- Birth UI consumes authoritative `birthQuote` cap, third-slot condition, slot state, outgoing proposals and unavailable reason.
+- Slots #1/#2/#3 are presentation state only; submission still uses the existing generic `child:birth` action.
+- Incoming accept/reject/default-accept semantics remain server-owned.
+- No local fertility/cap rule was invented.
 
-## Implemented
-- Birth remains a Voluntary surface under shared HUD timer;
-- incoming Accept/Reject controls use authoritative proposal IDs without exposing them as labels;
-- proposer-visible outgoing proposal state is decorated from authoritative public proposals when present;
-- <10s default-Accept warning uses authoritative phase deadline only;
-- no newborn preview or client-local proposal truth.
-
-## Blocker
-`H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT` for explicit authoritative #1/#2/conditional #3 slot/cap state, outgoing proposal card completeness and unavailable reason.
-
-No eligibility/default-Accept/cap rule is inferred locally.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
