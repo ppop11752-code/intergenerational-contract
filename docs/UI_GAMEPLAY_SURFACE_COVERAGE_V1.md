@@ -33,10 +33,10 @@ The approved shell specs do **not** imply full-game UX completion.
 | 4 | Marriage lifecycle / proposals / notices | **USER-APPROVED V1** — `docs/UI_MARRIAGE_APPROVED_V1.md` | Chat 06 implement |
 | 5 | Residence / Family / current Residence semantics | **USER-APPROVED V1** — `docs/UI_RESIDENCE_FAMILY_APPROVED_V1.md` | Chat 06 implement |
 | 6 | Waiting Queue / reconnect / NPC takeover / no reclaim | **USER-APPROVED V1** — `docs/UI_WAITING_QUEUE_RECONNECT_APPROVED_V1.md` | Chat 06 implement |
-| 7 | Government / ASXH / PAYG / reserves / support/crisis | **USER-APPROVED V1** — `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_APPROVED_V1.md` | Chat 06 implement via `H-20260907-057-06-GOVERNMENT-SOCIAL-SYSTEMS-DESIGN-IMPLEMENTATION` |
-| 8 | Elderly medical / mortality / Grief / inheritance results | **SOURCE VALIDATION ACTIVE** — `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_SOURCE_VALIDATION_V1.md` | Obtain direct E1–E8 approval |
-| 9 | Immigration / NPC takeover communication | NOT DIRECTLY APPROVED | Source validate after elderly/mortality |
-| 10 | World Event effect detail | PARTIAL — temporary banner approved | Approve detail surface |
+| 7 | Government / ASXH / PAYG / reserves / support/crisis | **USER-APPROVED V1** — `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_APPROVED_V1.md` | Chat 06 implement |
+| 8 | Elderly medical / mortality / Grief / inheritance results | **USER-APPROVED V1** — `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_APPROVED_V1.md` | Chat 06 implement via `H-20260907-058-06-ELDERLY-MORTALITY-INHERITANCE-DESIGN-IMPLEMENTATION` |
+| 9 | Immigration / NPC takeover communication | **SOURCE VALIDATION ACTIVE** — `docs/UI_IMMIGRATION_NPC_TAKEOVER_SOURCE_VALIDATION_V1.md` | Obtain direct I1–I8 approval |
+| 10 | World Event effect detail | PARTIAL — temporary banner approved | Approve after Immigration/NPC takeover |
 | 11 | Niên sử detailed contents / provenance | PARTIAL — entry + two tabs approved | Approve detailed contents |
 | 12 | End Report / scoring / extinction / Host replay | NOT DIRECTLY APPROVED | Source validate |
 
@@ -49,10 +49,12 @@ The approved shell specs do **not** imply full-game UX completion.
 - Residence focus uses current authoritative Residence; co-residence does not imply shared Economic Household.
 - Reconnect leaves old Character permanently NPC-controlled and moves Human to Queue end; UI never implies reclaim.
 - Government is automatic/read-only; public finance and social-system values come from authoritative state.
-- Government V1 user choice G3 B visually aggregates PAYG + Pension Reserve + Support Fund as `TỔNG QUỸ AN SINH`; aggregation is presentation-only and never merges underlying gameplay funds.
-- Government V1 user choice G4 B keeps detailed 10% ASXH split explanation in Rules/Tutorial rather than Government panel.
-- Elderly medical is passive end-round and cannot itself force liquidation/borrowing/bankruptcy; Grief Fee is a next-Mandatory obligation and may contribute to bankruptcy there.
-- Inheritance distribution must use authoritative settlement result; client must not recalculate estate/beneficiaries/resource conversion.
+- Government V1 G3 B `TỔNG QUỸ AN SINH` is presentation aggregation only; underlying funds remain authoritative/separate.
+- Elderly medical cannot itself force liquidation/borrowing/bankruptcy.
+- Grief Fee UI follows E4 B: no early death-time warning; it appears only in next Mandatory when due.
+- Inheritance distribution must use authoritative settlement result; client never recalculates estate/beneficiaries/resource conversion.
+- Immigration is authoritative round-start NPC arrival; immigrants never enter Waiting Queue and must not be presented as Human-controlled newcomers.
+- Disconnect NPC takeover and immigrant NPC are distinct causes even though both are NPC-controlled afterward.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
 
 ## Exit criteria
