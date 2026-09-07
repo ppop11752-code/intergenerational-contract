@@ -24,12 +24,12 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 | # | Gameplay surface group | Current UX status | Next action |
 |---|---|---|---|
 | 1 | Mandatory presentation / obligations / liquidation / bankruptcy | **USER-APPROVED V1** — `docs/UI_MANDATORY_APPROVED_V1.md`; exact reading duration gameplay dependency OPEN | Chat 06 implement; Chat 01 resolve shorter-duration request |
-| 2 | Status Purchase / 15s / next-round effect / married rep / fallback / Noble cap-refund | **SOURCE VALIDATION ACTIVE** — `docs/UI_STATUS_SOURCE_VALIDATION_V1.md` | Obtain direct presentation approval S1–S7 |
-| 3 | Voluntary shell + shared 60s timer | NOT DIRECTLY APPROVED | Source validate after Status |
-| 3a | Market | NOT DIRECTLY APPROVED | Approve within Voluntary sequence |
-| 3b | Recovery | NOT DIRECTLY APPROVED | Approve within Voluntary sequence |
-| 3c | Support | NOT DIRECTLY APPROVED | Approve within Voluntary sequence |
-| 3d | Birth | NOT DIRECTLY APPROVED | Approve within Voluntary sequence |
+| 2 | Status Purchase / 15s / next-round effect / married rep / fallback / Noble cap-refund | **USER-APPROVED V1** — `docs/UI_STATUS_APPROVED_V1.md` | Chat 06 implement via `H-20260907-048-06-STATUS-DESIGN-IMPLEMENTATION` |
+| 3 | Voluntary shell + shared 60s timer | **SOURCE VALIDATION ACTIVE** — `docs/UI_VOLUNTARY_SOURCE_VALIDATION_V1.md` | Obtain direct V1–V6 approval |
+| 3a | Market | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
+| 3b | Recovery | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
+| 3c | Support | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
+| 3d | Birth | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
 | 4 | Marriage lifecycle / proposals / notices | NOT DIRECTLY APPROVED | Source validate |
 | 5 | Residence / Family / child-orphan-current Residence semantics | PARTIAL — shell interaction approved only | Source validate detail surface |
 | 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate |
@@ -45,14 +45,11 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 - No gameplay/protocol/timer changes to make UI easier.
 - Mandatory is presentation-only and has no gameplay decision timer.
 - Mandatory V1 shows no visible timing/progress and follows the server phase transition.
-- Status has authoritative max 15s and is a real decision phase.
-- Status choice/pay happens now but applies next round; current-round Status/Market access stays unchanged.
-- Status surface is Household-representative only for married Household; later spouse does not get a second Status phase.
-- Noble selection remains provisional until end-round authoritative competition resolves.
+- Status has authoritative max 15s; approved Status V1 shows that timer only in the HUD, not duplicated in the chooser.
 - Voluntary has one authoritative 60s total timer shared across Market/Recovery/Support/Birth; switching surfaces never resets/pauses it.
 - Residence/Government/Niên sử/marriage notifications do not pause Voluntary timer.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
-- Chat 06 must never invent missing gameplay semantics or client-side eligibility/calculation.
+- Chat 06 must never invent missing gameplay semantics or client-side eligibility.
 
 ## Active external dependency from Mandatory
 
