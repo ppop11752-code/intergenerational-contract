@@ -28,9 +28,9 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 | 3 | Voluntary shell + shared 60s timer | **USER-APPROVED V1** — `docs/UI_VOLUNTARY_APPROVED_V1.md` | Chat 06 implement via `H-20260907-049-06-VOLUNTARY-SHELL-DESIGN-IMPLEMENTATION` |
 | 3a | Market | **USER-APPROVED V1** — `docs/UI_MARKET_APPROVED_V1.md` | Chat 06 implement via `H-20260907-050-06-MARKET-DESIGN-IMPLEMENTATION` |
 | 3b | Recovery | **USER-APPROVED V1** — `docs/UI_RECOVERY_APPROVED_V1.md` | Chat 06 implement via `H-20260907-051-06-RECOVERY-DESIGN-IMPLEMENTATION` |
-| 3c | Support | **SOURCE VALIDATION ACTIVE** — `docs/UI_SUPPORT_SOURCE_VALIDATION_V1.md` | Obtain direct SP1–SP7 approval |
-| 3d | Birth | NOT DIRECTLY APPROVED | Approve after Support |
-| 4 | Marriage lifecycle / proposals / notices | NOT DIRECTLY APPROVED | Source validate |
+| 3c | Support | **USER-APPROVED V1** — `docs/UI_SUPPORT_APPROVED_V1.md` | Chat 06 implement via `H-20260907-052-06-SUPPORT-DESIGN-IMPLEMENTATION` |
+| 3d | Birth | **SOURCE VALIDATION ACTIVE** — `docs/UI_BIRTH_SOURCE_VALIDATION_V1.md` | Obtain direct B1–B7 approval |
+| 4 | Marriage lifecycle / proposals / notices | NOT DIRECTLY APPROVED | Source validate after Birth |
 | 5 | Residence / Family / child-orphan-current Residence semantics | PARTIAL — shell interaction approved only | Source validate detail surface |
 | 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate |
 | 7 | Government / ASXH / PAYG / reserves / support/crisis explanation | PARTIAL — Government access approved, detail UX not approved | Source validate |
@@ -47,7 +47,8 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 - Status has authoritative max 15s; Status V1 shows that timer only in HUD.
 - Voluntary has one authoritative 60s total timer shared across Market/Recovery/Support/Birth; switching surfaces never resets/pauses it.
 - Voluntary V1 uses a persistent desktop right-edge action dock below/clear of minimap and mobile bottom action rail.
-- Market and Recovery use authoritative quotes/results and no independent timer.
+- Market, Recovery and Support consume authoritative quotes/targets/results and no independent timer.
+- Support targets come only from authoritative direct-parent/direct-child eligibility; internal Character IDs are not player-facing selectors.
 - Residence/Government/Niên sử/marriage notifications do not pause Voluntary timer.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
 - Chat 06 must never invent missing gameplay semantics, kinship eligibility or economic limits.
