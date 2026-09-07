@@ -1,0 +1,90 @@
+name: Publish v1.0.0
+
+on:
+  push:
+    paths:
+      - ".github/workflows/publish-v1.0.0.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify target and absence of existing publication
+        env:
+          TARGET_SHA: e959cdd25a05e2f61345295b505ef6ee5c8e3dc2
+          TAG: v1.0.0
+        run: |
+          git cat-file -e "${TARGET_SHA}^{commit}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists; refusing to move or replace it."
+            exit 1
+          fi
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; refusing duplicate publication."
+            exit 1
+          fi
+      - name: Create immutable release tag on verified SHA
+        env:
+          TARGET_SHA: e959cdd25a05e2f61345295b505ef6ee5c8e3dc2
+          TAG: v1.0.0
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" "${TARGET_SHA}" -m "Intergenerational Contract ${TAG}"
+          git push origin "refs/tags/${TAG}"
+      - name: Prepare release notes
+        run: |
+          cat > release-notes.md <<'EOF'
+          Intergenerational Contract v1.0.0 is the first officially published release from the project-wide verified release candidate.
+
+          Verified release scope includes:
+          - authoritative multiplayer room/start/state/reconnect flow;
+          - finalized marriage lifecycle, combined scarcity inflation, Tutorial, Residence identity/lifecycle and server/runtime contracts;
+          - Mandatory 5-second server-authoritative presentation with no visible countdown or manual skip;
+          - Approved UI V1 desktop/mobile navigation, Residence/Family, Queue, HUD/Turn Track, QR, Chronicle and End Report surfaces;
+          - World Event direct-banner impacts with exact Chronicle linkage;
+          - Marriage profile visible-but-disabled affordance where required;
+          - maintained legacy Vitest coverage and maintained Approved UI V1 authoritative fixture.
+
+          Release verification:
+          - exact release SHA: e959cdd25a05e2f61345295b505ef6ee5c8e3dc2
+          - Final Project Release Assessment run: 34160089361
+          - job: 101859847687
+          - conclusion: SUCCESS
+          - evidence artifact: 10032335865
+          - artifact digest: sha256:b93b3e7c5f2143844455979c466486dcaa73b3dbbdf2482f33ec11206eee846d
+          - Render deploy dep-dafi0rfavr4c73c63d5g was live on the exact verified SHA before final browser/runtime acceptance completed.
+
+          OI-001 through OI-007 are CLOSED / VERIFIED. No known blocking product/runtime defect remained in the agreed release scope at publication.
+          EOF
+      - name: Create public GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v1.0.0 \
+            --verify-tag \
+            --title "Intergenerational Contract v1.0.0" \
+            --notes-file release-notes.md
+      - name: Verify published tag and release target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: e959cdd25a05e2f61345295b505ef6ee5c8e3dc2
+        run: |
+          git fetch --tags --force
+          RESOLVED_SHA="$(git rev-list -n 1 v1.0.0)"
+          test "${RESOLVED_SHA}" = "${TARGET_SHA}"
+          gh release view v1.0.0 --json isDraft,isPrerelease,tagName,url,publishedAt,targetCommitish > release-publication.json
+          test "$(jq -r '.isDraft' release-publication.json)" = "false"
+          test "$(jq -r '.isPrerelease' release-publication.json)" = "false"
+          test "$(jq -r '.tagName' release-publication.json)" = "v1.0.0"
+      - name: Upload publication evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: v1.0.0-publication-evidence
+          path: release-publication.json
