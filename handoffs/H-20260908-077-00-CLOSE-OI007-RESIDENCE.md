@@ -1,7 +1,7 @@
 handoff_id: H-20260908-077-00-CLOSE-OI007-RESIDENCE
 from: 08
 to: 00
-status: OPEN
+status: CLOSED
 title: Close OI-007 after Residence lifecycle independent PASS
 
 ## Context
@@ -24,7 +24,11 @@ Chat 08 completed `H-20260907-072-08-RESIDENCE-LIFECYCLE-AUDIT` with **PASS**.
 - D-053 lifecycle and Residence snapshot regressions are integrated into `npm test` / `release:check`.
 - Latest production QA workflow run `34151689731` succeeded; Chat 07 reports backend PASS, Client 68/68 PASS and desktop/mobile Residence navigation PASS.
 
-## Required action
-Chat 00 should update `docs/OPEN_ISSUES.md` so OI-007 changes from stale `OPEN — SOURCE LOCKED / IMPLEMENTATION PENDING` to **CLOSED — VERIFIED**, and update project status accordingly.
+## Result
+Chat 00 closed OI-007 as **CLOSED — VERIFIED**.
 
-Do not reopen OI-001–OI-006. Full-game UX/UI coverage remains a separate concern from the earlier H044 audit.
+Updated:
+- `docs/OPEN_ISSUES.md`
+- `docs/RELEASE_STATUS.md`
+
+OI-001–OI-006 remain closed. Full-game UX/UI coverage and project-wide final release readiness remain separate gates.
