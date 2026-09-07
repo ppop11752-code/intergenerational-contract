@@ -4,82 +4,82 @@
 
 ### Status
 
-Hoàn thành `H-20260907-025-03-UIUX-DISPLAY-CONTRACT`; server đã expose các
-display contract authoritative còn thiếu cho World Event, Mandatory, Recovery
-và Status, đồng thời bàn giao Chat 06 tích hợp production client.
+Hoàn thành `H-20260907-048-03-MANDATORY-5S-SERVER`; default authoritative của
+Mandatory presentation đã đổi từ 7 giây thành đúng 5 giây theo D-052.
 
 ### Changed
 
-- Public snapshot thêm `game.eventName` từ World Event state hiện hành.
-- Private snapshot thêm `mandatoryQuote` theo đúng lượt Mandatory, gồm breakdown
-  và kết quả thanh lý/phá sản dự kiến.
-- Private snapshot thêm `recoveryQuotes` theo đúng lượt Voluntary, gồm giá mỗi
-  đơn vị, pool hiện tại, sức chứa, số pending vòng sau và sức chứa còn lại.
-- Private snapshot thêm `statusQuote` cho Household representative ở phase
-  Status, gồm phí/khả năng chi trả và thông tin cạnh tranh Noble, fallback/refund.
-- Lobby và ngoài phase trả shape an toàn: quote `null` hoặc danh sách rỗng.
-- Các action Mandatory, Recovery và Status dùng chung pure quote helpers; bổ sung
-  regression action parity/no-side-effect và cập nhật multiplayer protocol.
+- Thêm một nguồn default duy nhất `DEFAULT_MANDATORY_PRESENTATION_MS=5_000`
+  trong authoritative room.
+- `AuthoritativeRoom` và Socket.io bootstrap cùng dùng default này, tránh drift.
+- Giữ nguyên server environment override `MANDATORY_PRESENTATION_MS` và minimum
+  clamp hiện có; client không có timing authority.
+- Cập nhật protocol/README: Mandatory tự chuyển khi hết 5 giây, không manual
+  skip, không countdown/progress semantics và không phải decision timer.
+- Khóa behavior bằng fake-clock regression chính xác tại 4.999/5.000 ms, kiểm
+  tra từ chối `turn:complete` trong Mandatory và kiểm tra override 8 giây.
 
 ### Source
 
-- `server/backend/src/engine.ts`
+- `docs/RULE_LEDGER.md` — Mandatory presentation 5 giây.
+- `docs/DECISION_LOG.md` — D-052.
 - `server/backend/src/authoritative-room.ts`
-- `server/backend/test/uiux-display-contract.mjs`
+- `server/backend/server/src/index.ts`
+- `server/backend/test/rule-ledger-v5.mjs`
 - `server/backend/MULTIPLAYER_PROTOCOL_V50.md`
-- `server/backend/package.json`
-- Handoff `H-20260907-025-03-UIUX-DISPLAY-CONTRACT`
-- Implementation commit `9222968e2aba9970cd2f7038b9b901b304f40a89`
+- `server/backend/server/README.md`
+- Implementation commit `5213e871cfa8210985a7772e2e0de50f32080820`
 
 ### Impact
 
-Production client có thể render bốn surface còn thiếu từ snapshot mà không tự
-tính công thức kinh tế hoặc suy diễn eligibility. Mandatory liquidation và
-bankruptcy là projection tại thời điểm snapshot; action vẫn được server
-revalidate và kết quả chỉ committed khi Mandatory được resolve.
+Phòng mới không có environment override sẽ phát deadline Mandatory tại server
+time `now + 5.000 ms`. Sau deadline server tự resolve Mandatory và chuyển phase;
+không có action bỏ qua. Các phép tính Mandatory và thứ tự phase không đổi.
 
 ### Verified
 
 - Backend `npm run release:check`: PASS.
 - Typecheck: PASS.
-- Rule Ledger: PASS 42/42.
+- Rule Ledger: PASS 42/42, gồm deterministic 5-second timer regression.
 - OI-002 regression: PASS 6/6.
 - OI-001 regression: PASS 9/9.
-- Birth eligibility và Support target regressions: PASS.
-- UI/UX display contract regression: PASS — event, lobby/out-of-phase guards,
-  action parity, liquidation/bankruptcy và snapshot no-side-effect.
+- Birth eligibility, Support target và UI display regressions: PASS.
 - Fuzz: PASS 20 games.
 - Final simulation: PASS 30 games.
 - Nested server typecheck/build: PASS.
 - Socket event contract: PASS 9/9.
-- Current client build/tests trước field integration: PASS 18/18.
 
 ### Audit
 
-- Authoritative source: existing engine state, `mandatoryBreakdown()`, market
-  liquidation formula, recovery capacity/cost formula và `statusFee()`.
-- Blast radius checked: engine actions, public/private snapshots, multiplayer
-  protocol và client type/display consumers.
-- Falsification cases checked: event null/name, lobby/out-of-phase fields,
-  quote/action parity, projected bankruptcy/shortfall và no-side-effect.
+- Authoritative source: lựa chọn B của người dùng, Rule Ledger và D-052.
+- Blast radius checked: room default, server bootstrap environment resolution,
+  deadline scheduling, timeout transition, protocol, deployment override và QA.
+- Falsification cases checked: 4.999 ms chưa chuyển, 5.000 ms tự chuyển,
+  `turn:complete` bị từ chối trong Mandatory, server override vẫn được tôn trọng.
 - `docs/OPEN_ISSUES.md`: không có OI-001–OI-006 nào bị mở lại.
-- Gameplay constants/rules: unchanged.
-- Verification level: source + deterministic integration complete; live browser
-  và client field integration pending.
+- Mandatory calculations, phase order, actions và UI design: unchanged.
+- Verification level: source + deterministic server integration complete; deployed
+  runtime timing/readability pending.
 
-AUDIT: PASS
+AUDIT: PASS WITH WARNINGS
 
-### Unverified
+### Warning / Unverified
 
-- Chưa xác minh bốn surface mới trên live browser/deployed runtime.
-- Client chưa consume các field mới; không có claim toàn bộ UI/art release-ready.
+- `server/backend/docker-compose.yml` vẫn explicit
+  `MANDATORY_PRESENTATION_MS: 7000`; thuộc handoff triển khai Chat 04.
+- Chat 04 đã báo production environment được đặt 5.000 ms nhưng env deploy chưa
+  được xác nhận LIVE/effective ở lần kiểm tra gần nhất.
+- Chưa có live-browser timing/readability evidence cho normal, liquidation và
+  bankruptcy Mandatory states.
 
 ### Handoff
 
-Chat 06 xử lý `H-20260907-028-06-UIUX-DISPLAY-INTEGRATION`, sau đó chuyển bốn
-surface đã tích hợp cho Chat 07 browser/server QA.
+- Chat 04 tiếp tục `H-20260907-049-04-MANDATORY-5S-DEPLOY`: xử lý explicit
+  deployment override và xác minh effective runtime.
+- Chat 06 xử lý `H-20260907-050-06-MANDATORY-5S-CLIENT`.
+- Chat 07 xử lý `H-20260907-051-07-MANDATORY-5S-QA` sau deployment/client gates.
 
 ### Open Issues
 
 - Không mở lại OI-001–OI-006.
-- UI/UX production work tiếp tục dưới handoff Chat 06 hiện hành.
+- Release gate vẫn mở cho deployment/client/live QA của Mandatory 5 giây.
