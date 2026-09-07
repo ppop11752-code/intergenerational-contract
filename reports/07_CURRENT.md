@@ -4,69 +4,58 @@
 
 ### Status
 
-Hoàn thành — `H-20260908-089-07-OFFICIAL-RELEASE-PREPARATION` = **DONE / PASS — OFFICIAL RELEASE CANDIDATE VERIFIED**.
+Hoàn thành — `H-20260908-091-07-PUBLISH-V1.0.0` = **DONE / PASS — OFFICIAL v1.0.0 PUBLISHED**.
 
 ### Changed
 
-- Strengthened `.github/workflows/final-project-release-assessment.yml` so the final release gate now explicitly runs maintained `qa/approved-ui-v1-fixture.mjs` from H088.
-- Final verified release candidate SHA: `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`.
-- Final workflow `Final Project Release Assessment` run `34160089361`, job `101859847687`: **SUCCESS**.
-- Artifact `10032335865`, digest `sha256:b93b3e7c5f2143844455979c466486dcaa73b3dbbdf2482f33ec11206eee846d`.
-- Render deploy `dep-dafi0rfavr4c73c63d5g` reached `live` on the exact assessed SHA before final browser/runtime acceptance completed.
-- H089 closed with final release checklist, release notes and tag instructions.
+- User/Chat 00 locked official tag name `v1.0.0`.
+- Verified before publication that tag/release `v1.0.0` did not already exist.
+- Published annotated tag `v1.0.0` on exact previously verified release SHA `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`.
+- Created public GitHub Release `Intergenerational Contract v1.0.0` using H089 release notes/evidence.
+- Publication used repository workflow `.github/workflows/publish-v1.0.0.yml` because the connector did not expose direct tag/release creation.
+- Publication workflow run `34160631305`: SUCCESS.
+- Publication artifact `10032466875`, digest `sha256:3d8b0383aa7ac20723777fd5718b05c0dc0846c314b171734723cf6365184a5d`.
+- GitHub Release ID `384310137`, published `2026-09-07T20:46:00Z`.
 
 ### Source
 
+- `handoffs/H-20260908-091-07-PUBLISH-V1.0.0.md`
 - `handoffs/H-20260908-089-07-OFFICIAL-RELEASE-PREPARATION.md`
-- `handoffs/H-20260908-087-02-LEGACY-VITEST-MAINTENANCE.md`
-- `handoffs/H-20260908-088-07-QA-FIXTURE-MAINTENANCE.md`
-- `docs/RELEASE_STATUS.md`
-- `.github/workflows/final-project-release-assessment.yml`
-- `qa/final-release-multiplayer-smoke.mjs`
-- `qa/approved-ui-v1-live-smoke.mjs`
-- `qa/approved-ui-v1-fixture.mjs`
-- `qa/world-event-approved-ui-qa.mjs`
+- user/Chat 00 decision H090: official version/tag `v1.0.0`
+- `.github/workflows/publish-v1.0.0.yml`
+- final release gate run `34160089361`
+- publication run `34160631305`
 
 ### Impact
 
-Release candidate is freshly verified after H087/H088 maintenance cleanup. H089 changed QA/release harness only; no gameplay, UI design, protocol or runtime behavior changed. Exact SHA safe to tag is pinned independently of later report/handoff documentation commits.
+Intergenerational Contract v1.0.0 is now officially published from the exact release candidate that passed the full release gate. Later documentation/workflow commits remain outside the tagged release target. No gameplay, UI design, protocol, server/client runtime or release acceptance criteria were changed by publication.
 
 ### Verified
 
-- Backend `npm run release:check`: PASS.
-- Maintained legacy Vitest remains inside `release:check`; H087 verified 10 files / 30 tests and current release gate remains green.
-- Clean Client build/test: PASS.
-- Production health: PASS.
-- Two-Human create/join/start/get-state: PASS.
-- Disconnect/reconnect authoritative continuity: PASS.
-- Approved UI V1 desktop/mobile critical paths: PASS.
-- Mandatory 5-second/no-visible-countdown semantics: PASS.
-- Residence / HUD / Turn Track / QR: PASS.
-- Maintained H088 Approved UI V1 authoritative fixture: PASS.
-- H080 retained World Event direct banner / exact Chronicle focus / Marriage visible-disabled / mobile acceptance: PASS.
-- Render exact assessed SHA was live before final live acceptance finished.
-- OI-001 through OI-007 remain CLOSED / VERIFIED.
+- Annotated tag `v1.0.0` exists.
+- Tag object `8c65c1473172969ae7b1bdb57a9f2125520af507` dereferences to exact commit `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`.
+- GitHub Release ID `384310137` exists.
+- Release is public (`draft=false`).
+- Release is not prerelease (`prerelease=false`).
+- Release URL: `https://github.com/ppop11752-code/intergenerational-contract/releases/tag/v1.0.0`.
+- Publication workflow run `34160631305`: SUCCESS.
+- Publication evidence artifact `10032466875` recorded.
+- Underlying release candidate evidence remains final gate run `34160089361`: SUCCESS, artifact `10032335865`.
 
 ### Unverified
 
-- Official version/tag name is not locked in canonical project docs.
-- GitHub tag/release has not been created because no canonical version name exists and current GitHub connector surface does not expose release/tag creation in this chat.
+Không còn mục H091 nào chưa kiểm tra trong phạm vi publish v1.0.0.
 
 ### Handoff
 
-Chat 00/user must choose the official version/tag name and publish a GitHub tag/release from exact verified SHA:
-`e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`.
+Chat 00: ghi nhận Project đã chính thức phát hành `v1.0.0` từ SHA `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`, GitHub Release ID `384310137`, published at `2026-09-07T20:46:00Z`.
 
 ### Open Issues
 
-No known blocking product/runtime issue remains in current release scope.
-
-Pending release administration only:
-- choose canonical version/tag name;
-- create tag on exact verified SHA;
-- create GitHub Release using H089 release notes.
+Không có known blocking product/runtime issue trong release scope v1.0.0.
 
 Completed:
+- `H-20260908-091-07-PUBLISH-V1.0.0`: DONE / PASS — OFFICIAL v1.0.0 PUBLISHED.
 - `H-20260908-089-07-OFFICIAL-RELEASE-PREPARATION`: DONE / PASS.
 - `H-20260908-088-07-QA-FIXTURE-MAINTENANCE`: DONE / PASS.
 - `H-20260908-087-02-LEGACY-VITEST-MAINTENANCE`: DONE.
