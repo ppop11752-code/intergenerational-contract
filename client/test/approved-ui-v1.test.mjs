@@ -8,5 +8,5 @@ test("queue decoration is idempotent",()=>{assert.match(ui,/root\.dataset\.appro
 test("client does not invent authoritative MAX",()=>{assert.match(ui,/Chưa có MAX authoritative/);assert.doesNotMatch(ui,/Math\.floor\([^)]*cash/)});
 test("marriage cancel uses existing server action",()=>{assert.match(ui,/type:"marriage:cancel"/);assert.doesNotMatch(ui,/marriage:accept/)});
 test("end report preserves extinction and no-life semantics",()=>{assert.match(ui,/XÃ HỘI ĐÃ TUYỆT CHỦNG/);assert.match(ui,/THẤT BẠI CHUNG/);assert.match(ui,/CHƯA CÓ KIẾP SỐNG/);assert.match(ui,/CHƠI LẠI CÙNG PHÒNG/);assert.match(ui,/ĐANG CHỜ HOST/)});
-test("approved shell removes duplicate world quick navigation",()=>{assert.match(ui,/data-panel=\\"government\\"\],\[data-panel=\\"residence\\"/);assert.match(css,/\.approved-minimap/)});
+test("approved shell removes duplicate world quick navigation",()=>{assert.match(ui,/data-panel="government"/);assert.match(ui,/data-panel="residence"/);assert.match(ui,/querySelectorAll<HTMLElement>\('\[data-panel="government"\],\[data-panel="residence"\]'\)/);assert.match(css,/\.approved-minimap/)});
 test("approved UI keeps one authoritative timer source",()=>{assert.doesNotMatch(ui,/setInterval\(/);assert.doesNotMatch(ui,/60_000|15_000|5_000/)});
