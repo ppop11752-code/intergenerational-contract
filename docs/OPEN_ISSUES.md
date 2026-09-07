@@ -1,6 +1,6 @@
 # OPEN ISSUES — CURRENT
 
-Updated for GitHub canonical baseline on 2026-09-07.
+Updated for GitHub canonical baseline on 2026-09-08.
 
 ## OI-001 — Marriage proposal lifecycle
 
@@ -77,17 +77,25 @@ Chat 04 verified the Render build and live dependency-backed runtime. Chat 03 ob
 
 ## OI-007 — Residence identity and lifecycle implementation
 
-**Status:** OPEN — SOURCE LOCKED / IMPLEMENTATION PENDING.
+**Status:** CLOSED — VERIFIED.
 
-D-053 and the Rule Ledger now define stable Residence identity, Character current-Residence mapping, creation/marriage/child/adulthood transitions, sibling behavior, and the exact empty → abandoned → reclaimed timeline.
+D-053 and the Rule Ledger define stable Residence identity, authoritative Character `currentResidenceId`, creation/marriage/child/adulthood transitions, sibling behavior, presentation-only stable coordinates, and the exact `empty → abandoned → reclaimed` lifecycle while keeping Economic Household distinct from Residence.
 
-Owner sequence: Chat 02 engine state/lifecycle → Chat 03 snapshot/map contract → Chat 06 client integration → Chat 08 independent audit.
+Implementation sequence completed:
 
-This issue is an implementation/verification gate only. It does not reopen OI-001–OI-006 and does not authorize property, inheritance-of-house, real-estate, or gameplay-distance mechanics.
+- Chat 02 implemented canonical Residence state/lifecycle and regression coverage.
+- Chat 03 exposed authoritative Residence/map/snapshot/protocol state.
+- Chat 06 integrated Residence/Family/map/Chronicle UI without client inference.
+- Chat 07 production QA passed backend gate, clean Client 68/68, and desktop/mobile Residence navigation.
+- Chat 08 independently audited D-053 across Rule Ledger, engine, protocol, Client and regression coverage and returned PASS under H-20260907-072-08-RESIDENCE-LIFECYCLE-AUDIT.
+
+Verified constraints include no property ownership, sale, house inheritance, Residence reuse, gameplay-distance mechanic, Household/Residence conflation or hidden Persona exposure. Reclaimed Residence IDs leave active map/navigation but remain authoritative and history-addressable.
+
+Final closure handoff: `H-20260908-077-00-CLOSE-OI007-RESIDENCE`.
 
 ## Current blocking status
 
-OI-007 is OPEN and blocks authoritative Residence/Family runtime completion. OI-001–OI-006 remain CLOSED.
+No blocking Open Issue remains in OI-001 through OI-007. Full-game UX/UI coverage and project-wide release readiness must still be evaluated separately from Open Issue closure.
 
 ## Non-blocking maintenance debt
 
