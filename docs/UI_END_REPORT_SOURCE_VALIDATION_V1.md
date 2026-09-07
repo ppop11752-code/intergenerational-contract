@@ -1,6 +1,6 @@
 # UI END REPORT — SOURCE VALIDATION V1
 
-Status: USER VERIFICATION REQUIRED
+Status: CLOSED — USER VERIFIED
 Date: 2026-09-07
 Owner: 05 — UI/UX & ART
 Trigger: `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE`
@@ -14,7 +14,7 @@ Final-game result UX covering:
 - Host-only same-room replay;
 - post-game navigation without changing authoritative scoring/session rules.
 
-## CURRENT / AUTHORITATIVE BEHAVIOR — DO NOT RE-ASK
+## CURRENT / AUTHORITATIVE BEHAVIOR — VERIFIED
 
 ### End conditions
 
@@ -46,99 +46,32 @@ Client must not calculate winner/ranking independently when authoritative rankin
 - Replay clears the finished engine/game state and starts a fresh game flow while keeping room/player connections.
 - Old Characters, scores, histories and gameplay state must not visually look carried into the replay as active state.
 
-## CURRENT DATA
+## USER DECISIONS — 2026-09-07
 
-Current authoritative room/public state exposes:
-- `game.ended`;
-- `game.endingReason`;
-- `game.rankings()` result through public snapshot;
-- room `hostPlayerId` / Human roster;
-- per-Human history/score snapshots through private/history state;
-- current history statistics including lives, highest assets/status, marriages and children.
+User explicitly approved the recommendation for **ER1–ER9**, all option **A**.
 
-## UX RISKS
+- **ER1 A** — dedicated full-screen End Report scene with the final world softly visible/faded behind it; no active gameplay HUD/actions.
+- **ER2 A** — winner prominently at top, Top 3 podium-style treatment, complete ordered Human ranking below, using authoritative ranking order.
+- **ER3 A** — score label `ĐIỂM TÀI SẢN TRUNG BÌNH QUA CÁC KIẾP` plus short explanation that the score uses HHA/assets across active rounds/lives, not cash alone; detailed formula stays in Rules/Niên sử.
+- **ER4 A** — every Human gets `HÀNH TRÌNH CỦA BẠN` with final rank, average score, lives, highest asset score/status, marriages, children and compact score trend.
+- **ER5 A** — Human who never received a Character/life remains visible with `CHƯA CÓ KIẾP SỐNG` / `0 VÒNG HOẠT ĐỘNG`, preserving authoritative result order/value where supplied.
+- **ER6 A** — early extinction replaces winner/podium with `XÃ HỘI ĐÃ TUYỆT CHỦNG — THẤT BẠI CHUNG`; statistics remain viewable only as historical/postmortem context; explicitly no winner.
+- **ER7 A** — Host sees primary `CHƠI LẠI CÙNG PHÒNG`; non-host sees `ĐANG CHỜ HOST`, never an enabled replay button.
+- **ER8 A** — Host replay uses short `BẮT ĐẦU MỘT XÃ HỘI MỚI` transition and returns connected room to fresh pre-game/Lobby flow; old game state does not remain active.
+- **ER9 A** — read-only post-game actions include `XEM NIÊN SỬ` and `XEM THẾ GIỚI CUỐI CÙNG`, plus leave/return navigation; no gameplay actions remain.
 
-1. End Report must not call raw cash the winning score.
-2. Married Humans must not be credited with 100% of Household assets in scoring presentation.
-3. Early extinction must never show a winner/podium even if rankings can technically be computed.
-4. Ranking must come from authoritative server order, not client-side sorting/recalculation.
-5. Replay must clearly mean a fresh game in the same room, not continuation of the ended world.
-6. Non-host players must not see a usable replay control that implies they can start it.
+## IMPLEMENTATION GUARDRAILS
 
-## USER VERIFICATION QUESTIONS
+1. Use server `endingReason` and authoritative `rankings()` result; do not recalculate/sort winner locally.
+2. Never call AverageLifeAssetScore “cash”, “money” or equivalent cash-only wording.
+3. Early extinction must never render a standard winner/podium, even if ranking data exists for historical context.
+4. Married scoring must not display full Household assets as the Human's authoritative score share.
+5. `CHƯA CÓ KIẾP SỐNG` is not the same semantic state as an active player who legitimately scored zero.
+6. Same-room replay is fresh game state in the same room, not continuation/reset of the ended world.
+7. Non-host replay authority must be communicated before click; do not expose an enabled fake control.
+8. Post-game world/Chronicle views are read-only.
+9. If a desired personal recap/stat field is not exposed cleanly, Chat 06 must request a narrow Chat 03 contract addition rather than infer it from raw logs or recalculate scoring.
 
-### ER1 — Normal Round32 ending composition
+## Result
 
-A. Use a dedicated **full-screen End Report scene** with the final world softly visible/faded in the background, strong result hierarchy and no active gameplay HUD/actions.
-B. Keep normal World Map shell and open one large centered results panel.
-C. Use a minimal toast and remain in the normal room UI.
-
-Recommendation: **A** — game completion is a true terminal state and deserves stronger visual closure than an ordinary information panel.
-
-### ER2 — Winner and ranking presentation
-
-A. Show winner prominently at top, then Top 3 podium-style treatment and a complete ordered Human ranking below using authoritative `AverageLifeAssetScore`.
-B. Show only the winner and local player rank.
-C. Show a plain full ranking table with no winner emphasis.
-
-Recommendation: **A** — celebratory but still transparent about the full competition.
-
-### ER3 — Score explanation
-
-A. Label the metric clearly as `ĐIỂM TÀI SẢN TRUNG BÌNH QUA CÁC KIẾP` and show one short explanation that it uses authoritative HHA/tài sản across active rounds/lives, not cash alone; detailed formula stays in Rules/Niên sử.
-B. Show the number only.
-C. Show the full scoring formula beside every ranking row.
-
-Recommendation: **A** — enough to prevent the most important scoring misunderstanding without turning the end screen into documentation.
-
-### ER4 — Personal lifetime recap
-
-A. Give every Human a `HÀNH TRÌNH CỦA BẠN` section with final rank, average score, lives, highest asset score/status, marriages, children and a compact score trend; no raw internal IDs.
-B. Show only final rank and score.
-C. Show the full Niên sử timeline again inside End Report.
-
-Recommendation: **A** — useful closure without duplicating the whole Chronicle.
-
-### ER5 — Human who never received a Character/life
-
-A. Keep them visible in the complete room result list but label `CHƯA CÓ KIẾP SỐNG` / `0 VÒNG HOẠT ĐỘNG` rather than visually presenting them like a normal scored life; preserve authoritative ranking value/order where supplied.
-B. Remove them entirely from End Report.
-C. Display them identically to a Human with an active 0 score from gameplay.
-
-Recommendation: **A** — transparent without falsely implying they actively earned a zero through gameplay.
-
-### ER6 — Early extinction ending
-
-A. Replace winner/podium with a strong shared result `XÃ HỘI ĐÃ TUYỆT CHỦNG — THẤT BẠI CHUNG`; show final society summary and personal recap/rank statistics only as historical context, explicitly **no winner**.
-B. Still show the highest-ranked Human as `người thắng` despite extinction.
-C. Show only the failure sentence and no report data.
-
-Recommendation: **A** — matches authoritative ending semantics while preserving useful postmortem information.
-
-### ER7 — Replay controls
-
-A. Host sees primary `CHƠI LẠI CÙNG PHÒNG`; non-hosts see `ĐANG CHỜ HOST` status plus ordinary leave/return navigation, never an enabled replay button.
-B. Everyone sees the replay button; server rejects non-host clicks.
-C. Hide replay entirely and require creating a new room.
-
-Recommendation: **A** — accurately reflects Host-only authority before interaction.
-
-### ER8 — Replay transition
-
-A. On Host replay, use a short transition `BẮT ĐẦU MỘT XÃ HỘI MỚI`, then return the connected room to the fresh pre-game/Lobby flow; no old scores/Characters/world state remain active.
-B. Restart directly into Round1 without returning through the room/lobby context.
-C. Visually keep the old world and reset only numbers.
-
-Recommendation: **A** — clearly communicates a fresh engine/game while preserving the same room connections.
-
-### ER9 — End Report navigation
-
-A. Keep compact actions for `XEM NIÊN SỬ` and `XEM THẾ GIỚI CUỐI CÙNG` as read-only post-game exploration, plus return/leave room navigation; no gameplay actions remain.
-B. Only show replay/leave controls.
-C. Leave all normal gameplay panels active after end.
-
-Recommendation: **A** — lets players inspect what happened without confusing the ended game with an active session.
-
-## Gate
-
-Do not create final End Report spec or Chat 06 implementation handoff until ER1–ER9 are directly approved by the user.
+Source validation gate is closed. Final implementation source is `docs/UI_END_REPORT_APPROVED_V1.md`.
