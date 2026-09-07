@@ -41,12 +41,14 @@ Rules:
 - Pixel-frame treatment, but avoid excessively rigid/blocky geometry.
 - No emoji as primary icons.
 
-## 4. Reconnect state
+## 4. Reconnect state — updated by Waiting Queue/Reconnect V1
 
 When reconnect state exists:
 - Show a compact secondary card **above the menu**.
-- Example copy: `TIẾP TỤC PHÒNG ABC123`.
+- Primary copy: `KẾT NỐI LẠI PHÒNG ABC123`.
+- Supporting copy: `NHÂN VẬT CŨ SẼ TIẾP TỤC DO NPC ĐIỀU KHIỂN · BẠN SẼ VÀO CUỐI HÀNG CHỜ`.
 - It is clearly discoverable but does not replace or visually dominate the normal menu.
+- Do **not** use `TIẾP TỤC PHÒNG` or any wording that implies reclaim/resume control of the old Character after reconnect.
 
 ## 5. Key art
 
@@ -105,7 +107,7 @@ Do not use automatic camera pan/zoom or dense particle effects.
 Do not simply shrink the desktop split layout.
 - Logo/title stay at top.
 - Key art becomes a cropped hero area.
-- Reconnect card appears below hero/title when present.
+- Reconnect card appears below hero/title when present and uses the same no-reclaim wording.
 - Five menu buttons stack vertically.
 - Credit remains at the bottom.
 - Same art direction and interactions; no gameplay/protocol changes.
@@ -118,6 +120,7 @@ User explicitly approved:
 - five separate vertical same-style menu buttons;
 - key art emphasizes settlement more than characters;
 - reconnect card above menu;
+- reconnect wording later refined by Waiting Queue/Reconnect V1 to `KẾT NỐI LẠI PHÒNG ...` + permanent NPC/no-reclaim Queue explanation;
 - credit bottom-right;
 - moderate-light motion;
 - left-aligned menu;
@@ -125,4 +128,4 @@ User explicitly approved:
 - seal less visually dominant than wordmark;
 - exactly 3 foreground chibi characters.
 
-This Landing design is approved for Client Implementation. Lobby / Room / HUD are still awaiting separate design approval.
+This Landing design is approved for Client Implementation.
