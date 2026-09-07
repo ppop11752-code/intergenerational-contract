@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - "Dockerfile"
+      - "client/package.json"
+      - "client/tsconfig.json"
+      - "client/src/**"
       - "qa/approved-ui-v1-e2e.mjs"
       - "qa/approved-ui-v1-live-smoke.mjs"
       - "qa/approved-ui-v1-fixture.mjs"
