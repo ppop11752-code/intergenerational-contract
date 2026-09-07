@@ -1,37 +1,33 @@
 handoff_id: H-20260908-076-06-APPROVED-UI-V1-MANDATORY-POINTER-INTERCEPTION
 from: 04
 to: 06
-status: OPEN
+status: DONE
 title: Fix Approved UI Mandatory panel pointer interception over Residence map
 
-## Context
+## Result
+Client fix complete.
 
-H075 fixed production CSS packaging. Render deploy `dep-daffl23bc2fs73d7kad0` for commit `fcc858e4ea58002f0814df4565f487011d56e406` reached `live`.
+`client/residence-pointer-fix.css` now makes the whole `.approved-mandatory` presentation surface and all descendants pointer-transparent.
 
-Fresh live browser evidence after the CSS stack was packaged:
-- workflow `Approved UI V1 E2E`
-- run `34149561408`
-- head `fcc858e4ea58002f0814df4565f487011d56e406`
-- backend release regressions: PASS
-- clean client suite: 67/67 PASS, including H074 pointer tests
-- previous `.approved-turn-track` / `.hud-cluster` interception is no longer the observed blocker
-- live marker click still FAILS because `.approved-mandatory` descendants (`dt` / `dl`) intercept pointer events over a visible/enabled `.residence-map-marker`
-- evidence artifact `10028892877`, digest `sha256:91eedbe161bc90f354bf9396e9f4e1c44942fea09412dbe8bac7e5c925607d76`
+This is valid because the approved Mandatory surface has no player controls: it is informational, cannot be skipped, and phase progression remains server-authoritative. No button/input exception was added because none is intended in this surface.
 
-## Required work
+HUD buttons and Turn Track token interaction from H074 remain unchanged.
 
-1. Inspect Approved UI Mandatory presentation hit-area and determine why it overlays the interactive Residence map.
-2. Fix Client/UI implementation without changing Mandatory timing, gameplay, protocol, authoritative state, layout decisions, or Residence coordinates.
-3. Preserve any genuinely interactive controls inside the Mandatory surface if such controls are intended by the approved UI contract.
-4. Add a focused regression test for Mandatory overlay pointer pass-through / intended interactive exceptions.
-5. Return H067 to Chat 07 for live browser acceptance after deploy.
+## Regression
+`client/test/residence-pointer-fix.test.mjs` now verifies:
+- pointer correction stylesheet load order;
+- HUD transparent areas pass through while HUD buttons remain interactive;
+- Turn Track background passes through while tokens remain interactive;
+- `.approved-mandatory` and descendants are pointer-transparent;
+- no Mandatory interactive-control exception is introduced.
 
-## Constraints
+## Verification
+GitHub Actions `UIUX Art Final E2E` run `34150174856`, head `fa9c4a4a2386ed0d229282c088b7b808b9aa6b66`:
+- clean Client suite step: PASS;
+- browser/live acceptance still requires the new CSS to reach production before it can prove the marker click path.
 
-- Do not change Mandatory 5-second server authority or introduce local timers.
-- Do not use forced click or DOM scripting as a product workaround.
-- Do not alter gameplay rules or server protocol.
+## Scope protection
+No Mandatory timing, local timer, gameplay, protocol, authoritative state, layout, Residence coordinates or map assignment changed.
 
-## Impact
-
-H075 deployment packaging is resolved, but H067 remains blocked on this separate Client hit-area regression before final Approved UI V1 live acceptance can pass.
+## Handoff
+Return `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` to Chat 07 after production deploy of this commit for ordinary desktop/mobile Residence marker click verification.
