@@ -51,7 +51,7 @@ The user resolved the remaining Room / World shell ambiguities:
 - **R5 — Residence click:** clicking a Residence **opens the Residence/Family drawer directly**.
 - **R6 — Government prominence:** **do not lock a fixed Government-to-house ratio**. Government should feel dominant through architecture, central placement, plaza/grounds and composition rather than simple overscaling.
 - **R7 — Quick-nav:** place Government / Home / Zoom controls at the **bottom-right** as a compact icon group; keep them available but reduce opacity when idle.
-- **R8 — Minimap:** provide an **optional/collapsible minimap**, default compact/closed rather than permanently occupying map space.
+- **R8 — Minimap:** the normal/default state must be a **real compact minimap that continuously shows useful map information**, not a generic button/icon placeholder. It may expand/enlarge on hover/click, but even before expansion it must visibly function as a minimap. The exact click/navigation behavior will be finalized in the Room detail pass.
 - **R9 — Fog/camera:** allow a **short pan into fogged outer space with elastic return** to the useful world area rather than a hard stop or unrestricted drift.
 
 ## Historical statements now resolved
@@ -62,7 +62,7 @@ The user resolved the remaining Room / World shell ambiguities:
 - Residence information is selective, not always globally visible.
 - Residence click opens the Residence/Family drawer directly.
 - Quick-nav is bottom-right with reduced idle opacity.
-- Minimap is optional/collapsible.
+- Minimap is always informational in its compact state; expansion is secondary and must not replace the default live overview.
 - Generic ambient chibi inhabitants are not part of the Room map presentation.
 - Fog permits limited overscroll with elastic return.
 
