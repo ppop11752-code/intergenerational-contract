@@ -1,24 +1,18 @@
 handoff_id: H-20260907-061-06-CHRONICLE-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
+status: DONE
 title: Implement user-approved Niên sử / Chronicle V1
 
-## Source
-- `docs/UI_CHRONICLE_APPROVED_V1.md`
-- `docs/UI_CHRONICLE_SOURCE_VALIDATION_V1.md`
-- `docs/UI_HUD_APPROVED_V1.md`
+## Result
+- `HÀNH TRÌNH / THẾ GIỚI` structure remains; player score uses authoritative ranking/history data, not cash reconstruction.
+- World Event occurrences are rendered from structured `worldEventOccurrences` with exact occurrence IDs.
+- `XEM TRONG NIÊN SỬ` opens Chronicle, switches to `THẾ GIỚI`, and focuses exact `chronicleEntryId`.
+- Approved filter chips are present; categories are assigned only where structured event impact data supports them. Unsupported categories show no authoritative items rather than parsing chronology strings.
+- Residence transitions/reclaimed history remain structured and history-addressable.
+- Chronicle does not pause/reset gameplay timers.
 
-## Implemented
-- large centered ledger/sheet presentation;
-- top-level `HÀNH TRÌNH / THẾ GIỚI` tabs;
-- personal history grouped by lives from structured PlayerHistory events;
-- authoritative average score from rankings and score trend from scoreSnapshots;
-- World timeline and indicator mode from authoritative historySnapshots;
-- no raw IDs as player-facing labels;
-- no timer ownership/reset.
+No scoring/history/event semantics changed.
 
-## Blocker
-`H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT` for exact `XEM TRONG NIÊN SỬ` linkage and structured world-category filtering without parsing chronology strings.
-
-Client does not calculate AverageLifeAssetScore or infer world-event causality.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
