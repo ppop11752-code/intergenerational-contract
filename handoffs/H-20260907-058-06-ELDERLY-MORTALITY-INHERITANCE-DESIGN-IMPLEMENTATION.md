@@ -1,17 +1,16 @@
 handoff_id: H-20260907-058-06-ELDERLY-MORTALITY-INHERITANCE-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement approved elderly medical / mortality / Grief / inheritance UI V1
+status: DONE
+title: Implement approved Elderly / Mortality / Inheritance V1
 
-## Source
-- `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_APPROVED_V1.md`
+## Result
+- Current elderly medical due/paid/risk presentation retained from authoritative Character state.
+- Structured lifecycle results now render exact elderly medical result, death notice, joint spouse death, estate total, beneficiary amounts and Government transfer when applicable.
+- Queue/new-life context consumes the same structured lifecycle records.
+- No chronology parsing or estate/heir reconstruction is performed in Client.
 
-## Implemented
-- elderly profile can show authoritative medical due/paid and mortality-risk context;
-- no Grief fee is surfaced at death;
-- no mortality/inheritance calculation exists in Client;
-- presentation remains non-blocking.
+No mortality, Grief, inheritance, bankruptcy or queue rule changed.
 
-## Blocker
-`H-20260907-065-03-UI-LIFECYCLE-RESULT-CONTRACT` is required for structured medical result, death notice, estate total, beneficiary amounts, joint spouse settlement and explicit Government transfer. Client will not parse Chronicle text or reconstruct heir logic.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
