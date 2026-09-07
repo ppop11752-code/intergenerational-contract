@@ -4,77 +4,68 @@
 
 ### Status
 
-Hoàn thành — chuỗi QA Mandatory 5 giây đã PASS và đóng đủ `H-20260907-050-07-MANDATORY-5S-LIVE-QA`, `H-20260907-051-07-MANDATORY-5S-CLIENT-QA` và `H-20260907-051-07-MANDATORY-5S-QA`.
+Bị chặn — `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` chưa thể PASS vì production Render chưa deploy được Approved UI V1.
 
 ### Changed
 
-- Xác nhận prerequisite H048/H049/H050 đều DONE.
-- Thêm QA runner `qa/mandatory-5s-e2e.mjs` và workflow `.github/workflows/mandatory-5s-e2e.yml`.
-- Chạy full gate `Mandatory 5s E2E` run `34116071374`, head `6b44034c3f3009730971992813d7bcafd05ebbcc`, job `101723075260`: SUCCESS.
-- Backend `npm run release:check`: PASS.
-- Clean client suite: **39/39 PASS**.
-- Live browser checks: **13/13 PASS**.
-- First live authoritative Mandatory snapshot còn **4692 ms** tới deadline; live Mandatory -> Status transition quan sát **4891 ms**.
-- Mandatory HUD hiển thị `TỰ ĐỘNG`, không countdown/progress; card không có skip/continue/confirm.
-- Normal, forced-liquidation và projected-bankruptcy presentation đều đọc được trong production renderer.
-- Status/Voluntary timers sau Mandatory vẫn authoritative (`15s` / `60s`).
-- Đóng cả ba handoff QA Mandatory 5s.
+- Mở H067 và thực hiện independent QA thay vì chỉ dùng evidence của Chat 06.
+- Thêm workflow/gate QA riêng cho Approved UI V1.
+- Workflow `Approved UI V1 E2E` run `34147167987` xác nhận:
+  - backend `release:check`: PASS;
+  - clean client suite: **64/64 PASS**.
+- Live browser không thấy `.landing-screen.approved-landing` vì production vẫn phục vụ client cũ.
+- Kiểm tra Render xác nhận các auto-deploy từ batch Approved UI V1 đang `build_failed`, không phải runtime UI đã deploy rồi bị lỗi.
+- Build log production chỉ ra Docker `client-build` TypeScript parity failure (TS2488/TS2347/TS7006 ở Approved UI sources).
+- Tạo `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD` cho Chat 04.
+- Chạy fixture source độc lập `Approved UI V1 Fixture` run `34147512202`: clean client build PASS; fixture đi qua authoritative Status fee và Market MAX trước khi vướng một assertion DOM quá hẹp của QA ở Market reason. Chưa phân loại đây là product defect vì runtime cũng truyền reason authoritative qua disabled MAX title.
 
 ### Source
 
-- `docs/RULE_LEDGER.md`
-- `docs/DECISION_LOG.md` D-052
-- `docs/UI_MANDATORY_APPROVED_V1.md`
-- `handoffs/H-20260907-048-03-MANDATORY-5S-SERVER.md`
-- `handoffs/H-20260907-049-04-MANDATORY-5S-DEPLOY.md`
-- `handoffs/H-20260907-050-06-MANDATORY-5S-CLIENT.md`
-- `handoffs/H-20260907-050-07-MANDATORY-5S-LIVE-QA.md`
-- `handoffs/H-20260907-051-07-MANDATORY-5S-CLIENT-QA.md`
-- `handoffs/H-20260907-051-07-MANDATORY-5S-QA.md`
-- `server/backend/src/authoritative-room.ts`
-- `server/backend/src/engine.ts`
-- `client/src/display-contract.ts`
-- `client/test/display-contract.test.mjs`
-- workflow run `34116071374`
-- artifact `10016330934`
-- digest `sha256:f15a906c64bd6de9a9fae239cbc9543b7d30ca0d05794f94bef7d256504d5a1f`
+- `handoffs/H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA.md`
+- `reports/06_CURRENT.md`
+- `client/src/approved-ui-v1.ts`
+- `client/src/residence-ui-v1.ts`
+- `client/src/resolved-ui-contracts.ts`
+- `client/src/approved-ui-finalize.ts`
+- `client/test/resolved-ui-contracts.test.mjs`
+- `Dockerfile`
+- Render deploy `dep-dafetkks728c738s3tv0` for Approved UI integration commit `6489c7c8f283464074943bf0ed4e243ee740a4d8`: build_failed.
+- Render deploy `dep-daff4h8ou94c73a6rdng` for QA head `687373ca23267f3ea304e0f0d8c2adb6e71f978d`: build_failed.
+- `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`.
 
 ### Impact
 
-D-052 hiện đã được xác minh end-to-end ở phạm vi rule -> authoritative server -> deployment -> client -> live browser. Mandatory là presentation tự động 5 giây, không trở thành decision timer và không có client timing authority. Không phát hiện regression phase order, gameplay/protocol hay surrounding Status/Voluntary flow.
+Approved UI V1 source and clean regression state are currently healthy, nhưng live production chưa chứa bản UI này. Vì vậy không được gọi H067 PASS hoặc coi Approved UI V1 production-ready. Không có gameplay/protocol/rule nào bị thay đổi bởi Chat 07.
 
 ### Verified
 
-- Canonical server default `DEFAULT_MANDATORY_PRESENTATION_MS=5_000`.
-- Production config `MANDATORY_PRESENTATION_MS=5000`.
-- Deterministic server timing: no advance at 4999 ms; auto advance at 5000 ms; `turn:complete` rejected during Mandatory.
-- Live authoritative timing: 4692 ms remaining at first observed snapshot; 4891 ms observed transition.
-- Normal phase order: `mandatory -> status -> voluntary`.
-- Mandatory no countdown/progress/skip/continue/confirm.
-- No client local `5000` hardcode or local Mandatory transition.
-- Normal Mandatory readability: PASS.
-- Forced liquidation readability: PASS.
-- Projected bankruptcy readability: PASS.
-- Terminal Mandatory failure source path: `resolveCurrentMandatory()` routes `!survived || !c.alive` through `advanceToNextTurn()` before any `phase="status"`, so bankrupt Character cannot receive Status/Voluntary.
-- Backend release regressions and bankruptcy/estate foundations: PASS.
-- Status/Voluntary timer behavior after Mandatory: PASS.
+- Backend full release regression trên current main: PASS.
+- Clean client suite: 64/64 PASS.
+- Client TypeScript build ngoài Docker production stage: PASS.
+- Clean tests bao phủ authoritative MAX/reason, structured mortality/inheritance, World Event contract/Chronicle linkage, Residence lifecycle/map, Queue/takeover navigation, no Persona leak, authoritative timer ownership, QR contract và idempotent runtime.
+- Render production deployment failure là build-time, không phải browser runtime defect.
+- Docker client-build dùng một đường build khác clean client và đang fail với Approved UI sources.
 
 ### Unverified
 
-- Không còn hạng mục chưa kiểm trong ba handoff Mandatory 5s này.
-- Project-wide release readiness ngoài phạm vi các handoff này chưa được khẳng định.
+Chờ H073:
+- production Approved UI V1 landing/shell thực sự live;
+- desktop/mobile live flow;
+- Residence/map/Queue/reconnect/Marriage world-first navigation trên deployed build;
+- live authoritative timers và Mandatory no-countdown trong Approved UI V1;
+- QR browser regression trên deployed UI;
+- final raw-ID/Persona/privacy check;
+- final responsive and Landing→End Report closure.
 
 ### Handoff
 
-Không có defect handoff mới. Chat 00 có thể dùng kết quả này cho điều phối Project tiếp theo.
+- Chat 04: `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD` — sửa Docker/client-build parity và deploy Approved UI V1.
+- Sau khi H073 DONE/live, trả H067 về Chat 07 để rerun final browser QA.
 
 ### Open Issues
 
-- `H-20260907-050-07-MANDATORY-5S-LIVE-QA`: DONE / PASS.
-- `H-20260907-051-07-MANDATORY-5S-CLIENT-QA`: DONE / PASS.
-- `H-20260907-051-07-MANDATORY-5S-QA`: DONE / PASS.
-- `H-20260907-048-03-MANDATORY-5S-SERVER`: DONE.
-- `H-20260907-049-04-MANDATORY-5S-DEPLOY`: DONE.
-- `H-20260907-050-06-MANDATORY-5S-CLIENT`: DONE.
+- `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: BLOCKED.
+- `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`: OPEN.
+- Previous Mandatory 5s QA chain remains DONE / PASS.
 - `H-20260907-038-07-UIUX-ART-FINAL-QA`: CLOSED / PASS.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
