@@ -7,11 +7,11 @@
 
 ### Changed
 - User đã chọn Room direction `WSA — Thế giới là màn hình`.
-- Tạo `docs/UI_ROOM_DIRECTION_V1.md` làm source cho direction đã được user xác nhận nhưng chưa phải final screen approval.
-- User bổ sung constraint quan trọng cho minimap: ở trạng thái mặc định/compact, minimap phải **thật sự hiển thị thông tin bản đồ**, không được biến thành một nút/icon thông thường.
-- `docs/UI_ROOM_SOURCE_VALIDATION_V1.md` đã được cập nhật để làm rõ R8: compact minimap luôn là một live/simplified map overview; hover/click chỉ dùng để enlarge/reveal thêm chi tiết.
+- `docs/UI_ROOM_DIRECTION_V1.md` là source cho direction đã được user xác nhận nhưng chưa phải final screen approval.
+- Minimap constraint giữ nguyên: trạng thái mặc định/compact phải thật sự hiển thị live/simplified map overview, không được collapse thành ordinary icon/button.
+- Quyết định mới nhất: **minimap được chuyển lên một góc trên màn hình**, tách khỏi bottom-right quick-nav cluster.
+- Exact upper-left vs upper-right chưa được user chốt; sẽ xử lý trong final detail pass dựa trên HUD/Turn Track collision.
 - WSA giữ map chiếm gần toàn viewport; HUD/Turn Track/quick-nav/minimap nổi nhẹ trên map thay vì đóng map vào frame/dashboard.
-- Minimap compact mặc định phải cho thấy ít nhất spatial overview + current viewport region; exact marker set và click-navigation behavior vẫn chờ final detail pass.
 - Không thay gameplay, protocol, timers, authoritative state hoặc map rules.
 
 ### Source
@@ -25,17 +25,18 @@
 ### Impact
 - Room không còn ở bước chọn concept; chỉ còn final composition/detail approval trước khi khóa spec.
 - Chat 06 chưa được phép implement Room redesign.
-- Mọi implementation minimap dạng collapsed icon/button sẽ vi phạm current user decision.
+- Implementation minimap dạng collapsed button/icon hoặc đặt lại ở bottom-right sẽ vi phạm current user decision.
+- Bottom-right quick-nav giờ độc lập với minimap.
 - HUD detailed composition vẫn chưa được khóa; Room pass chỉ xác định shell/map spatial structure và interaction zones.
 
 ### Verified
 - Room Source Validation Gate đã CLOSED.
 - WSA được user chọn trực tiếp.
-- Minimap default-state semantics đã được user làm rõ trực tiếp.
+- Minimap default-state semantics và upper-corner placement được user làm rõ trực tiếp.
 - Không có gameplay/protocol/timer/action semantic change.
 
 ### Unverified
-- Exact desktop proportions, Government plaza/world composition, Residence density/grouping, Turn Track chrome, minimap dimensions/marker set/click behavior, quick-nav arrangement around minimap, drawer anchoring, mobile Room layout và ornament density chưa được user duyệt cuối.
+- Exact upper-left/right minimap corner, desktop proportions, Government plaza/world composition, Residence density/grouping, Turn Track chrome, minimap dimensions/marker set/click behavior, quick-nav icon arrangement, drawer anchoring, mobile Room layout và ornament density chưa được user duyệt cuối.
 
 ### Handoff
 - Chat 06: `H-20260907-038-06-LANDING-DESIGN-IMPLEMENTATION` — Landing V1.
