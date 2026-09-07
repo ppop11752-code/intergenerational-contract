@@ -4,61 +4,74 @@
 
 ### Status
 
-Hoàn thành — `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` đã DONE / PASS sau H084.
+Hoàn thành — `H-20260908-085-07-FINAL-PROJECT-RELEASE-ASSESSMENT` = **DONE / PASS WITH WARNINGS — RELEASE READY**. Không còn blocker sản phẩm/runtime đã biết trong phạm vi phát hành hiện tại.
 
 ### Changed
 
-- Xác nhận H084 DONE và Marriage profile rerender loop đã được sửa idempotent.
-- Chấp nhận final H080 run `34156855982`, head `ac2affa621b68cf0021830412a772153d61c9b79`, conclusion SUCCESS.
-- Artifact `10031262501`, digest `sha256:b7504e49547fdd7ff25c042e6132d3b4c43d162738ad6e31ba9849eb36fca28f`.
-- Artifact `results.json`: **24/24 browser checks PASS**.
-- Đóng H080 = DONE / PASS.
+- Hoàn tất gate project-wide H085 trên canonical `main`/production.
+- Final workflow `Final Project Release Assessment` run `34157976545`, head `14a88966df889698e1afe2c72d710d12725fc41f`, job `101853649977`: **SUCCESS**.
+- Backend `release:check`: PASS.
+- Clean Client build/test: PASS.
+- Critical production multiplayer smoke: PASS cho health, room create/join, start, authoritative get-state, disconnect/reconnect và state emissions.
+- Approved UI V1 live compatibility: PASS desktop/mobile, Residence/Turn Track/HUD, Mandatory no-countdown, QR deep-link/privacy.
+- H080 retained acceptance: PASS World Event direct banner, exact Chronicle focus qua rerender, timer continuity, no event-name inference, Marriage visible-disabled semantics và mobile reflow.
+- Production Render deploy `dep-dafhhes9v7es73c4601g` cho head H085 đã live trước khi final runtime/browser gate kết thúc.
+- Artifact `10031644674`, digest `sha256:e5671f2c437ac5a3c643b33cf308058f662857b4d84b49be8f300c24f01281bf`.
+- OI-001 through OI-007 giữ trạng thái CLOSED / VERIFIED; không có regression trong H085 buộc reopen.
 
 ### Source
 
+- `handoffs/H-20260908-085-07-FINAL-PROJECT-RELEASE-ASSESSMENT.md`
+- `docs/OPEN_ISSUES.md`
+- `docs/RELEASE_STATUS.md`
+- `handoffs/H-20260908-078-08-FULL-UI-RULE-LEDGER-REAUDIT.md`
+- `handoffs/H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT.md`
 - `handoffs/H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA.md`
-- `handoffs/H-20260908-084-06-MARRIAGE-PROFILE-RERENDER-LOOP.md`
-- `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`
-- `client/src/resolved-ui-contracts.ts`
-- `client/src/approved-ui-finalize.ts`
-- `qa/world-event-approved-ui-qa.mjs`
-- workflow run `34156855982`
-- artifact `10031262501`
+- `qa/final-release-multiplayer-smoke.mjs`
+- `.github/workflows/final-project-release-assessment.yml`
+- workflow run `34157976545`
+- artifact `10031644674`
 
 ### Impact
 
-World Event approved banner + Chronicle navigation/focus + Marriage disabled profile affordance + mobile reflow đã qua final integrated browser gate. Không thay gameplay, protocol, World Event mechanics, Marriage rule hoặc timer rule.
+Project hiện đủ bằng chứng để được phân loại **release ready** trong phạm vi hiện tại. H085 không thay gameplay/UI/protocol; chỉ thêm QA release gate và ghi nhận bằng chứng. Chat 00 có thể cập nhật trạng thái Project/release chính thức mà không cần mở corrective product handoff mới.
 
 ### Verified
 
-- Clean Client regression PASS.
-- Production direct World Event banner PASS.
-- Không còn separate `CHI TIẾT`/detail surface.
-- Structured authoritative impacts và only-affected-system rendering PASS.
-- Exact `chronicleEntryId` identity/focus PASS qua rerender khi event id khác Chronicle id.
-- Timer continuity PASS (`20s -> 18s`), không pause/reset.
-- No event-name inference PASS.
-- Marriage candidate visible + disabled + exact copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN` PASS.
-- H084 repeated-snapshot loop không còn khóa browser.
-- Mobile same-content reflow PASS.
-- Mobile no horizontal overflow PASS (`scrollWidth=390`, `clientWidth=390`).
-- Render production hiện live trên main với H084 fix đã nằm trong lịch sử deploy.
+- Canonical open issues: OI-001–OI-007 CLOSED / VERIFIED.
+- Backend release/regression gate xanh trên final assessed head.
+- Client build/test sạch xanh trên final assessed head.
+- Production `/health` 200.
+- Hai Human client có thể create/join/start; authoritative room state có 2 players.
+- Reconnect token được cấp; disconnect/reconnect quay lại đúng started room và lấy authoritative state thành công.
+- Room/player snapshot emissions được quan sát.
+- Approved UI V1 live desktop/mobile và critical controls PASS.
+- Residence marker navigation, Turn Track, HUD interaction PASS.
+- Mandatory no visible countdown regression PASS.
+- QR same-origin/deep-link/privacy PASS.
+- H080 World Event/Chronicle/Marriage/mobile acceptance PASS.
+- Render production đúng assessed head đã live trong lúc final browser/runtime acceptance chạy.
 
 ### Unverified
 
-Không còn mục H080 nào chưa kiểm tra trong phạm vi handoff.
+- Không mô phỏng live mọi rare multiplayer timing permutation; broader deterministic backend/client regression là lớp bao phủ chính cho các nhánh hiếm.
+- Nợ bảo trì QA/tài liệu không được sửa trong H085 vì không phải release blocker.
 
 ### Handoff
 
-Không có handoff tiếp theo từ H080.
+Chat 00: ghi nhận verdict H085 **PASS WITH WARNINGS — RELEASE READY**, cập nhật final project/release status. Không cần corrective specialist handoff cho product defect.
 
 ### Open Issues
 
+Không có known blocking product issue trong release scope.
+
+Non-blocking maintenance:
+- legacy Vitest `.test.ts` expectations trong `docs/OPEN_ISSUES.md` cần update/archive;
+- `qa/approved-ui-v1-fixture.mjs` còn expectation World Event `CHI TIẾT` pre-H079 và nên update/archive; H085 dùng H080 current acceptance thay thế;
+- một số specialist report cũ có dòng trạng thái stale so với handoff/canonical state mới hơn.
+
+Completed:
+- `H-20260908-085-07-FINAL-PROJECT-RELEASE-ASSESSMENT`: DONE / PASS WITH WARNINGS — RELEASE READY.
 - `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA`: DONE / PASS.
-- `H-20260908-084-06-MARRIAGE-PROFILE-RERENDER-LOOP`: DONE.
-- `H-20260908-083-06-WORLD-EVENT-CHRONICLE-FOCUS-RERENDER`: DONE / accepted.
-- `H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER`: DONE.
-- `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID`: DONE.
-- `H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT`: DONE.
 - `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: DONE / PASS WITH WARNINGS.
-- OI-001–OI-006 remain CLOSED/VERIFIED.
+- OI-001–OI-007: CLOSED / VERIFIED.
