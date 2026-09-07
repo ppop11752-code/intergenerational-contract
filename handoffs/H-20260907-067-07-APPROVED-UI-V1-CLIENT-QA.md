@@ -2,32 +2,41 @@ handoff_id: H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA
 from: 06
 to: 07
 status: OPEN
-title: Clean build/browser QA for approved UI V1 Client integration batch
+title: Independent clean/browser QA for completed approved UI V1 Client integration
 
 ## Scope implemented by Chat 06
 - `client/src/approved-ui-v1.ts`
 - `client/src/approved-ui-v1-followups.ts`
+- `client/src/residence-ui-v1.ts`
+- `client/src/resolved-ui-contracts.ts`
+- `client/src/approved-ui-finalize.ts`
 - `client/approved-ui-v1.css`
+- `client/residence-ui-v1.css`
+- `client/resolved-ui-contracts.css`
 - `client/src/types.ts`
-- `client/src/action-payloads.ts`
 - `client/index.html`
-- `client/test/approved-ui-v1.test.mjs`
+- associated Client regression tests.
 
-## Required QA
-1. clean `client/npm test` and TypeScript build;
-2. browser smoke desktop + mobile for Landing, Lobby, Room/HUD, Mandatory, Status, Voluntary dock, Market, Recovery, Support, Birth, Marriage, Government, Chronicle, Queue, End Report;
-3. verify no MutationObserver/render loop, especially Queue and End Report;
-4. verify authoritative timers continue without reset/pause and Mandatory remains no-countdown;
-5. verify existing QR flow remains functional;
-6. verify `marriage:cancel` reaches the already-existing server action only while pending;
-7. verify End Report extinction has no winner/podium and non-host has no enabled replay;
-8. verify no raw internal IDs become primary labels;
-9. responsive/mobile layout smoke.
+## Dependency status
+H063, H064, H065 and H066 are all DONE and integrated. H042/H048–H061 dependent Client handoffs are now DONE at implementation level.
 
-## Known server-contract dependencies — do not fail Client for absent server fields alone
-- H063 Residence/map mapping;
-- H064 authoritative MAX/disabled reasons;
-- H065 structured lifecycle/inheritance results;
-- H066 structured World Event/Chronicle linkage.
+## Existing automated evidence
+On HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`:
+- TypeScript build PASS;
+- clean Client suite 64/64 PASS;
+- automated desktop/mobile `UIUX Art Final E2E` PASS;
+- workflow run `34145674583`;
+- evidence artifact `10027576158`, SHA-256 `3700645a6cfe693de5f724308e4296d77c05ccd21d5dca548362b36451b3e72b`.
 
-Report any product regression separately from the above known blocked acceptance points.
+## Required independent QA
+1. independently rerun/inspect clean build and browser smoke across Landing→End Report;
+2. exercise authoritative MAX/reason behavior for Status/Market/Recovery/Support/Birth;
+3. exercise Residence/map/Queue/reconnect/Marriage world-first navigation;
+4. exercise structured mortality/inheritance and World Event→Chronicle deep link;
+5. verify no MutationObserver/render loop;
+6. verify authoritative timers continue without reset/pause and Mandatory remains no-countdown;
+7. verify QR flow remains functional;
+8. verify no raw internal IDs become primary labels and no hidden NPC Persona leaks;
+9. verify responsive/mobile layout.
+
+Report any product regression with a narrow handoff back to Chat 06. Do not treat the existing automated pass as a substitute for this independent QA ownership.
