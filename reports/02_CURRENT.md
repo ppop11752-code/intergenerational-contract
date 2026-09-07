@@ -2,57 +2,61 @@
 
 ## Status
 
-OI-001 implementation complete; awaiting independent Chat 08 re-audit.
+H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE complete and merged to `main`.
 
 ## Changed
 
-Implemented A1+B1+C1 marriage proposal lifecycle:
+Implemented authoritative D-053 Residence state/lifecycle without changing gameplay rules:
 
-- max one outgoing `pending`;
-- multiple incoming `pending` allowed;
-- no pending timeout;
-- accepted binding;
-- `createdRound` history-only;
-- settlement by `acceptedRound`;
-- eligibility loss invalidates;
-- disconnect/NPC takeover does not invalidate;
-- successful settlement => `executed`, inactive but retained in history;
-- first valid Accept in authoritative processing order wins.
+- independent Residence entity with stable identity;
+- server-authoritative Character `currentResidenceId`;
+- founder/immigrant/newborn initialization;
+- symmetric shared Residence on marriage;
+- dependent-child survivor/remarriage placement;
+- both-direct-parents-dead Residence retention;
+- no duplicate Residence on orphan Stage2→3;
+- normal Stage2→3 independent Residence creation;
+- sibling transitions remain independent;
+- stable presentation-only coordinates;
+- exact `empty` → next-round `abandoned` → end-of-next-round `reclaimed` lifecycle;
+- reclaimed Residence IDs remain addressable for history but leave active-map selection.
 
-No gameplay constants or unrelated formulas were changed.
+No property ownership, sale, house inheritance, Residence reuse or gameplay-distance mechanic was introduced. Economic Household remains distinct from Residence.
 
 ## Source
 
-User-locked OI-001 A1+B1+C1 + Rule Ledger / Migration Pack v3.
+D-053, `docs/RULE_LEDGER.md`, and H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE.
 
 ## Impact
 
-Directly affects model/engine marriage proposal state and authoritative action handling.
+Adds canonical Residence state and lifecycle hooks to the engine. Unblocks Chat 03 handoff H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT.
 
 ## Verified
 
-Chat 02 handoff reports, from the implementation artifact:
+Implementation merged through PR #2.
 
-- Typecheck PASS
-- Rule Ledger regression 42/42 PASS
-- OI-002 regression 6/6 PASS
-- OI-001 regression 9/9 PASS
-- Fuzz 20 games PASS
-- Simulation 30 games completed
+Merge commit:
+`c6e2415684dcab45b8d66446eaf8a24a50c2f783`
 
-Reported artifact SHA-256:
-`a896c69cd186fbe6cb6cf7db780c25e341e683fd8545175b9e1df1c43b46b11f`
+Verified on integrated branch source before merge:
+
+- Typecheck PASS;
+- Rule Ledger regression 42/42 PASS;
+- OI-002 regression 6/6 PASS;
+- OI-001 regression 9/9 PASS;
+- configured UI/birth/support/lifecycle/world-event contract regressions PASS;
+- Residence D-053 regression 10/10 PASS.
 
 ## Unverified
 
-Independent Chat 08 verification of OI-001 has not yet been recorded as PASS in the current Project state.
-
-Legacy Vitest `.test.ts` files were not run in Chat 02's environment because local Vitest/dependencies were unavailable; authoritative configured regression suites above did pass.
+- Chat 03 snapshot/protocol exposure has not yet been implemented.
+- Client integration and deployed/browser verification remain downstream.
+- Independent Chat 08 Residence lifecycle audit remains downstream under the OI-007 chain.
 
 ## Handoff
 
-Chat 08 — independently inspect artifact, lifecycle/timing/order and regression coverage.
+Chat 03 — H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT is OPEN and unblocked. Consume canonical Residence state directly; do not infer Residence from Economic Household, parent links or map proximity.
 
 ## Open Issues
 
-OI-001 remains OPEN until Chat 08 PASS.
+OI-007 remains open for downstream server/client integration and independent verification. H-069 itself is DONE.
