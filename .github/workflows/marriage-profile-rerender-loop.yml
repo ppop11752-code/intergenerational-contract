@@ -1,0 +1,31 @@
+name: Marriage Profile Rerender Loop QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "client/src/approved-ui-finalize.ts"
+      - "client/test/marriage-profile-rerender-loop.test.mjs"
+      - "qa/marriage-profile-rerender-loop.mjs"
+      - ".github/workflows/marriage-profile-rerender-loop.yml"
+
+jobs:
+  h084-marriage-profile-rerender:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Clean client regression
+        working-directory: client
+        run: |
+          npm install
+          npm test
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run H084 browser regression
+        run: timeout 30s node qa/marriage-profile-rerender-loop.mjs
