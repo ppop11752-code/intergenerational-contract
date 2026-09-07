@@ -1,0 +1,43 @@
+name: Approved UI V1 E2E
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/approved-ui-v1-e2e.mjs"
+      - ".github/workflows/approved-ui-v1-e2e.yml"
+
+jobs:
+  approved-ui-v1-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LIVE_URL: https://intergenerational-contract.onrender.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Backend release regressions
+        working-directory: server/backend
+        run: |
+          npm install
+          npm run release:check
+      - name: Clean client suite
+        working-directory: client
+        run: |
+          npm install
+          npm test
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run approved UI V1 independent browser QA
+        run: node qa/approved-ui-v1-e2e.mjs
+      - name: Upload approved UI V1 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-ui-v1-e2e-evidence
+          path: qa/approved-ui-v1-artifacts
+          if-no-files-found: warn
