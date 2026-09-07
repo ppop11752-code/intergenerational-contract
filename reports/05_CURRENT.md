@@ -3,48 +3,64 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Landing V1 và Lobby V1 đã được user duyệt và handoff sang Chat 06. Room / World shell Source Validation Gate đã CLOSED và user đã chọn direction `WSA — Thế giới là màn hình`; hiện đang ở final concrete-detail pass trước khi có thể khóa Room V1. HUD sẽ xử lý sau khi Room shell đủ rõ.
+Đang làm — Landing V1, Lobby V1 và Room / World shell V1 đã được user duyệt và handoff sang Chat 06. HUD hiện đang ở Source Validation Gate theo workflow V2; chưa được phép đi sang concrete HUD alternatives trước khi user xác minh 5 presentation semantics còn mở.
 
 ### Changed
-- User đã chọn Room direction `WSA — Thế giới là màn hình`.
-- `docs/UI_ROOM_DIRECTION_V1.md` là source cho direction đã được user xác nhận nhưng chưa phải final screen approval.
-- Minimap constraint giữ nguyên: trạng thái mặc định/compact phải thật sự hiển thị live/simplified map overview, không được collapse thành ordinary icon/button.
-- Quyết định mới nhất: **minimap được chuyển lên một góc trên màn hình**, tách khỏi bottom-right quick-nav cluster.
-- Exact upper-left vs upper-right chưa được user chốt; sẽ xử lý trong final detail pass dựa trên HUD/Turn Track collision.
-- WSA giữ map chiếm gần toàn viewport; HUD/Turn Track/quick-nav/minimap nổi nhẹ trên map thay vì đóng map vào frame/dashboard.
-- Không thay gameplay, protocol, timers, authoritative state hoặc map rules.
+- User hoàn tất Room final detail pass G1–G9 và bổ sung thay đổi quick-navigation qua minimap.
+- Tạo `docs/UI_ROOM_APPROVED_V1.md` làm authoritative user-approved Room / World shell spec.
+- Tạo handoff `H-20260907-042-06-ROOM-DESIGN-IMPLEMENTATION` → OPEN cho Chat 06.
+- Room final decisions: WSA full-world shell; 3/4 top-down; upper-right always-informational minimap (~200×140 target desktop); minimap click-to-pan; highlighted Government + local Home markers on minimap; REMOVE standalone Government/Home world-map quick-nav buttons; keep only bottom-right Zoom In/Out with reduced idle opacity; radial Government plaza; balanced Residence density; Turn Track = individual left-edge avatars with one vertical line through their centers; middle-right floating world panels; light map dim; mobile keeps real minimap + horizontal Turn Track/sheets.
+- `docs/UI_ROOM_DIRECTION_V1.md` marked superseded by approved Room V1 to avoid stale quick-nav/minimap assumptions.
+- Checked current report and handoff state; no new OPEN handoff to Chat 05 overrides current priority.
+- Started HUD historical/source validation using original-conversation recovery + Migration Pack + V5–V10.1 reconciliation.
+- Created `docs/UI_HUD_SOURCE_VALIDATION_V1.md`.
+- Confirmed/safely carried forward: top-oriented clustered compact/adaptive HUD; phase/timer emphasis inside HUD; temporary separate World Event banner; Niên sử reachable from HUD with current `HÀNH TRÌNH / THẾ GIỚI` direction; no Player Bar; Music/SFX only in Settings; right-side persistent utility historically Settings gear; no default persistent Help `?` button.
+- Historical always-on World Event HUD cell is explicitly superseded by the newer temporary-banner decision.
+- No gameplay, protocol, timers, authoritative state or game rules changed.
 
 ### Source
-- Quyết định trực tiếp mới nhất của user trong Chat 05.
-- `docs/UI_ROOM_DIRECTION_V1.md`.
+- Latest direct user decisions in Chat 05.
+- `docs/UI_ROOM_APPROVED_V1.md`.
 - `docs/UI_ROOM_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_HUD_SOURCE_VALIDATION_V1.md`.
 - `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md`.
 - `docs/UI_V5_V10_1_DECISION_RECONCILIATION_A_B.md`.
+- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_C.md`.
 - `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md`.
+- Historical conversation `Game mô phỏng nhân sinh`.
+- Project Migration Pack v1.0 `04_UI_UX_SPEC.md`, `06_DECISION_LOG.md`, `10_SOURCE_INDEX.md`, combined pack.
 
 ### Impact
-- Room không còn ở bước chọn concept; chỉ còn final composition/detail approval trước khi khóa spec.
-- Chat 06 chưa được phép implement Room redesign.
-- Implementation minimap dạng collapsed button/icon hoặc đặt lại ở bottom-right sẽ vi phạm current user decision.
-- Bottom-right quick-nav giờ độc lập với minimap.
-- HUD detailed composition vẫn chưa được khóa; Room pass chỉ xác định shell/map spatial structure và interaction zones.
+- Chat 06 may implement Room V1 but must not infer final HUD design from the Room handoff.
+- Standalone Government/Home camera buttons are no longer valid; their focus behavior moves to highlighted minimap markers.
+- HUD must preserve space for left Turn Track and upper-right minimap.
+- HUD cannot restore dense dashboard/player-bar/world-event-cell assumptions from old baseline.
+- Concrete HUD composition waits for source-validation answers.
 
 ### Verified
-- Room Source Validation Gate đã CLOSED.
-- WSA được user chọn trực tiếp.
-- Minimap default-state semantics và upper-corner placement được user làm rõ trực tiếp.
-- Không có gameplay/protocol/timer/action semantic change.
+- Landing/Lobby/Room design decisions are directly user-approved.
+- Room handoff created for Chat 06.
+- Frozen V5–V10.1 prototypes remain NON-AUTHORITATIVE.
+- Historical HUD direct decisions recovered: Settings as right-side persistent utility, Niên sử on HUD, Player Bar removed, core macro HUD direction accepted.
+- Newer World Event banner decision supersedes historical always-on event HUD cell.
 
 ### Unverified
-- Exact upper-left/right minimap corner, desktop proportions, Government plaza/world composition, Residence density/grouping, Turn Track chrome, minimap dimensions/marker set/click behavior, quick-nav icon arrangement, drawer anchoring, mobile Room layout và ornament density chưa được user duyệt cuối.
+HUD Source Validation Gate still needs user decisions on:
+1. Population/Inflation trend indicator persistence.
+2. Public debt/ceiling compact visibility.
+3. Phase/timer prominence outside local turn.
+4. In-game network/connection indicator policy.
+5. Mobile HUD overflow/expansion model.
 
 ### Handoff
 - Chat 06: `H-20260907-038-06-LANDING-DESIGN-IMPLEMENTATION` — Landing V1.
 - Chat 06: `H-20260907-041-06-LOBBY-DESIGN-IMPLEMENTATION` — Lobby V1.
-- Chat 05: hoàn tất final Room detail pass; chưa có Room implementation handoff.
+- Chat 06: `H-20260907-042-06-ROOM-DESIGN-IMPLEMENTATION` — Room / World shell V1.
+- Chat 05: waiting on HUD source-validation answers; no HUD implementation handoff yet.
 
 ### Open Issues
 - Landing implementation/visual verification OPEN.
 - Lobby implementation/visual verification OPEN.
-- Room / World shell final design approval OPEN.
-- HUD design approval OPEN.
+- Room implementation/visual verification OPEN.
+- HUD Source Validation Gate OPEN.
+- HUD final design approval OPEN.
