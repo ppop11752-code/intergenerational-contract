@@ -1,6 +1,7 @@
-/* H074 — presentation-only pointer hit-area correction.
+/* H074/H076 — presentation-only pointer hit-area correction.
    Transparent Approved UI overlays must not swallow clicks intended for the world map.
-   Actual HUD buttons and Turn Track tokens remain interactive. */
+   Actual HUD buttons and Turn Track tokens remain interactive.
+   Mandatory is non-interactive by contract, so its whole presentation surface passes through. */
 .approved-hud .hud-cluster,
 .approved-hud .hud-phase,
 .approved-hud .world-event-banner {
@@ -18,4 +19,9 @@
 
 .approved-turn-track .turn-token {
   pointer-events: auto;
+}
+
+.approved-mandatory,
+.approved-mandatory * {
+  pointer-events: none;
 }
