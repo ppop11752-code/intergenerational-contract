@@ -1,7 +1,7 @@
 handoff_id: H-20260907-050-06-MANDATORY-5S-CLIENT
 from: 01
 to: 06
-status: OPEN
+status: DONE
 title: Verify client follows server-authoritative 5-second Mandatory timing
 
 ## Context
@@ -26,14 +26,40 @@ D-052 locks Mandatory presentation at 5 seconds. The approved UI still has no sk
 
 - No client-only delay, skip control, countdown or gameplay calculation.
 
-## Expected output
-
-- Client integration evidence or a narrow defect handoff if any mismatch exists.
-
 ## Result
 
-Chưa có.
+DONE with one narrow client presentation defect found and fixed.
+
+### Verification / finding
+
+- No client-side `5s` / `5000ms` Mandatory duration hardcode was found.
+- Client does not schedule a local Mandatory phase transition; authoritative room/game phase state remains the transition source.
+- Mandatory card itself has no skip/continue/confirm control and no local timer/progress.
+- Existing generic HUD timer did, however, expose `phaseDeadlineAt` during Mandatory. That contradicted the approved no-countdown presentation.
+
+### Fix
+
+`client/src/display-contract.ts` now:
+- detects authoritative `room.game.phase === "mandatory"`;
+- removes `data-timer` from the Mandatory HUD phase value;
+- renders `TỰ ĐỘNG` instead of visible seconds;
+- does not add any local duration, timeout or phase transition.
+
+Status/Voluntary authoritative timer presentation remains unchanged.
+
+Regression added in `client/test/display-contract.test.mjs` to guard:
+- no local `5000` duration;
+- no Mandatory progress/local timeout;
+- Mandatory HUD removes timer marker and shows `TỰ ĐỘNG`.
+
+Normal / projected forced-liquidation / projected bankruptcy content continues to render from authoritative snapshot data and has no client timing branch, so the 5-second change does not require separate client delays for those presentations.
 
 ## Result commit/ref
 
-Chưa có.
+- `91b4ac76303a2a002e8d7bc3c788fef6a13b84e8` — Mandatory HUD no-countdown fix.
+- `6d5716d7902a339c1275fb5ffd49d049c1d9a406` — regression.
+- QA handoff: `H-20260907-051-07-MANDATORY-5S-CLIENT-QA`.
+
+## Unverified
+
+No automatic CI status was attached to the latest client regression commit at handoff close. Browser/runtime confirmation of the server-authoritative ~5s transition and no visible Mandatory countdown is delegated to Chat 07 via H051.
