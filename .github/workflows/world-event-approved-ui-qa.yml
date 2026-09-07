@@ -8,8 +8,10 @@ on:
       - ".github/workflows/world-event-approved-ui-qa.yml"
       - "client/src/resolved-ui-contracts.ts"
       - "client/src/approved-ui-finalize.ts"
+      - "client/src/world-event-chronicle-focus.ts"
       - "client/src/resolved-ui-contracts.css"
       - "client/test/resolved-ui-contracts.test.mjs"
+      - "client/test/world-event-chronicle-focus.test.mjs"
 
 jobs:
   h080-world-event-approved-ui:
