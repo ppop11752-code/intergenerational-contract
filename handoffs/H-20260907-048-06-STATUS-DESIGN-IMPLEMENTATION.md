@@ -1,22 +1,20 @@
 handoff_id: H-20260907-048-06-STATUS-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement user-approved Status Purchase V1
+status: DONE
+title: Implement user-approved Status V1
 
 ## Source
-- `docs/UI_STATUS_APPROVED_V1.md`
+- approved Status UI docs;
+- H064 authoritative action-limit/reason contract.
 
-## Implemented
-- approved centered three-card chooser;
-- no duplicate timer inside panel;
-- current/household context and `HIỆU LỰC VÒNG SAU`;
-- authoritative fee/person-count/affordability attached to each card;
-- Noble end-round competition warning;
-- <5s authoritative timeout explanation;
-- mobile stacked/paged-ready presentation.
+## Result
+- Each Status card consumes authoritative fee, persons charged, affordability and `unavailableReason`.
+- Unavailable cards stay visible with server-authored reason.
+- Noble competition/fallback/refund presentation remains authoritative and end-of-round.
+- Status timer ownership remains server `phaseDeadlineAt`; no local duration added.
 
-## Blocker
-`H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT` for authoritative per-card unavailable reason beyond the current affordability boolean and for consistent quote/error presentation.
+No gameplay Status rule or protocol changed.
 
-No fee/fallback/Noble/refund logic is calculated client-side.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS in run `34145674583` (artifact `10027576158`).
