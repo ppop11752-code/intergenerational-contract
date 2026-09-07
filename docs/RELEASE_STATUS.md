@@ -2,29 +2,60 @@
 
 ## Overall
 
-**PASS WITH WARNINGS — RELEASE READY.**
+**v1.0.0 — OFFICIALLY PUBLISHED.**
 
-`H-20260908-085-07-FINAL-PROJECT-RELEASE-ASSESSMENT` completed successfully on the current canonical `main` and live Render production. No known blocking product/runtime defect remains in the current release scope. OI-001 through OI-007 are CLOSED / VERIFIED.
+The Project passed the final release gate and the official `v1.0.0` GitHub Release has been published from the exact verified release commit.
 
-This release-ready verdict is based on project-wide backend regression, clean Client build/test, live production multiplayer smoke, Approved UI V1 desktop/mobile compatibility, Residence/HUD/Turn Track/Mandatory/QR acceptance, and retained H080 World Event/Chronicle/Marriage/mobile acceptance.
+- Official tag: `v1.0.0`
+- Verified release commit: `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`
+- GitHub Release ID: `384310137`
+- Release name: `Intergenerational Contract v1.0.0`
+- Public release: yes
+- Prerelease: no
+- Published at: `2026-09-07T20:46:00Z`
+- Release URL: `https://github.com/ppop11752-code/intergenerational-contract/releases/tag/v1.0.0`
+
+The annotated tag dereferences to the exact verified commit above. No later documentation/workflow commit was tagged.
 
 Canonical backend path: `server/backend/`
 Canonical client path: `client/`
 Live same-origin service: `https://intergenerational-contract.onrender.com`
 
-## Final release evidence
+## Official release verification
 
-Workflow: `Final Project Release Assessment`
+Pre-publication release preparation:
 
-- Run: `34157976545`
-- Head: `14a88966df889698e1afe2c72d710d12725fc41f`
-- Job: `101853649977`
-- Conclusion: **SUCCESS**
-- Artifact: `10031644674`
-- Digest: `sha256:e5671f2c437ac5a3c643b33cf308058f662857b4d84b49be8f300c24f01281bf`
-- Render assessed deploy: `dep-dafhhes9v7es73c4601g` — live on the assessed head before final browser/runtime acceptance completed.
+- `H-20260908-089-07-OFFICIAL-RELEASE-PREPARATION`: DONE / PASS.
+- Final Project Release Assessment workflow run: `34160089361`.
+- Job: `101859847687`.
+- Conclusion: **SUCCESS**.
+- Artifact: `10032335865`.
+- Digest: `sha256:b93b3e7c5f2143844455979c466486dcaa73b3dbbdf2482f33ec11206eee846d`.
+- Production deploy `dep-dafi0rfavr4c73c63d5g` was live on the exact verified release commit before final browser/runtime acceptance completed.
 
-Verified final layers:
+Publication verification:
+
+- `H-20260908-091-07-PUBLISH-V1.0.0`: DONE / PASS.
+- Publication workflow: `Publish v1.0.0`.
+- Run: `34160631305`.
+- Conclusion: **SUCCESS**.
+- Publication evidence artifact: `10032466875`.
+- Digest: `sha256:3d8b0383aa7ac20723777fd5718b05c0dc0846c314b171734723cf6365184a5d`.
+- Annotated tag object: `8c65c1473172969ae7b1bdb57a9f2125520af507`.
+
+Verified publication constraints:
+
+- `v1.0.0` did not exist before publication.
+- Tag `v1.0.0` points to `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`.
+- GitHub Release exists and is public.
+- Release is not marked prerelease.
+- No gameplay/UI/protocol behavior changed during publication.
+
+## Product / runtime status
+
+No known blocking product/runtime defect remains in the agreed `v1.0.0` release scope.
+
+Verified layers include:
 
 - backend `release:check`: PASS;
 - clean Client build/test: PASS;
@@ -33,9 +64,9 @@ Verified final layers:
 - disconnect/reconnect and authoritative state continuity: PASS;
 - Approved UI V1 desktop/mobile compatibility: PASS;
 - Residence marker navigation, Turn Track and HUD interaction: PASS;
-- Mandatory no visible countdown / server-authoritative progression: PASS;
+- Mandatory 5-second presentation semantics: PASS;
 - Lobby QR same-origin/deep-link/privacy behavior: PASS;
-- H080 World Event direct banner, exact Chronicle focus through rerender, timer continuity, no event-name inference, Marriage visible-disabled affordance and mobile reflow: PASS.
+- World Event direct-banner + Chronicle focus + Marriage affordance + mobile acceptance: PASS.
 
 ## Open Issue status
 
@@ -51,17 +82,7 @@ No blocking Open Issue remains in OI-001 through OI-007.
 
 ## Approved UI V1 status
 
-Full-game design/source coverage is complete. H078 independent re-audit found full-game Rule Ledger coverage aligned and identified only a World Event presentation drift plus a minor Marriage affordance fidelity warning.
-
-Those findings were corrected under H079–H084 and independently verified in production under H080:
-
-- no separate desktop World Event `CHI TIẾT` layer;
-- authoritative impact rows render directly in the temporary banner;
-- exact Chronicle linkage/focus is preserved through rerender;
-- Marriage proposal affordance remains visible-but-disabled when required by the approved design;
-- mobile uses the same authoritative content without horizontal overflow.
-
-H080 final production/browser acceptance: **24/24 PASS**.
+Full-game design/source coverage is complete. H078 independent re-audit resolved the earlier H044 missing-coverage finding. The World Event presentation drift and Marriage affordance warning were corrected under H079–H084 and verified in production under H080 with 24/24 PASS.
 
 ## Mandatory 5-second presentation — VERIFIED END-TO-END
 
@@ -71,21 +92,19 @@ D-052 locks Mandatory presentation at 5 seconds. Server default, production envi
 
 D-053 is fully implemented across engine, server contract and Client, with independent Chat 08 audit PASS. Economic Household remains distinct from Residence; coordinates are presentation-only; no property ownership, sale, house inheritance, Residence reuse or gameplay-distance mechanic is introduced; reclaimed Residence remains history-addressable but inactive for current navigation.
 
-## Non-blocking warnings / maintenance debt
+## Maintenance status
 
-The release-ready verdict includes the following non-blocking warnings:
+The previously recorded release warnings have been substantially cleaned before official publication:
 
-- legacy Vitest `.test.ts` expectations from obsolete behavior should be updated, replaced or archived;
-- `qa/approved-ui-v1-fixture.mjs` still contains a pre-H079 World Event expectation and should be updated/archived; H085 relied on current H080 acceptance instead;
-- some older specialist reports contain stale status prose superseded by newer canonical documents and DONE handoffs;
-- fresh live multiplayer smoke covers the critical path, not exhaustive reproduction of every rare timing permutation; deterministic backend/client regression remains the primary coverage for rare states.
+- H087 updated all 10 legacy Vitest files; legacy Vitest now passes 30/30 and is included in `release:check`.
+- H088 updated `qa/approved-ui-v1-fixture.mjs` to current post-H079 World Event behavior; fixture and Approved UI V1 E2E both PASS.
 
-These items are maintenance/documentation/coverage-depth debt and are not current release blockers.
+Remaining historical/stale prose in old specialist reports is archival documentation context only and does not override canonical current documents or DONE handoffs.
 
 ## Final claim
 
-As of H-20260908-085 and H-20260908-086, the Project is officially classified:
+As of H-20260908-091, the Project is officially classified:
 
-**PASS WITH WARNINGS — RELEASE READY**
+**INTERGENERATIONAL CONTRACT v1.0.0 — OFFICIALLY PUBLISHED**
 
-No corrective specialist product handoff is required before release within the current agreed scope.
+No corrective specialist product handoff is required for the published v1.0.0 release unless a new post-release issue is reported.
