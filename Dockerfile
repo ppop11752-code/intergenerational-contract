@@ -25,7 +25,7 @@ COPY server/backend/server/package*.json ./
 RUN npm install --omit=dev --no-audit --no-fund
 COPY --from=server-build /app/server/dist ./dist
 COPY client/index.html /app/client/index.html
-COPY client/styles.css /app/client/styles.css
+COPY client/*.css /app/client/
 COPY client/public /app/client/public
 COPY --from=client-build /app/client/dist /app/client/dist
 EXPOSE 3001
