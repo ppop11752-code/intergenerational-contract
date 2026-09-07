@@ -12,7 +12,7 @@ Rule authoritative A1+B1+C1 has been independently verified by Chat 08 against a
 
 Verified coverage includes lifecycle, timing, invalidation, disconnect/NPC takeover behavior, authoritative accept ordering, active-set/history behavior, test-gate integration, typecheck, 42/42 Rule Ledger regression, 6/6 OI-002 regression, 9/9 OI-001 regression, fuzz 20 games, and simulation 30 games.
 
-Legacy Vitest `.test.ts` files contain outdated expectations and are not normative for OI-001. Cleaning/archiving those tests is tracked as non-blocking maintenance debt, not as an OI-001 blocker.
+Legacy Vitest expectations were subsequently updated under `H-20260908-087-02-LEGACY-VITEST-MAINTENANCE`; 10 files / 30 tests PASS and the suite is now included in `release:check`.
 
 ## OI-002 — Inflation scarcity combined formula
 
@@ -35,29 +35,6 @@ Implementation commit: `e0e000ad9ec920ade3a73a4cf204b5e1954cd0b4`.
 **Status:** CLOSED — RELEASE QA VERIFIED.
 
 Implementation and deployment fixes from Chat 03/04/06 were followed by final browser/server E2E evidence using a GitHub-hosted Playwright runner against the live Render service.
-
-Final live evidence:
-
-- URL: `https://intergenerational-contract.onrender.com`
-- workflow: `Live Client E2E`
-- run ID: `34039901844`
-- head SHA: `8facc98a38b654a30cad24aaf13667c78a529705`
-- artifact ID: `9991351341`
-- artifact digest: `sha256:172d1160e32cf08e99109343c0eea66764a2d41e1e44c030b01243420e01cbf2`
-
-Release-QA evidence verified by Chat 07:
-
-- live page load PASS;
-- same-origin Socket.IO connection PASS;
-- Tutorial entry with T0 visible PASS;
-- help recap non-blocking while authoritative countdown continued `7s -> 6s` PASS;
-- authoritative Birth gating observed live with `canInitiateBirth=false`, no `child:birth` button PASS;
-- normal multiplayer has no Tutorial overlay PASS;
-- client deterministic regression covers `canInitiateBirth=false/true` T7 behavior and non-modal help;
-- server deterministic regression covers Birth eligibility true/false and no-side-effect query/snapshot behavior;
-- T0–T11 trigger logic is covered deterministically; a single forced live 32-round playthrough is not required by current release policy.
-
-Compare from runner head `8facc98a38b654a30cad24aaf13667c78a529705` to current `main` showed only report/handoff changes, so browser evidence remains compatible with current runtime client/server source.
 
 ## OI-005 — Render/GitHub server tree deployment mismatch
 
@@ -95,8 +72,15 @@ Final closure handoff: `H-20260908-077-00-CLOSE-OI007-RESIDENCE`.
 
 ## Current blocking status
 
-No blocking Open Issue remains in OI-001 through OI-007. Full-game UX/UI coverage and project-wide release readiness must still be evaluated separately from Open Issue closure.
+No blocking Open Issue remains in OI-001 through OI-007.
 
-## Non-blocking maintenance debt
+The Project has passed final release assessment and official `v1.0.0` publication.
 
-- Legacy Vitest `.test.ts` suites include expectations from pre-OI-001 behavior (for example an obsolete `marriage` phase and immediate marriage-on-accept). They should be updated, replaced, or archived so future test readers do not mistake them for current normative behavior.
+## Maintenance status
+
+Previously recorded maintenance debt has been cleared where it affected active tests/fixtures:
+
+- `H-20260908-087-02-LEGACY-VITEST-MAINTENANCE`: DONE; legacy Vitest 30/30 PASS and integrated into `release:check`.
+- `H-20260908-088-07-QA-FIXTURE-MAINTENANCE`: DONE; post-H079 Approved UI fixture and E2E PASS.
+
+Older specialist-report prose may remain as historical record; canonical current docs and DONE handoffs supersede stale historical wording.
