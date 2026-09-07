@@ -35,9 +35,9 @@ The approved shell specs do **not** imply full-game UX completion.
 | 6 | Waiting Queue / reconnect / NPC takeover / no reclaim | **USER-APPROVED V1** — `docs/UI_WAITING_QUEUE_RECONNECT_APPROVED_V1.md` | Chat 06 implement |
 | 7 | Government / ASXH / PAYG / reserves / support/crisis | **USER-APPROVED V1** — `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_APPROVED_V1.md` | Chat 06 implement |
 | 8 | Elderly medical / mortality / Grief / inheritance results | **USER-APPROVED V1** — `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_APPROVED_V1.md` | Chat 06 implement |
-| 9 | Immigration / NPC takeover communication | **USER-APPROVED V1** — `docs/UI_IMMIGRATION_NPC_TAKEOVER_APPROVED_V1.md` | Chat 06 implement via `H-20260907-059-06-IMMIGRATION-NPC-TAKEOVER-DESIGN-IMPLEMENTATION` |
-| 10 | World Event effect detail | **SOURCE VALIDATION ACTIVE** — `docs/UI_WORLD_EVENT_DETAIL_SOURCE_VALIDATION_V1.md` | Obtain direct WE1–WE8 approval |
-| 11 | Niên sử detailed contents / provenance | PARTIAL — entry + two tabs approved | Approve after World Event detail |
+| 9 | Immigration / NPC takeover communication | **USER-APPROVED V1** — `docs/UI_IMMIGRATION_NPC_TAKEOVER_APPROVED_V1.md` | Chat 06 implement |
+| 10 | World Event effect detail | **USER-APPROVED V1** — `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md` | Chat 06 implement via `H-20260907-060-06-WORLD-EVENT-DESIGN-IMPLEMENTATION` |
+| 11 | Niên sử detailed contents / provenance | **SOURCE VALIDATION ACTIVE** — `docs/UI_CHRONICLE_SOURCE_VALIDATION_V1.md` | Obtain direct N1–N9 approval |
 | 12 | End Report / scoring / extinction / Host replay | NOT DIRECTLY APPROVED | Source validate after Niên sử |
 
 ## Cross-surface constraints already locked
@@ -53,9 +53,12 @@ The approved shell specs do **not** imply full-game UX completion.
 - Elderly medical cannot itself force liquidation/borrowing/bankruptcy.
 - Grief Fee UI follows E4 B: no early death-time warning; it appears only in next Mandatory when due.
 - Inheritance distribution must use authoritative settlement result; client never recalculates estate/beneficiaries/resource conversion.
-- Immigration V1 uses one **short/small non-blocking notification**, subtle Residence arrival highlight, no camera hijack and no Waiting Queue semantics.
+- Immigration V1 uses one short/small non-blocking notification, subtle Residence arrival highlight, no camera hijack and no Waiting Queue semantics.
 - Disconnect NPC takeover preserves the same Character identity/history and changes controller presentation only.
-- World Event uses the already-approved temporary upper-center HUD banner; detail UI must not become a phase/timer or recompute event effects from the event name.
+- World Event V1 has **no separate desktop detail surface**; authoritative concrete effects are integrated into the temporary banner itself.
+- Mobile World Event bottom sheet/card, if used, is same-content responsive reflow only, never an extra detail layer.
+- World Event effects/numbers are never inferred from Event name.
+- Niên sử top-level tabs remain exactly `HÀNH TRÌNH / THẾ GIỚI`; personal history and world history must come from authoritative history/chronology/snapshot state rather than client-invented narratives.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
 
 ## Exit criteria
