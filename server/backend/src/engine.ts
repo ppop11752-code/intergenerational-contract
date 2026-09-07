@@ -5,6 +5,7 @@ import {socialContribution} from "./social-security.js";
 import {maintainGovernment,convertGovernmentResources,recoverScarceResourcesBeforeSubsidy,prepareGovernmentSubsidies,runGovernmentTurn,applyResourceSubsidy,quoteResourceSubsidy,accruePublicDebt,taxPerPerson} from "./government.js";
 import {insertAtQueueEnd,popQueue} from "./queue.js";
 import {buildTurnOrder,createEmptyTurnState,RoundPhase,TurnEntry} from "./turn-order.js";
+import {advanceResidenceRoundStart,applyMarriageResidence,finalizeResidenceEndRound,initializeCharacterResidence,markCharacterResidenceOriginImmigrant,reconcileResidenceAfterDeath} from "./residence.js";
 
 const empty=():Resources=>({low:0,mid:0,high:0});
 
@@ -49,6 +50,7 @@ export class GameEngine{
       socialSecurity:{payg:0,support:0,personalBalances:{},pensionReserve:0,investmentReturnRate:0,pensionTargetThisRound:0,pensionPaidThisRound:0,pensionStateTransferThisRound:0,pensionPayoutRatio:1,pensionCrisis:false,lastWorkerAverageIncome:0},
       characters:{},
       households:{},
+      residences:{},
       marriageProposals:{},
       birthProposals:{},
       statusPurchases:{},
@@ -119,13 +121,14 @@ export class GameEngine{
       };
     }
     const c:Character={
-      id,ownerId,householdId:hId,npc,persona,ageStage:stage,alive:true,
+      id,ownerId,householdId:hId,npc,persona,ageStage:stage,alive:true,currentResidenceId:"",residenceAdultTransitionHandled:stage>=3,
       aiState:npc?{memory:[],decisions:[],temporaryRiskModifier:0}:undefined,
       parentsHouseholdId:parentHouseholdId,
       childrenIds:[],griefFeeDue:0,birthRound:this.state.round,elderlyMedicalDueThisRound:0,elderlyMedicalPaidThisRound:0,lastMortalityRisk:0,birthStatus:parentHouseholdId&&this.state.households[parentHouseholdId]?this.state.households[parentHouseholdId]!.status:"poor"
     };
     this.state.characters[id]=c;
     this.state.households[hId]!.memberIds.push(id);
+    initializeCharacterResidence(this.state,c,parentHouseholdId);
     const lifeKey=String(stage);this.state.telemetry.lifecycle.created[lifeKey]=(this.state.telemetry.lifecycle.created[lifeKey]??0)+1;
     return c;
   }
@@ -218,7 +221,7 @@ export class GameEngine{
       const cash=this.cfg.game.startingCash*cashFactor*this.state.priceIndex;
       const persona=personas[Math.floor(this.random()*personas.length)]!;
       const c=this.createCharacter(null,stage,cash,null,true,undefined,persona);
-      c.immigrant=true;
+      c.immigrant=true;markCharacterResidenceOriginImmigrant(this.state,c);
       const h=this.household(c);
       const status=this.random()<this.cfg.immigration.middleStatusProbability?"middle":"poor";
       h.status=status;
@@ -870,6 +873,7 @@ export class GameEngine{
     if(paidBeforeMerge>0||resolved!==ha.status){
       this.state.statusPurchases[ha.id]={householdId:ha.id,requested:desired,paid:required,purchaserCharacterId:ha.pendingStatusPurchaserId??a.id,round:this.state.round,resolvedStatus:resolved!==desired?resolved:undefined,refund:mergeRefund||undefined};
     }
+    applyMarriageResidence(this.state,a,b);
   }
 
   canInitiateBirth(h:Household){
@@ -948,6 +952,7 @@ export class GameEngine{
    */
   startRound(){
     if(this.state.ended)throw Error("game ended");if(this.state.round>=this.cfg.game.totalRounds)throw Error("completed");this.state.round++;
+    advanceResidenceRoundStart(this.state);
     this.state.eventInterestDelta=0;this.state.eventName=null;this.state.epidemicMedicalCostPerCharacter=0;this.state.eventBirthLimit=this.cfg.fertility.normalMaxBirthsPerHousehold;this.state.recoveryCostMultiplier=1;this.state.debtXMultiplier=1;this.state.marketBounds={min:this.cfg.market.min,max:this.cfg.market.max};this.state.turnState=createEmptyTurnState();
     this.state.realizedNetIncomeByHousehold={};this.state.realizedNetIncomeByCharacter={};this.state.voluntarySpentByCharacter={};this.state.spendingLimitByCharacter={};this.state.sharedQuotaChargeByCharacter={};this.state.birthsThisRoundByHousehold={};this.state.mandatoryResolvedHouseholds={};this.state.prepaidChildSupportByParentHousehold={};this.state.prepaidParentSupportByWorkerHousehold={};this.state.pensionIncomeByHousehold={};this.state.statusPurchases={};this.state.debtContributionCollected=0;
     for(const h of Object.values(this.state.households)){h.pendingStatus=null;h.pendingStatusPaid=0;h.pendingStatusPurchaserId=null;h.sharedQuotaCharge=0;h.bankruptRound=null}
@@ -1041,6 +1046,7 @@ export class GameEngine{
     }
     this.recordLifecycleResult({type:"death",characterIds:[a.id,b.id],householdId:h.id,cause:reason,joint:true,medicalDue:null,medicalPaid:null,estateTotal:null,beneficiaries:[],governmentTransfer:0,playerId:null,queuePosition:null,assignmentReason:null});
     this.settleEstate(h,h.childrenIds,[a.id,b.id],true);
+    reconcileResidenceAfterDeath(this.state);
     this.state.chronology.push(`[Vòng ${this.state.round}] ${a.id} và ${b.id}: tử vong cùng cuối vòng; di sản hộ chia cho các con còn sống`);
   }
 
@@ -1142,6 +1148,7 @@ export class GameEngine{
     this.resolveDebtInterestAndInflation();
     this.resolveElderlyMedicalAndMortality();
     for(const c of [...this.alive()]){if(c.birthRound===this.state.round)continue;c.ageStage++;const cohort=this.cohort(c);if(c.ageStage===2)cohort.reachedStage2++;if(c.ageStage===3)cohort.reachedWorker++;if(c.ageStage===7)cohort.reachedElder++}
+    finalizeResidenceEndRound(this.state);
     // Noble cap is decided after deaths/aging; pending status activates only now.
     this.allocateNobleSlots();
     const adults=this.alive().filter(c=>c.ageStage>=3);const seen=new Set<string>();let ww=0,we=0,ee=0;for(const c of adults){const sp=this.spouseOf(c);if(!sp)continue;const key=[c.id,sp.id].sort().join("|");if(seen.has(key))continue;seen.add(key);const cw=this.isWorkerAge(c),sw=this.isWorkerAge(sp);if(cw&&sw)ww++;else if(cw||sw)we++;else ee++}
@@ -1202,6 +1209,7 @@ export class GameEngine{
       const surviving=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive);
       if(surviving.length===0)this.settleEstate(h,c.childrenIds,[c.id]);
     }
+    reconcileResidenceAfterDeath(this.state);
     this.state.chronology.push(`[Vòng ${this.state.round}] ${c.id}: ${reason}`);
   }
 
@@ -1212,7 +1220,7 @@ export class GameEngine{
     for(const p of Object.values(this.state.marriageProposals)){const a=this.state.characters[p.proposerCharacterId],b=this.state.characters[p.targetCharacterId];if(["pending","accepted"].includes(p.status)&&(a?.householdId===h.id||b?.householdId===h.id))p.status="invalidated"}
     const members=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive);if(members.some(c=>c.immigrant))this.state.telemetry.immigration.bankruptcies++;this.state.telemetry.bankruptcies++;
     for(const c of members){const cohort=this.cohort(c);if(c.ageStage<3)cohort.diedBeforeWorker++;else if(c.ageStage<=6)cohort.workerDeaths++;else cohort.elderDeaths++;this.state.telemetry.bankruptcyByStage[String(c.ageStage)]=(this.state.telemetry.bankruptcyByStage[String(c.ageStage)]??0)+1;this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"bankruptcy",c.id,"Hộ gia đình phá sản");c.alive=false;this.queueOwner(c,"bankruptcy")}
-    this.settleEstate(h,h.childrenIds,members.map(c=>c.id),members.length>1);this.state.chronology.push(`[Vòng ${this.state.round}] Hộ ${h.id}: phá sản; mọi lượt còn lại bị hủy.`);
+    this.settleEstate(h,h.childrenIds,members.map(c=>c.id),members.length>1);reconcileResidenceAfterDeath(this.state);this.state.chronology.push(`[Vòng ${this.state.round}] Hộ ${h.id}: phá sản; mọi lượt còn lại bị hủy.`);
   }
 
   rankings(){
