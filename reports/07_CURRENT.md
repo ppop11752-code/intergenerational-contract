@@ -4,66 +4,70 @@
 
 ### Status
 
-Bị chặn — `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` đang BLOCKED bởi lỗi exact World Event → Chronicle focus. H067 trước đó vẫn DONE / PASS WITH WARNINGS.
+Bị chặn — `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` vẫn BLOCKED sau H081 vì exact Chronicle row đã map đúng `chronicleEntryId` nhưng visible focus vẫn bị clobber. H067 trước đó vẫn DONE / PASS WITH WARNINGS.
 
 ### Changed
 
-- Xác nhận H079 đã lên production; Render live deployment quan sát tại commit `a9e95b3a02751d468ca83e4ddc47003a5039284a`.
-- Tạo targeted H080 gate: `qa/world-event-approved-ui-qa.mjs` + workflow `World Event Approved UI QA`.
-- Fresh run `34153570608`, job `101840631652`:
-  - clean Client regression **69/69 PASS**;
-  - production runtime check PASS cho direct `.world-event-banner-detail`;
-  - legacy `CHI TIẾT` / `.world-event-detail-panel` không còn trên deployed runtime;
-  - structured impacts, only-affected-system rows và Chronicle button xuất hiện đúng trong authoritative fixture;
-  - FAIL tại exact Chronicle focus.
-- Root cause xác minh từ source: `worldEvent()` lưu `chronicleFocus = ev.chronicleEntryId`, nhưng `chronicle()` lại so sánh/select theo `data-world-event-id`, giá trị này lấy từ `WorldEventOccurrence.id`.
-- Tạo `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID` cho Chat 06.
+- H081 đã DONE và production deploy chứa `world-event-chronicle-focus.js`.
+- Cập nhật workflow H080 để theo dõi runtime/test H081.
+- Sửa H080 fixture để thực sự load `world-event-chronicle-focus.js`; run trước đó `34154207203` vì thiếu runtime trong fixture không được dùng làm verdict Client sau H081.
+- Fresh authoritative run `34154349342`, head `ff4f3860894785df769599f5a3605a27954fafd8`:
+  - clean Client regression **72/72 PASS**;
+  - production H079/H081 runtime presence checks PASS;
+  - direct World Event banner/no legacy detail surface PASS;
+  - exact row receives `data-chronicle-entry-id="chron-h080"` for `event.id="we-h080"` PASS;
+  - visible `.focused-event` remains FAIL.
+- Phân loại defect: legacy Chronicle focus path in `resolved-ui-contracts.ts` can still toggle focus by `data-world-event-id` and clobber H081 exact-id focus.
+- Tạo `H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER` cho Chat 06.
 
 ### Source
 
 - `handoffs/H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA.md`
-- `handoffs/H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT.md`
 - `handoffs/H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID.md`
+- `handoffs/H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER.md`
 - `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`
 - `client/src/resolved-ui-contracts.ts`
+- `client/src/world-event-chronicle-focus.ts`
 - `client/src/approved-ui-finalize.ts`
-- workflow run `34153570608`
-- artifact `10030187563`
-- digest `sha256:57a25f81878b298d784a1325bc50fe26c45f4086d1b1d392bb83198f6ad9acb3`
+- `qa/world-event-approved-ui-qa.mjs`
+- `.github/workflows/world-event-approved-ui-qa.yml`
+- workflow run `34154349342`
+- artifact `10030437925`
+- digest `sha256:67dc73052dbd568dc9adfb1052acd8a261aca13307381822a8d855dee16d9079`
 
 ### Impact
 
-World Event approved banner semantics đã phần lớn đúng trên production, nhưng `XEM TRONG NIÊN SỬ` chưa đảm bảo focus đúng entry khi `chronicleEntryId` khác `event.id`. Đây là presentation/navigation defect, không phải gameplay/protocol defect. H080 chưa thể PASS.
+Approved World Event banner presentation and exact Chronicle-id data mapping are mostly correct, but the visible Chronicle focus can still be lost due to competing Client runtime behavior. This is presentation/navigation only; no gameplay, protocol, event mechanics or timer rules changed. H080 cannot PASS until H082 removes the conflict.
 
 ### Verified
 
-- H079 deployed production runtime tồn tại.
-- Clean Client suite 69/69 PASS.
-- Desktop direct event detail nằm trong temporary banner.
-- Không còn separate desktop `CHI TIẾT` / detail sheet path.
-- Event name + concrete authoritative structured impact rows render trực tiếp.
-- Fixture chỉ render systems thực sự bị ảnh hưởng; không thêm fixed extra systems.
-- Chronicle button chỉ xuất hiện khi `chronicleEntryId` có dữ liệu.
-- Deployed Marriage approved disabled-affordance copy có mặt.
-- Exact focus defect được tái hiện bằng `event.id = we-h080`, `chronicleEntryId = chron-h080` và xác minh trực tiếp trong source.
+- Production contains H081 runtime and H079 direct-banner implementation.
+- Clean Client suite 72/72 PASS.
+- No separate desktop `CHI TIẾT` / detail sheet path.
+- Event name + concrete authoritative structured impacts render directly in banner.
+- Only affected systems render in fixture.
+- Chronicle button appears when `chronicleEntryId` exists.
+- Exact chronology row receives authoritative `data-chronicle-entry-id` when event id differs.
+- No event-name inference in source/regression.
+- Deployed Marriage disabled-affordance copy remains present.
 
 ### Unverified
 
-Sau H081 cần rerun phần còn lại của H080:
-- exact Chronicle focus PASS;
-- timer continuity / không pause-reset;
-- no event-name inference;
+After H082 must rerun:
+- exact visible Chronicle focus PASS;
+- timer continuity / no pause-reset;
 - mobile same-content responsive reflow;
 - targeted Marriage visible-but-disabled browser assertion.
 
 ### Handoff
 
-Chat 06: `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID` — sửa mapping exact `chronicleEntryId` → corresponding World chronology entry, thêm regression với hai ID khác nhau, rồi trả H080 về Chat 07.
+Chat 06: `H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER` — consolidate exact World Event → Chronicle focus so legacy event-id logic cannot remove H081 focus; add ordering/mutation regression; return H080 to Chat 07.
 
 ### Open Issues
 
 - `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA`: BLOCKED.
-- `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID`: OPEN.
-- `H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT`: DONE source/deployed; exact Chronicle acceptance remains blocked by H081.
+- `H-20260908-082-06-WORLD-EVENT-CHRONICLE-FOCUS-CLOBBER`: OPEN.
+- `H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID`: DONE but not sufficient alone for visible focus acceptance.
+- `H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT`: DONE.
 - `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: DONE / PASS WITH WARNINGS.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
