@@ -34,7 +34,7 @@ export type ResidenceStatus="occupied"|"empty"|"abandoned"|"reclaimed";
 export interface ResidenceOccupant{characterId:string;roleKeys:string[];parentCharacterIds:string[];spouseCharacterIds:string[];childCharacterIds:string[]}
 export interface ResidenceRecord{residenceId:string;status:ResidenceStatus;origin:"founder"|"immigrant"|"marriage"|"adult_transition";createdRound:number;coordinates:{x:number;y:number};activeOnMap:boolean;currentNavigationAllowed:boolean;emptySinceRound:number|null;abandonedRound:number|null;reclaimedRound:number|null;parentResidenceIds:string[];occupants:ResidenceOccupant[]}
 export interface ResidenceTransition{id:string;round:number;year:number;characterId:string;kind:"adult_move"|"adult_retained";fromResidenceId:string;toResidenceId:string}
-export interface RankingEntry{playerId:string;average:number;cumulativeAssets:number;activeRounds:number;lives:number}
+export interface RankingEntry{playerId:string;average:number;cumulativeAssets:number;activeRounds:number;lives:number;averageAssets?:number;score?:number}
 
 export interface RoomSnapshot{
   code:string;started:boolean;hostPlayerId:string;initialPopulationTarget?:number;initialNpcCount?:number;founderDraw?:Array<{playerId:string;displayName:string;card:number;founder:boolean;queuePosition:number|null}>;players:RoomPlayer[];
