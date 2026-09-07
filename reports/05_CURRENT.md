@@ -3,62 +3,63 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN. Landing/Lobby/Room/HUD, Mandatory, Status, Voluntary shell, Market, Recovery, Support, Birth, Marriage, Residence/Family, Waiting Queue/Reconnect và Government/social systems đã có direct user-approved V1. Chat 05 hiện chạy Source Validation cho elderly medical / mortality / Grief / inheritance.
+Đang làm — Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN. Landing/Lobby/Room/HUD và gameplay surfaces #1–#8 hiện đã có direct user-approved V1. Chat 05 đang chạy Source Validation cho Immigration / NPC takeover communication.
 
 ### Changed
-- User approved Government G1 A, G2 A, G3 B, G4 B, G5 A, G6 A, G7 A, G8 A.
-- Government V1 = 3 tabs `TỔNG QUAN / AN SINH / CAN THIỆP`.
-- Tổng quan prominently shows Budget, Reserve Floor, Public Debt/Debt Ceiling plus current-round tax/maintenance/borrowing/debt repayment/subsidy rows and authoritative Fiscal Crisis warning.
-- User chose G3 B: An sinh visually consolidates PAYG + Pension Reserve + Support Fund into one `TỔNG QUỸ AN SINH` presentation. This is display aggregation only; underlying gameplay funds remain separate and non-fungible except through authoritative rules.
-- User chose G4 B: detailed `10% → 5% funded personal / 3% PAYG / 2% Support Fund` explanation stays in Rules/Tutorial and is not repeated inside Government.
-- An sinh still shows pension target/paid/payout ratio/Government state transfer/workers/elders and authoritative Pension Crisis warning.
-- Can thiệp is read-only current-round interventions + short history; no fake policy controls.
-- Government turn gets subtle red building glow + small non-blocking `CHÍNH PHỦ ĐANG HÀNH ĐỘNG` summary; no forced camera.
-- Mobile keeps same 3 tabs in sheet layout.
-- `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_SOURCE_VALIDATION_V1.md` CLOSED — USER VERIFIED.
-- Created `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_APPROVED_V1.md`.
-- Created `H-20260907-057-06-GOVERNMENT-SOCIAL-SYSTEMS-DESIGN-IMPLEMENTATION` → OPEN for Chat 06.
-- Updated coverage: Government = USER-APPROVED V1; elderly medical/mortality/Grief/inheritance = SOURCE VALIDATION ACTIVE.
-- Created `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_SOURCE_VALIDATION_V1.md` grounded in Rule Ledger sections M/N.
-- No gameplay, Rule Ledger, protocol, timers, pension/debt/fund mechanics, mortality or inheritance rules changed by Chat 05.
+- User approved Elderly/Mortality/Grief/Inheritance E1 A, E2 A, E3 A, E4 B, E5 A, E6 A, E7 A, E8 A.
+- Elderly Character detail includes compact `SỨC KHỎE TUỔI GIÀ` with authoritative medical due/paid and mortality-risk context where exposed.
+- End-round elderly medical uses small non-blocking `Y TẾ TUỔI GIÀ — ĐÃ TRẢ X / Y`; partial payment may warn mortality risk increases; no fake medical action.
+- Natural elderly death uses short non-blocking portrait/name notice; no forced camera/full-screen scene.
+- E4 B: **no Grief Fee notice at the moment of death**. Grief appears only inside next Mandatory breakdown when due.
+- Inheritance uses compact `DI SẢN ĐÃ PHÂN CHIA` with authoritative estate total + beneficiary identity + received amount when structured data exists.
+- One spouse death uses one combined family inheritance summary; both spouses dying in same settlement use one joint result, never sequential pseudo-inheritance.
+- No eligible heir explicitly communicates estate transfer to Government Budget.
+- `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_SOURCE_VALIDATION_V1.md` CLOSED — USER VERIFIED.
+- Created `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_APPROVED_V1.md`.
+- Created `H-20260907-058-06-ELDERLY-MORTALITY-INHERITANCE-DESIGN-IMPLEMENTATION` → OPEN for Chat 06.
+- Coverage row #8 = USER-APPROVED V1; row #9 Immigration/NPC takeover = SOURCE VALIDATION ACTIVE.
+- Created `docs/UI_IMMIGRATION_NPC_TAKEOVER_SOURCE_VALIDATION_V1.md` grounded in Rule Ledger sections P/Q and current public `npc`/`immigrant`/connection state.
+- No gameplay, Rule Ledger, protocol, timers, mortality, Grief, inheritance, immigration or NPC behavior changed by Chat 05.
 
 ### Source
 - Latest direct user decisions in Chat 05.
-- `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_APPROVED_V1.md`.
-- `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_APPROVED_V1.md`.
 - `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_IMMIGRATION_NPC_TAKEOVER_SOURCE_VALIDATION_V1.md`.
 - `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
-- `docs/RULE_LEDGER.md` sections J/K/M/N.
-- `server/backend/src/authoritative-room.ts` public Government/social-security/elderly state exposure.
+- `docs/RULE_LEDGER.md` sections M/N/P/Q.
+- Current server public Character/connection state.
 - `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
 
 ### Impact
-- Chat 06 may implement Government V1 using authoritative public state only.
-- `TỔNG QUỸ AN SINH` must remain a presentation aggregate and must never replace the three underlying authoritative balances/mechanics.
-- Elderly/mortality/inheritance is now the active direct-approval gate.
-- Estate/beneficiary/resource-conversion results must not be reconstructed client-side; if structured authoritative result data is insufficient, Chat 06/03 need a narrow contract handoff.
-- Full-game UX coverage remains incomplete.
+- Chat 06 may implement elderly/mortality/inheritance V1 but must not calculate mortality, heirs, estate, shares or resource conversion client-side.
+- E4 B means no early Grief warning at death; next Mandatory remains the single player-facing due moment.
+- Structured inheritance-result data may require a narrow Chat 03 contract addition during implementation.
+- Immigration/NPC takeover is now the active direct-approval gate.
+- Full-game UX coverage remains incomplete; World Event detail, Niên sử detail and End Report remain after Immigration/NPC takeover.
 
 ### Verified
-- Government G1–G8 are direct user decisions.
-- Government V1 remains read-only and does not create policy actions.
-- Rule Ledger confirms elderly medical cannot itself force liquidation/borrowing/bankruptcy, while Grief Fee is a next-Mandatory obligation.
-- Rule Ledger FINAL POLICY A is the authoritative inheritance policy, including simultaneous-spouse-death single settlement and no-heir transfer to Government.
+- E1–E8 are direct user decisions.
+- Elderly medical itself cannot force liquidation/borrowing/bankruptcy.
+- Grief remains a next-Mandatory obligation despite E4 B presentation choice.
+- FINAL POLICY A remains authoritative inheritance logic.
+- Immigration arrives at round start as NPC independent households, never Waiting Queue.
+- Disconnect takeover changes controller permanently but preserves the existing Character identity/history.
 
 ### Unverified
-- Elderly/mortality/Grief/inheritance E1–E8 final presentation choices.
+- Immigration/NPC takeover I1–I8 final presentation choices.
 - Structured estate-result contract sufficiency for beneficiary-by-beneficiary inheritance display.
-- Immigration/NPC takeover, World Event detail, Niên sử detail and End Report UX approval.
+- World Event detail, Niên sử detail and End Report UX approval.
 - Client implementation/visual fidelity for approved gameplay surfaces remains open.
 
 ### Handoff
-- Chat 06: `H-20260907-057-06-GOVERNMENT-SOCIAL-SYSTEMS-DESIGN-IMPLEMENTATION` — OPEN.
-- Chat 06: existing Queue/Residence/Marriage/Birth/Support/Recovery/Market/Voluntary/Status/Mandatory implementation handoffs remain active.
-- Chat 05: resolve E1–E8, then continue Immigration/NPC takeover communication.
+- Chat 06: `H-20260907-058-06-ELDERLY-MORTALITY-INHERITANCE-DESIGN-IMPLEMENTATION` — OPEN.
+- Chat 06: existing Government/Queue/Residence/Marriage/Birth/Support/Recovery/Market/Voluntary/Status/Mandatory implementation handoffs remain active.
+- Chat 05: resolve Immigration/NPC takeover I1–I8, then continue World Event detail.
 - Parent `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN.
 
 ### Open Issues
-- Elderly medical/mortality/Grief/inheritance direct design approval OPEN.
-- Structured inheritance-result data may require narrow Chat 03 contract support during implementation.
-- Immigration/event/Niên sử/end-report and remaining gameplay surface approvals OPEN.
+- Immigration/NPC takeover direct design approval OPEN.
+- Structured inheritance result may require narrow Chat 03 contract support.
+- World Event detail / Niên sử detail / End Report approvals OPEN.
 - Implementation/visual verification for approved specs remains OPEN.
