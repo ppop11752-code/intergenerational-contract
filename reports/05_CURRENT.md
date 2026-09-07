@@ -3,67 +3,51 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Hoàn thành — Direct user design approval cho cụm chính `Landing → Lobby → Room → HUD` đã hoàn tất. Landing V1, Lobby V1, Room / World shell V1 và HUD V1 đều đã có approved spec và handoff OPEN sang Chat 06 để triển khai. Chat 05 hiện chờ implementation/visual verification hoặc handoff mới.
+Đang làm — Handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` đang được xử lý. Cụm `Landing → Lobby → Room → HUD` vẫn giữ approved V1; Chat 05 hiện mở rộng direct UX coverage sang các gameplay surfaces còn thiếu, bắt đầu từ Mandatory.
 
 ### Changed
-- User hoàn tất HUD final detail pass K1–K6.
-- Tạo `docs/UI_HUD_APPROVED_V1.md` làm authoritative user-approved HUD spec.
-- HUD final direction = `HDA — Cụm thông tin nổi`.
-- K1: Phase/timer centered nhưng thấp hơn top macro clusters một chút, đọc như floating gameplay-status instrument.
-- K2: `Vòng/Năm` = một cluster; `Dân số/Lạm phát/Nợ công + trần nợ` = một society macro cluster lớn.
-- K3: `NIÊN SỬ` đặt bên trái upper-right minimap; `SETTINGS` gear ở upper-right utility edge ngoài vùng nội dung minimap.
-- K4: World Event = compact temporary banner riêng ở upper-center World Map, thấp hơn normal HUD clusters.
-- K5: HUD cluster chrome = restrained pixel-fantasy plaques với thin wood/metal/parchment-inspired ornament; không tạo box nặng che map.
-- K6: Mobile primary HUD = Round/Year + Phase/Timer + Population; expandable secondary layer chứa Inflation + Public Debt/Ceiling + secondary macro data.
-- HUD semantics giữ nguyên: trend arrows nhỏ persistent, numeric delta on hover/tap; current debt + ceiling direct-visible; phase/timer always visible nhưng adaptive prominence; healthy network hidden, only exception warnings.
-- Explicit removals giữ nguyên: dense full-width HUD strip, persistent World Event empty cell, Player Bar, Help `?`, healthy-connection indicator, permanent Music/SFX HUD controls, separate Government/Home camera controls.
-- `docs/UI_HUD_DIRECTION_V1.md` marked superseded by approved HUD V1.
-- Tạo handoff `H-20260907-043-06-HUD-DESIGN-IMPLEMENTATION` → OPEN cho Chat 06.
-- Main UI approval cluster now complete: Landing V1 + Lobby V1 + Room V1 + HUD V1.
-- Không thay gameplay, protocol, timers, authoritative state hoặc rules.
+- Đã đọc handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` từ Chat 08.
+- Xác nhận audit finding: approved shell cluster không đồng nghĩa full-game UX coverage.
+- Tạo `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md` làm coverage matrix cho 12 gameplay surface groups còn lại.
+- Sequence ưu tiên: Mandatory → Status → Voluntary shell + Market/Recovery/Support/Birth → Marriage → Residence/Family → Waiting Queue/Reconnect → Government social systems → mortality/Grief/inheritance → immigration/NPC takeover → World Event detail → Niên sử detail → End Report.
+- Tạo `docs/UI_MANDATORY_SOURCE_VALIDATION_V1.md` và mở Source Validation Gate cho Mandatory.
+- Mandatory authoritative semantics được giữ nguyên: automatic/server-authoritative; no skip; default ~7s reading duration; no gameplay decision timer; obligation breakdown; forced liquidation at 75% spot value where applicable; bankruptcy ends the turn before Status/Voluntary; married shared Mandatory once per Household representative with Character-defined Tax/ASXH attribution preserved.
+- Xác định contradiction cần presentation fix với approved HUD V1: Mandatory phase may show phase identity/presentation progress but must not visually look like a decision countdown.
+- Không thay gameplay, rules, protocol, timers hoặc authoritative calculations.
 
 ### Source
-- Latest direct user decisions in Chat 05.
-- `docs/UI_HUD_APPROVED_V1.md`.
-- `docs/UI_HUD_SOURCE_VALIDATION_V1.md`.
-- `docs/UI_ROOM_APPROVED_V1.md`.
-- `docs/UI_LANDING_APPROVED_V1.md`.
-- `docs/UI_LOBBY_APPROVED_V1.md`.
-- `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md`.
-- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_A_B.md`.
-- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_C.md`.
-- `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md`.
+- `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
+- `docs/RULE_LEDGER.md`.
+- `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
+- `docs/UI_MANDATORY_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_UX_FULL_AUDIT_2026-09-06.md`.
+- Project Migration Pack v1.0 `04_UI_UX_SPEC.md`.
+- Existing approved shell specs remain active.
 
 ### Impact
-- Chat 06 is now authorized to implement the complete approved main UI cluster, screen by screen according to the four approved specs.
-- Chat 06 must not restore old baseline/dashboard assumptions where they conflict with approved specs.
-- Visual/interaction QA should compare implementation against approved specs, not against old V5–V10.1 prototypes or old client baseline.
-- Any new UI surface outside the approved cluster still requires normal source-validation/direct-approval workflow if redesign is material.
+- Full UX completion must not be claimed until coverage matrix is closed.
+- Chat 06 must not invent missing gameplay-surface semantics before direct approval.
+- Existing Landing/Lobby/Room/HUD specs remain valid unless a later concrete contradiction is found.
+- Mandatory presentation must integrate with HUD without implying player agency where none exists.
 
 ### Verified
-- Landing, Lobby, Room and HUD each have direct user-approved design specs.
-- HUD Source Validation Gate CLOSED before design approval.
-- H1–H5, HDA and K1–K6 are direct user decisions.
-- HUD handoff to Chat 06 created.
-- No gameplay/protocol/timer/action semantic changes introduced by Chat 05.
+- Handoff is OPEN and assigned to Chat 05.
+- Rule Ledger Mandatory semantics and Migration-Pack normalized presentation were cross-checked.
+- Current client Mandatory surface was previously audited as insufficient production UX.
+- No new gameplay decision is required to design the Mandatory surface.
 
 ### Unverified
-- Client implementation/visual fidelity for Landing V1.
-- Client implementation/visual fidelity for Lobby V1.
-- Client implementation/visual fidelity for Room V1.
-- Client implementation/visual fidelity for HUD V1.
-- Full integration/responsive QA of the newly approved design cluster.
+- Mandatory final presentation choices M1–M6.
+- Remaining gameplay surfaces #2–#12 in the coverage matrix.
 
 ### Handoff
-- Chat 06: `H-20260907-038-06-LANDING-DESIGN-IMPLEMENTATION` — Landing V1.
-- Chat 06: `H-20260907-041-06-LOBBY-DESIGN-IMPLEMENTATION` — Lobby V1.
-- Chat 06: `H-20260907-042-06-ROOM-DESIGN-IMPLEMENTATION` — Room / World shell V1.
-- Chat 06: `H-20260907-043-06-HUD-DESIGN-IMPLEMENTATION` — HUD V1.
-- Chat 05: no additional OPEN task owned by Chat 05 at this point; wait for implementation/visual-review handoff or a new user-assigned design surface.
+- Existing Chat 06 implementation handoffs for Landing/Lobby/Room/HUD remain OPEN/active as previously recorded.
+- Chat 05: resolve Mandatory M1–M6, then create approved Mandatory spec/handoff and continue to Status.
+- `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN until the full coverage matrix exit criteria are met.
 
 ### Open Issues
-- Landing implementation/visual verification OPEN.
-- Lobby implementation/visual verification OPEN.
-- Room implementation/visual verification OPEN.
-- HUD implementation/visual verification OPEN.
-- Integrated desktop/mobile visual QA of approved cluster OPEN.
+- Mandatory direct design approval OPEN.
+- Status direct design approval OPEN.
+- Voluntary + Market/Recovery/Support/Birth direct design approval OPEN.
+- Marriage/Residence/Queue/Government/event/Niên sử/end-report and other gameplay surface approvals OPEN.
+- Implementation/visual verification for already approved shell specs remains OPEN.
