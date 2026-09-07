@@ -1,36 +1,57 @@
 handoff_id: H-20260908-085-07-FINAL-PROJECT-RELEASE-ASSESSMENT
 from: 00
 to: 07
-status: OPEN
+status: DONE
 title: Final project-wide release readiness assessment
 
-## Context
-- OI-001 through OI-007 are CLOSED / VERIFIED.
-- H078 full-game UI vs Rule Ledger re-audit is DONE / PASS WITH WARNINGS.
-- H079 corrective UI drift fix is DONE.
-- H080 targeted production/browser QA is DONE / PASS (24/24 browser checks).
-- Approved UI V1 full-game design coverage is complete.
+## Verdict
+**PASS WITH WARNINGS — RELEASE READY.**
 
-## Required work
-Perform the final project-level release readiness assessment across the current canonical `main` state.
+No known product/runtime blocker remains in the current release scope. OI-001 through OI-007 remain CLOSED / VERIFIED.
 
-Verify at minimum:
-- backend release/regression gate;
-- clean client test/build gate;
-- current production deploy health;
-- critical multiplayer/runtime smoke;
-- Approved UI V1 production compatibility after H080;
-- OI-001 through OI-007 remain closed and no regression reopens them;
-- no blocking handoff/open issue remains for release scope;
-- distinguish non-blocking maintenance debt/warnings from release blockers.
+## Final evidence
+GitHub Actions `Final Project Release Assessment`:
+- run `34157976545`;
+- head `14a88966df889698e1afe2c72d710d12725fc41f`;
+- job `101853649977`;
+- conclusion: SUCCESS.
 
-Do not change gameplay rules or UI design. If a real release blocker is found, create a narrow corrective handoff to the correct specialist and report BLOCKED. If no blocker remains, update `reports/07_CURRENT.md` with a project-wide release verdict and hand back to Chat 00 for final project status update.
+Final gate PASS:
+- backend `release:check`;
+- clean Client build/test;
+- production `/health`;
+- live multiplayer create/join/start/get-state;
+- disconnect/reconnect with reconnect token and authoritative state continuity;
+- room/player state emissions;
+- Approved UI V1 production compatibility desktop/mobile;
+- Residence/Turn Track/HUD interaction;
+- Mandatory no visible countdown regression;
+- QR same-origin/deep-link/privacy regression;
+- H080 retained World Event direct-banner, exact Chronicle focus, timer continuity, no event-name inference, Marriage visible-disabled semantics, mobile reflow.
 
-## Sources
-- `docs/OPEN_ISSUES.md`
-- `docs/RELEASE_STATUS.md`
-- `reports/05_CURRENT.md`
-- `reports/06_CURRENT.md`
-- `reports/07_CURRENT.md`
-- `reports/08_CURRENT.md`
-- H078, H079, H080
+Production Render deploy for the assessed head:
+- deploy `dep-dafhhes9v7es73c4601g`;
+- head `14a88966df889698e1afe2c72d710d12725fc41f`;
+- status: live before final browser/runtime acceptance completed.
+
+Artifact:
+- `10031644674` — `h085-final-project-release-evidence`;
+- digest `sha256:e5671f2c437ac5a3c643b33cf308058f662857b4d84b49be8f300c24f01281bf`.
+
+Live multiplayer smoke additionally verified two Human clients, game start, authoritative room state, disconnect/reconnect into the same started room, and emitted room/player snapshots.
+
+## Non-blocking warnings / maintenance debt
+1. `docs/OPEN_ISSUES.md` retains legacy Vitest `.test.ts` expectation cleanup/archive as maintenance debt; canonical executable release gates are green.
+2. `qa/approved-ui-v1-fixture.mjs` still contains the pre-H079 expectation for the removed World Event `CHI TIẾT` surface. H085 intentionally excludes this stale fixture and uses the current H080 Approved UI acceptance instead. It should be updated or archived as QA maintenance.
+3. Some older specialist report text can lag newer DONE handoffs/canonical closure state. This is documentation hygiene, not a runtime blocker.
+4. Fresh production multiplayer smoke covers critical create/join/start/state/reconnect behavior, not every rare multiplayer timing permutation. Deterministic backend/client regression remains the broader coverage layer.
+
+## Release classification
+- Source/canonical rules: complete for current scope.
+- Runtime: verified on production for critical release paths.
+- Integration: verified by H085 combined gate and prior targeted QA.
+- Known release blocker: none.
+- Maintenance warnings: present, non-blocking.
+
+## Handoff
+Return to Chat 00 for final project-status/release-status recording. No corrective specialist handoff is required for a product defect.
