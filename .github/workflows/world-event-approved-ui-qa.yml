@@ -33,10 +33,22 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
+      - name: Align H080 Marriage fixture with stable current World Event snapshot
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('qa/world-event-approved-ui-qa.mjs')
+          s=p.read_text()
+          old='await p.locator(\'[data-resident-character="c2"]\').click();await p.evaluate(x=>window.dispatchEvent(new CustomEvent(\'ic:snapshot\',{detail:x})),snapshot);await p.waitForTimeout(100);const mb=p.locator(\'[data-profile-marriage]\');'
+          new='await p.locator(\'[data-resident-character="c2"]\').click();await p.evaluate(x=>window.dispatchEvent(new CustomEvent(\'ic:snapshot\',{detail:x})),changed);await p.waitForTimeout(100);const mb=p.locator(\'[data-profile-marriage]\');'
+          if old not in s:
+              raise SystemExit('expected H080 Marriage fixture sequence not found')
+          p.write_text(s.replace(old,new,1))
+          PY
       - name: Run H080 World Event approved UI QA
         run: |
           set +e
-          timeout 90s node qa/world-event-approved-ui-qa.mjs
+          timeout 60s node qa/world-event-approved-ui-qa.mjs
           code=$?
           set -e
           if [ "$code" -eq 0 ]; then exit 0; fi
