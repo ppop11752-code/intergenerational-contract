@@ -25,11 +25,11 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 |---|---|---|---|
 | 1 | Mandatory presentation / obligations / liquidation / bankruptcy | **USER-APPROVED V1** — `docs/UI_MANDATORY_APPROVED_V1.md`; exact reading duration gameplay dependency OPEN | Chat 06 implement; Chat 01 resolve shorter-duration request |
 | 2 | Status Purchase / 15s / next-round effect / married rep / fallback / Noble cap-refund | **USER-APPROVED V1** — `docs/UI_STATUS_APPROVED_V1.md` | Chat 06 implement via `H-20260907-048-06-STATUS-DESIGN-IMPLEMENTATION` |
-| 3 | Voluntary shell + shared 60s timer | **SOURCE VALIDATION ACTIVE** — `docs/UI_VOLUNTARY_SOURCE_VALIDATION_V1.md` | Obtain direct V1–V6 approval |
-| 3a | Market | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
-| 3b | Recovery | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
-| 3c | Support | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
-| 3d | Birth | NOT DIRECTLY APPROVED | Approve after Voluntary shell |
+| 3 | Voluntary shell + shared 60s timer | **USER-APPROVED V1** — `docs/UI_VOLUNTARY_APPROVED_V1.md` | Chat 06 implement via `H-20260907-049-06-VOLUNTARY-SHELL-DESIGN-IMPLEMENTATION` |
+| 3a | Market | **SOURCE VALIDATION ACTIVE** — `docs/UI_MARKET_SOURCE_VALIDATION_V1.md` | Obtain direct MK1–MK9 approval |
+| 3b | Recovery | NOT DIRECTLY APPROVED | Approve after Market |
+| 3c | Support | NOT DIRECTLY APPROVED | Approve after Recovery |
+| 3d | Birth | NOT DIRECTLY APPROVED | Approve after Support |
 | 4 | Marriage lifecycle / proposals / notices | NOT DIRECTLY APPROVED | Source validate |
 | 5 | Residence / Family / child-orphan-current Residence semantics | PARTIAL — shell interaction approved only | Source validate detail surface |
 | 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate |
@@ -47,6 +47,7 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 - Mandatory V1 shows no visible timing/progress and follows the server phase transition.
 - Status has authoritative max 15s; approved Status V1 shows that timer only in the HUD, not duplicated in the chooser.
 - Voluntary has one authoritative 60s total timer shared across Market/Recovery/Support/Birth; switching surfaces never resets/pauses it.
+- Voluntary V1 uses a persistent desktop right-edge action dock below/clear of minimap and mobile bottom action rail.
 - Residence/Government/Niên sử/marriage notifications do not pause Voluntary timer.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
 - Chat 06 must never invent missing gameplay semantics or client-side eligibility.
