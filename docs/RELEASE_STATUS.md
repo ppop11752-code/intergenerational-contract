@@ -2,11 +2,9 @@
 
 ## Overall
 
-**Wave 4 player-facing UI art is QA-verified at UI/UX scope.** OI-001 through OI-006 remain closed/verified. Support/form-state regression, authoritative World Event/Mandatory/Recovery/Status display integration, Lobby QR navigation/presentation, Wave 4 public-asset deployment, and final desktop/mobile raster runtime QA are verified.
+**Wave 4 player-facing UI art is QA-verified at UI/UX scope.** OI-001 through OI-007 are now closed/verified. Support/form-state regression, authoritative World Event/Mandatory/Recovery/Status display integration, Lobby QR navigation/presentation, Wave 4 public-asset deployment, final desktop/mobile raster runtime QA, and the D-053 Residence lifecycle chain are verified.
 
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains formally OPEN only until Chat 06 records owner closure using the final H038 PASS evidence. H038 alone does not assert project-wide release readiness beyond UI/UX scope.
-
-No current UI finding changes gameplay rules or reopens OI-001–OI-006.
+This document still does not by itself assert project-wide release readiness. Broader release status must account for the current Approved UI V1 scope, remaining non-blocking warnings, and final Project Control / Release & QA gates.
 
 ## Closed / verified foundations
 
@@ -16,6 +14,7 @@ No current UI finding changes gameplay rules or reopens OI-001–OI-006.
 - OI-004 dedicated Tutorial guidance: CLOSED / release QA verified.
 - OI-005 deployment source-tree mismatch: CLOSED / source-tree verified.
 - OI-006 dependency-backed live server runtime: CLOSED / release QA verified.
+- OI-007 Residence identity/lifecycle: CLOSED / independently verified.
 - Canonical backend source migration into GitHub: COMPLETE / verified.
 - Support authoritative selector/action integration: PASS.
 - Authoritative World Event / Mandatory / Recovery / Status display integration: PASS.
@@ -77,28 +76,29 @@ Final evidence:
 - digest `sha256:4b49b53833d1decbc53555ad2424c295b2ade58c37ed4617bc3ec5564ab5f513`
 - tested Render head `dep-daesb7e7bikc73dm8n90`: live before final browser assertions
 
-Verified runtime scope includes required raster loading/readiness, raster terrain, Government/Residence art, canonical 24px icon rendering after H040, T0 frame assets, non-blocking ambience, no raw IDs on tested surfaces, and countdown continuing through tutorial/help presentation on desktop and compact/mobile. Clean regressions cover the remaining frame rules, action-payload preservation, Birth/Tutorial/QR behavior and art-runtime presentation-only boundary.
+Verified runtime scope includes required raster loading/readiness, raster terrain, Government/Residence art, canonical 24px icon rendering after H040, T0 frame assets, non-blocking ambience, no raw IDs on tested surfaces, and countdown continuing through tutorial/help presentation on desktop and compact/mobile.
 
-## Remaining UI administration
-
-`H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` may now be closed by Chat 06 at its UI/UX implementation scope using H038 final PASS evidence.
-
-## Release claim rule
-
-Wave 4 art is complete and QA-verified at UI/UX scope. Do not infer project-wide release readiness solely from this document section; any broader release claim must still follow the Project's Release & QA / Project Control gates and account for any non-UI open work.
-
-## Mandatory reading-duration update — source locked
+## Mandatory 5-second presentation — VERIFIED END-TO-END
 
 - D-052 locks Mandatory presentation at **5 seconds**.
-- Source status: complete.
-- Current server default was inspected as 7 seconds, so implementation/deployment/integration QA are pending through H-20260907-048/049/050/051.
-- This does not reopen OI-001–OI-006 and does not change Mandatory calculations or UI interaction semantics.
+- Server default and production environment both resolve to 5,000 ms.
+- Mandatory remains automatic, has no skip/confirm, no visible countdown/progress, and is not a player decision timer.
+- Chat 07 full gate passed backend, clean Client 39/39 and live browser 13/13; observed production transition was approximately 4.9 seconds from the first sampled snapshot.
 
-
-## Residence identity/lifecycle — source locked
+## Residence identity/lifecycle — CLOSED / VERIFIED
 
 - D-053 locks the complete Residence identity/lifecycle package selected by the user.
-- Source status: complete; H-20260907-068 is DONE.
-- Runtime status: OI-007 OPEN — implementation and independent verification pending.
-- Required sequence: H-20260907-069 (Chat 02) → H-20260907-070 (Chat 03) → H-20260907-071 (Chat 06) → H-20260907-072 (Chat 08).
-- This does not reopen OI-001–OI-006 and introduces no property, house-inheritance, real-estate, or gameplay-distance mechanic.
+- H069 Chat 02 canonical state/lifecycle: DONE.
+- H070/H063 Chat 03 snapshot/map/protocol contract: DONE.
+- H071 Chat 06 Client integration: DONE.
+- H067 Chat 07 production Approved UI V1 QA: DONE / PASS WITH WARNINGS, clean Client 68/68 and desktop/mobile Residence navigation PASS.
+- H072 Chat 08 independent Residence lifecycle audit: PASS.
+- OI-007 is CLOSED — VERIFIED via H-20260908-077-00-CLOSE-OI007-RESIDENCE.
+
+Verified boundaries: Economic Household remains distinct from Residence; coordinates are presentation-only; no property ownership, sale, house inheritance, Residence reuse or gameplay-distance mechanics; reclaimed Residence remains history-addressable but inactive for current map/navigation; no hidden Persona leak.
+
+## Current release claim rule
+
+No blocking Open Issue remains in OI-001 through OI-007. This is necessary but not sufficient for a project-wide final release claim.
+
+Before declaring the whole project final-release-ready, Project Control should reconcile the latest Approved UI V1 completion/QA state, any remaining non-blocking rare-state QA warnings, full-game UX/UI coverage status, and the final Release & QA assessment.
