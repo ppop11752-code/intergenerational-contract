@@ -1,6 +1,6 @@
 # OPEN ISSUES — CURRENT
 
-Updated for GitHub canonical baseline on 2026-09-06.
+Updated for GitHub canonical baseline on 2026-09-07.
 
 ## OI-001 — Marriage proposal lifecycle
 
@@ -75,9 +75,19 @@ Live Render settings and runtime success are tracked under OI-006.
 
 Chat 04 verified the Render build and live dependency-backed runtime. Chat 03 obtained a successful external `/health` response and passed live WebSocket Socket.IO smoke for create/join/start/state, disconnect/reconnect, `game:replay` routing, authoritative error acks, and public/private state emissions. Chat 07 independently validated release compatibility and kept OI-006 closed.
 
+## OI-007 — Residence identity and lifecycle implementation
+
+**Status:** OPEN — SOURCE LOCKED / IMPLEMENTATION PENDING.
+
+D-053 and the Rule Ledger now define stable Residence identity, Character current-Residence mapping, creation/marriage/child/adulthood transitions, sibling behavior, and the exact empty → abandoned → reclaimed timeline.
+
+Owner sequence: Chat 02 engine state/lifecycle → Chat 03 snapshot/map contract → Chat 06 client integration → Chat 08 independent audit.
+
+This issue is an implementation/verification gate only. It does not reopen OI-001–OI-006 and does not authorize property, inheritance-of-house, real-estate, or gameplay-distance mechanics.
+
 ## Current blocking status
 
-No OI-001–OI-006 item remains OPEN or blocking.
+OI-007 is OPEN and blocks authoritative Residence/Family runtime completion. OI-001–OI-006 remain CLOSED.
 
 ## Non-blocking maintenance debt
 

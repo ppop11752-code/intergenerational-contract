@@ -23,6 +23,18 @@ This file records decisions that are known to be current at the GitHub migration
 - D-051 — Because no prior canonical client implementation exists in the available Project sources, Chat 06 is authorized to establish a new canonical client implementation under `client/` from the locked UI/UX specs and authoritative server protocol. This authorization does not permit gameplay-rule changes or protocol invention for client convenience.
 - D-052 — Mandatory reading presentation duration is **5 seconds**, server-authoritative. Mandatory remains automatic, has no skip/confirm control, displays no countdown/progress, and is not a gameplay decision timer.
 
+- D-053 — Residence identity/lifecycle is locked to package A:
+  - Residence is an entity independent from Economic Household, with stable `residenceId`; living Characters use server-authoritative mutable `currentResidenceId`.
+  - founders and immigrants create a new Residence; newborns map to the parents' current Residence without creating a physical Residence;
+  - marriage settlement creates a new shared Residence independent of proposer/target/order, moves dependent Stage1–2 children with their direct parent, and leaves prior Residences empty when vacated;
+  - dependent children follow a surviving direct parent and move with that parent on remarriage; a step-parent does not replace this rule;
+  - if both direct parents die while the child is Stage1–2, the child retains its current Residence; retained-orphan Stage2→3 creates no new ID/coordinates;
+  - normal Stage2→3 creates a separate Residence with stable server-authoritative presentation coordinates near the parents' current Residence; coordinates have no gameplay-distance effect;
+  - sibling transitions are independent, while orphan siblings may retain the same Residence without duplication;
+  - last occupant departure/death makes the Residence empty immediately, abandoned for the entire following round, and reclaimed at that round's end;
+  - reclaimed Residence leaves active map/navigation, but its stable ID and history remain resolvable through Chronicle;
+  - no ownership, sale, house-inheritance, reuse, or real-estate mechanic is introduced.
+
 ## Explicit baseline confirmations by user
 
 - No private debt; only Government public debt.

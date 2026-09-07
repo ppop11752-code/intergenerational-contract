@@ -30,6 +30,16 @@ Examples of concise role language may include spouse/parent/child/resident where
 
 Selecting a portrait opens the deeper Character detail within the same Residence/Family surface.
 
+## Authoritative Residence lifecycle dependency
+
+Residence assignment and lifecycle follow D-053 and `docs/RULE_LEDGER.md`:
+
+- UI binds only to stable server-supplied `residenceId` and Character `currentResidenceId`.
+- Founder/immigrant, newborn, marriage, surviving-parent/remarriage, orphan retention, normal adulthood and sibling placement follow the authoritative transition rules; client does not select or infer a Residence.
+- Normal adulthood coordinates are stable server-authoritative presentation data only.
+- Vacated Residence states are `empty` immediately, `abandoned` for the entire following round, then `reclaimed` at that round's end.
+- Reclaimed Residence leaves active map/current navigation; Chronicle may still resolve its historical ID.
+
 ## 3. Economic Household vs co-residence
 
 - Do not show a special economic-household badge in the Residence overview for Stage1–2 children who live with parents.
@@ -96,10 +106,11 @@ Financial values must come from the correct authoritative economic household and
 ## 9. Empty / abandoned Residence
 
 When no living Character occupies a Residence:
-- disable/close Family actions;
-- mark/treat building as `BỎ TRỐNG` in the world;
-- transition visually toward nature reclamation according to the authoritative visual lifecycle;
-- clicking the abandoned structure opens only a compact historical/empty-state view until reclamation/removal.
+- set/consume authoritative `empty` state immediately and disable/close Family actions;
+- show `BỎ TRỐNG` / `abandoned` for the entire following round;
+- remove it from active map/current navigation when the server marks it `reclaimed` at that round's end;
+- clicking the abandoned structure opens only a compact historical/empty-state view before reclamation;
+- preserve Chronicle links to the stable historical `residenceId` after reclamation.
 
 Do not create property ownership, sale, inheritance-of-house or real-estate mechanics.
 

@@ -93,3 +93,12 @@ Wave 4 art is complete and QA-verified at UI/UX scope. Do not infer project-wide
 - Source status: complete.
 - Current server default was inspected as 7 seconds, so implementation/deployment/integration QA are pending through H-20260907-048/049/050/051.
 - This does not reopen OI-001–OI-006 and does not change Mandatory calculations or UI interaction semantics.
+
+
+## Residence identity/lifecycle — source locked
+
+- D-053 locks the complete Residence identity/lifecycle package selected by the user.
+- Source status: complete; H-20260907-068 is DONE.
+- Runtime status: OI-007 OPEN — implementation and independent verification pending.
+- Required sequence: H-20260907-069 (Chat 02) → H-20260907-070 (Chat 03) → H-20260907-071 (Chat 06) → H-20260907-072 (Chat 08).
+- This does not reopen OI-001–OI-006 and introduces no property, house-inheritance, real-estate, or gameplay-distance mechanic.

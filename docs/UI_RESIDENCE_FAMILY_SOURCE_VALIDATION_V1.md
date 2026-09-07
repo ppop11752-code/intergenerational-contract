@@ -11,12 +11,18 @@ Detailed Residence / Family surface opened from the approved World Map, includin
 
 ## Authoritative behavior preserved
 
-- Residence is a visible house/location; Economic Household is the financial unit.
-- Stage1–2 child may visually live with parents while remaining a separate economic household.
-- Normal Stage2→3 usually creates a separate Residence near parents where possible.
-- One surviving parent → dependent child stays visually with survivor.
-- Both parents dead while child Stage1–2 → child retains old Residence; at Stage3 that same Residence becomes the adult Residence, with no duplicate house.
-- Empty Residence may visually become abandoned and reclaimed by nature; no real-estate mechanic.
+D-053 and `docs/RULE_LEDGER.md` now provide the exact source rule:
+
+- Residence is an independent stable-ID entity; Economic Household is the financial unit.
+- Founder/immigrant creates a Residence; newborn maps to parents without creating one.
+- Marriage creates a new shared Residence without proposer/target/order bias; dependent child moves with direct parent.
+- Stage1–2 child follows the surviving direct parent and that parent's remarriage; step-parent does not replace direct-parent placement.
+- Both direct parents dead while child Stage1–2 → child retains current Residence; Stage2→3 creates no duplicate ID/coordinates.
+- Normal Stage2→3 creates a separate stable-ID Residence with server-authoritative presentation coordinates near parents' current Residence.
+- Sibling transitions are independent; orphan siblings may retain one shared Residence without duplication.
+- Last occupant departure/death → `empty` immediately → `abandoned` for the full following round → `reclaimed` at that round's end.
+- Reclaimed Residence leaves active map/navigation but remains historically resolvable in Chronicle.
+- Coordinates are presentation-only; no property, house-inheritance, reuse, real-estate or gameplay-distance mechanic exists.
 - Turn Track / camera focus resolves the Character's current authoritative Residence.
 - Client does not derive co-residence, household membership, orphan state or family relations from map proximity.
 

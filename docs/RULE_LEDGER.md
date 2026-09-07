@@ -103,14 +103,31 @@ Trong cùng Status: Turn Card unique cao hơn đi trước. Lower Status không 
 ### Economic Household vs Residence
 
 - Economic Household = financial unit.
-- Residence = visible house trên map.
+- Residence = visible house/location trên map và là entity độc lập với Economic Household.
+- Mỗi Residence có `residenceId` ổn định; mỗi Character sống có `currentResidenceId` mutable do server authoritative quản lý.
+- Founder và immigrant tạo Residence mới. Newborn nhận `currentResidenceId` của parents tại thời điểm sinh, không tạo thêm physical Residence.
 - Child Stage1–2 sống trực quan trong Residence của parents nhưng là **separate economic household**.
-- Stage2→3: bình thường rời nhà, có Residence riêng gần parents.
-- Nếu cả parents chết khi child Stage1–2: child giữ Residence cũ; khi Stage3, Residence đó trở thành adult Residence, không tạo duplicate.
-- Nhiều dependent siblings chuyển tiếp độc lập.
-- Một parent chết → child ở với survivor về mặt visual.
+- Khi marriage settle cuối round:
+  - tạo một shared Residence mới cho hai spouses;
+  - proposer/target và server processing order không ảnh hưởng vị trí/Residence được chọn;
+  - cả hai Residence trước marriage mất occupants tương ứng và chuyển sang empty nếu không còn ai ở;
+  - dependent Stage1–2 child của một spouse chuyển cùng direct parent sang shared Residence mới.
+- Một direct parent chết → dependent child ở/chuyển sang Residence hiện tại của direct parent còn sống.
+- Direct parent còn sống remarry → dependent child chuyển cùng parent sang shared Residence mới.
+- Step-parent không thay thế direct-parent placement rule.
+- Nếu cả direct parents chết khi child Stage1–2, child giữ nguyên `currentResidenceId` tại thời điểm direct parent cuối cùng chết.
+- Khi retained-orphan child chuyển Stage2→3, Character trở thành adult resident của chính Residence đang giữ; không tạo Residence ID hoặc coordinates mới.
+- Stage2→3 bình thường tạo Residence mới với `residenceId` riêng và server-authoritative presentation coordinates gần Residence hiện tại của parents tại thời điểm transition.
+- Residence coordinates ổn định sau khi tạo và chỉ phục vụ presentation/navigation; khoảng cách không tạo gameplay mechanic, eligibility, cost hay modifier.
+- Sibling transitions độc lập:
+  - normal siblings mỗi người tạo Residence riêng khi trưởng thành;
+  - orphan siblings cùng giữ Residence cũ;
+  - một sibling trưởng thành không buộc sibling khác di chuyển và không tạo duplicate Residence.
 - Không divorce.
-- Empty residence chỉ visual: house → abandoned → reclaimed by nature khoảng 1 round; không có real-estate mechanic.
+- Khi living occupant cuối cùng rời đi/chết, Residence chuyển `empty` ngay.
+- Residence đó hiển thị `abandoned` trong toàn bộ round kế tiếp và chuyển `reclaimed` vào cuối round kế tiếp.
+- Residence `reclaimed` bị loại khỏi active map/current navigation nhưng `residenceId` và historical references vẫn được Chronicle lưu và resolve.
+- Không tái sử dụng empty/abandoned/reclaimed Residence cho placement bình thường; không có ownership, sale, house inheritance hay real-estate mechanic.
 
 ### Household Total Assets
 

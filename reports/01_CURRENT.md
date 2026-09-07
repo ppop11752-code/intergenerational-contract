@@ -2,53 +2,54 @@
 
 ## Status
 
-Mandatory reading duration đã được người dùng khóa ở **5 giây**. Source-complete; chờ implementation/integration/QA.
+Residence identity/lifecycle đã được người dùng khóa theo **package A**. Source-complete; OI-007 chờ implementation và independent audit.
 
 ## Changed
 
-- Cập nhật `docs/RULE_LEDGER.md`: Mandatory presentation = 5 giây.
-- Thêm D-052 vào `docs/DECISION_LOG.md`.
-- Giữ nguyên semantics: automatic/server-authoritative, không skip/confirm, không countdown/progress và không phải decision timer.
-- Đóng handoff H-20260907-047-01-MANDATORY-READING-DURATION.
-- Tạo handoff triển khai/xác minh cho Chat 03, 04, 06 và 07.
+- Cập nhật `docs/RULE_LEDGER.md` với lifecycle chính xác cho stable Residence identity, current assignment, marriage, child/survivor/orphan, adulthood, siblings và empty/abandoned/reclaimed.
+- Thêm D-053 vào `docs/DECISION_LOG.md`.
+- Đồng bộ tài liệu Residence/Family UI với authoritative dependency.
+- Đóng H-20260907-068.
+- Mở OI-007 và handoff H-069 → H-072.
 - Không sửa engine/server/client trong Chat 01.
 
 ## Source
 
-- Lựa chọn B của người dùng ngày 2026-09-07.
+- Lựa chọn A của người dùng ngày 2026-09-07.
 - `docs/RULE_LEDGER.md`.
-- `docs/UI_MANDATORY_APPROVED_V1.md`.
-- Handoff H-20260907-047-01-MANDATORY-READING-DURATION.
+- D-053.
+- `docs/UI_RESIDENCE_FAMILY_APPROVED_V1.md`.
+- H-20260907-068.
 
 ## Impact
 
-- Server default hiện được phát hiện vẫn là `MANDATORY_PRESENTATION_MS ?? 7_000`.
-- Deployment có thể override bằng environment variable.
-- Client phải tiếp tục theo server phase transition, không hardcode local delay.
-- Cần regression/integration QA cho mốc 5 giây và readability của normal/liquidation/bankruptcy states.
+- Engine cần Residence entity độc lập, stable IDs, Character `currentResidenceId`, deterministic transitions và stable presentation coordinates.
+- Server contract phải expose current Residence/map/lifecycle/history data, không để client infer từ Household, family links hoặc proximity.
+- Client phải bind authoritative state và giữ Chronicle access sau reclaim.
+- Không có tác động balance tài chính: coordinates/proximity chỉ presentation; không có ownership/property/inheritance-of-house mechanic.
 
 ## Verified
 
-- Source decision: verified.
-- Rule/UI semantic consistency: verified.
-- Current implementation mismatch (7 giây default): confirmed by direct source inspection.
+- User decision and source wording: verified.
+- Rule Ledger, Decision Log và approved Residence/Family UI semantics: reconciled.
+- No new gameplay mechanic introduced.
 
 ## Unverified
 
-- Server implementation 5 giây.
-- Production environment/deployment.
-- Client integration timing.
-- Runtime/readability QA.
+- Engine implementation and regression tests.
+- Public/private snapshot and map contract.
+- Client integration.
+- Independent lifecycle/audit gate.
 
 ## Handoff
 
-- Chat 03: đổi authoritative server default và test.
-- Chat 04: kiểm tra/update deployment environment và redeploy.
-- Chat 06: xác nhận client không hardcode delay, theo server transition.
-- Chat 07: integration/readability QA.
+- Chat 02: H-069 — Residence state and lifecycle.
+- Chat 03: H-070 — snapshot/map contract after H-069.
+- Chat 06: H-071 — client integration after H-070.
+- Chat 08: H-072 — independent audit and OI-007 closure decision.
 
 ## Open Issues
 
-Không có gameplay ambiguity. Implementation gate còn mở cho tới khi các handoff trên hoàn tất.
+OI-007 remains OPEN — SOURCE LOCKED / IMPLEMENTATION PENDING.
 
 AUDIT: PASS WITH WARNINGS

@@ -1,7 +1,7 @@
 handoff_id: H-20260907-068-01-RESIDENCE-IDENTITY-LIFECYCLE-RULE
 from: 03
 to: 01
-status: OPEN
+status: DONE
 title: Lock authoritative Residence identity and lifecycle rules
 
 ## Context
@@ -44,3 +44,21 @@ Lock the minimum Residence-state rules needed before Chat 02/03 can implement:
 
 H063; H042/H054 relationship navigation; H055 Residence/Family; Residence parts
 of H056 and H059.
+
+
+## Decision — 2026-09-07
+
+User selected **A**, locking the complete recommended Residence identity/lifecycle package. The authoritative rule is recorded as D-053 and in `docs/RULE_LEDGER.md`.
+
+## Result
+
+- Source ambiguity is closed.
+- No engine/server/client code was changed by Chat 01.
+- Implementation sequence is routed through:
+  - `H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE.md`
+  - `H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT.md`
+  - `H-20260907-071-06-RESIDENCE-CLIENT-INTEGRATION.md`
+  - `H-20260907-072-08-RESIDENCE-LIFECYCLE-AUDIT.md`
+- OI-007 tracks implementation and independent verification.
+
+Result ref: D-053 / source-complete.
