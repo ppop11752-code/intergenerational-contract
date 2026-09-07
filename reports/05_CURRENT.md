@@ -3,51 +3,60 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` đang được xử lý. Cụm `Landing → Lobby → Room → HUD` vẫn giữ approved V1; Chat 05 hiện mở rộng direct UX coverage sang các gameplay surfaces còn thiếu, bắt đầu từ Mandatory.
+Đang làm — Handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` đang được xử lý. Cụm `Landing → Lobby → Room → HUD` vẫn giữ approved V1. Mandatory UX V1 đã được user duyệt; tiếp theo Chat 05 chuyển sang Source Validation cho Status Purchase.
 
 ### Changed
-- Đã đọc handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` từ Chat 08.
-- Xác nhận audit finding: approved shell cluster không đồng nghĩa full-game UX coverage.
-- Tạo `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md` làm coverage matrix cho 12 gameplay surface groups còn lại.
-- Sequence ưu tiên: Mandatory → Status → Voluntary shell + Market/Recovery/Support/Birth → Marriage → Residence/Family → Waiting Queue/Reconnect → Government social systems → mortality/Grief/inheritance → immigration/NPC takeover → World Event detail → Niên sử detail → End Report.
-- Tạo `docs/UI_MANDATORY_SOURCE_VALIDATION_V1.md` và mở Source Validation Gate cho Mandatory.
-- Mandatory authoritative semantics được giữ nguyên: automatic/server-authoritative; no skip; default ~7s reading duration; no gameplay decision timer; obligation breakdown; forced liquidation at 75% spot value where applicable; bankruptcy ends the turn before Status/Voluntary; married shared Mandatory once per Household representative with Character-defined Tax/ASXH attribution preserved.
-- Xác định contradiction cần presentation fix với approved HUD V1: Mandatory phase may show phase identity/presentation progress but must not visually look like a decision countdown.
-- Không thay gameplay, rules, protocol, timers hoặc authoritative calculations.
+- User chốt Mandatory presentation M1–M6.
+- M1: large centered presentation card over persistent World Map.
+- M2: **không hiển thị timer/countdown/progress** cho Mandatory; panel tự chuyển khi server authoritative advance.
+- M3: luôn hiển thị mọi due obligation thành full line item.
+- M4: married Mandatory normal presentation hiển thị Household totals, không spouse split/subsection.
+- M5: forced liquidation hiển thị section `THANH LÝ BẮT BUỘC` ngay trong cùng card, gồm authoritative resources/units, 75% basis và cash/result data nơi có sẵn.
+- M6: bankruptcy biến cùng card thành state mạnh `PHÁ SẢN HỘ GIA ĐÌNH`, tóm tắt shortfall/consequence và không expose Status/Voluntary sau đó.
+- Tạo `docs/UI_MANDATORY_APPROVED_V1.md` làm authoritative user-approved Mandatory design spec.
+- `docs/UI_MANDATORY_SOURCE_VALIDATION_V1.md` chuyển sang `CLOSED — USER VERIFIED (UI) / GAMEPLAY TIMING DEPENDENCY OPEN`.
+- User đồng thời yêu cầu rút ngắn Mandatory reading duration để không quá dài. Vì đây là gameplay/server timing, Chat 05 không tự đổi 7s canonical baseline.
+- Tạo handoff `H-20260907-047-01-MANDATORY-READING-DURATION` → OPEN để Chat 01 phân tích và lấy exact user gameplay decision.
+- Tạo handoff `H-20260907-046-06-MANDATORY-DESIGN-IMPLEMENTATION` → OPEN cho Chat 06; implementation phải follow server timing hiện hành và không hardcode client-shorter delay.
+- Cập nhật `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`: Mandatory = USER-APPROVED V1; Status là surface kế tiếp.
+- Không thay gameplay, Rule Ledger, protocol, authoritative calculations hoặc timers trong Chat 05.
 
 ### Source
-- `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
-- `docs/RULE_LEDGER.md`.
-- `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
+- Latest direct user decisions in Chat 05.
+- `docs/UI_MANDATORY_APPROVED_V1.md`.
 - `docs/UI_MANDATORY_SOURCE_VALIDATION_V1.md`.
-- `docs/UI_UX_FULL_AUDIT_2026-09-06.md`.
-- Project Migration Pack v1.0 `04_UI_UX_SPEC.md`.
-- Existing approved shell specs remain active.
+- `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
+- `docs/RULE_LEDGER.md`.
+- `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
 
 ### Impact
-- Full UX completion must not be claimed until coverage matrix is closed.
-- Chat 06 must not invent missing gameplay-surface semantics before direct approval.
-- Existing Landing/Lobby/Room/HUD specs remain valid unless a later concrete contradiction is found.
-- Mandatory presentation must integrate with HUD without implying player agency where none exists.
+- Chat 06 được phép implement Mandatory presentation V1 nhưng phải follow authoritative server phase transition.
+- Chat 01 phải xử lý gameplay question về exact Mandatory reading duration; current canonical 7s vẫn có hiệu lực cho tới khi Rule Ledger thay đổi.
+- Approved HUD phase/timer treatment phải đặc biệt không mô tả Mandatory như action deadline.
+- Full-game UX coverage vẫn chưa complete; Status → Voluntary → remaining surface sequence tiếp tục.
 
 ### Verified
-- Handoff is OPEN and assigned to Chat 05.
-- Rule Ledger Mandatory semantics and Migration-Pack normalized presentation were cross-checked.
-- Current client Mandatory surface was previously audited as insufficient production UX.
-- No new gameplay decision is required to design the Mandatory surface.
+- Mandatory M1–M6 là direct user decisions.
+- Mandatory V1 không thêm player agency, skip/confirm hoặc client-side economic calculation.
+- Forced liquidation 75% basis và bankruptcy semantics giữ nguyên Rule Ledger.
+- Separate gameplay timing dependency đã được handoff đúng domain thay vì silently changed.
 
 ### Unverified
-- Mandatory final presentation choices M1–M6.
-- Remaining gameplay surfaces #2–#12 in the coverage matrix.
+- Exact new Mandatory reading duration requested by user.
+- Client implementation/visual fidelity for Mandatory V1.
+- Status Purchase direct UX approval.
+- Remaining gameplay surfaces #3–#12 in the coverage matrix.
 
 ### Handoff
-- Existing Chat 06 implementation handoffs for Landing/Lobby/Room/HUD remain OPEN/active as previously recorded.
-- Chat 05: resolve Mandatory M1–M6, then create approved Mandatory spec/handoff and continue to Status.
-- `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN until the full coverage matrix exit criteria are met.
+- Chat 06: `H-20260907-046-06-MANDATORY-DESIGN-IMPLEMENTATION` — OPEN.
+- Chat 01: `H-20260907-047-01-MANDATORY-READING-DURATION` — OPEN.
+- Chat 05: next = Source Validation Gate for Status Purchase.
+- Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN until the full coverage matrix exit criteria are met.
 
 ### Open Issues
-- Mandatory direct design approval OPEN.
+- Mandatory exact reading duration gameplay decision OPEN.
+- Mandatory implementation/visual verification OPEN.
 - Status direct design approval OPEN.
 - Voluntary + Market/Recovery/Support/Birth direct design approval OPEN.
 - Marriage/Residence/Queue/Government/event/Niên sử/end-report and other gameplay surface approvals OPEN.
-- Implementation/visual verification for already approved shell specs remains OPEN.
+- Implementation/visual verification for approved shell specs remains OPEN.
