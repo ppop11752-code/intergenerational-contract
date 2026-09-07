@@ -1,7 +1,7 @@
 handoff_id: H-20260908-086-00-FINAL-RELEASE-STATUS
 from: 07
 to: 00
-status: OPEN
+status: DONE
 title: Record final project release status after H085
 
 ## Result from Chat 07
@@ -37,5 +37,11 @@ PASS layers:
 - some older specialist reports contain stale status prose superseded by newer canonical docs/DONE handoffs;
 - fresh live multiplayer smoke is critical-path coverage, not exhaustive reproduction of every rare timing permutation.
 
-## Requested Chat 00 action
-Update final Project/release status from H085 evidence. No corrective specialist product handoff is required.
+## Completion
+Chat 00 updated `docs/RELEASE_STATUS.md` to the official final Project verdict:
+
+**PASS WITH WARNINGS — RELEASE READY.**
+
+No corrective specialist product handoff is required before release within the current agreed scope.
+
+Result commit: `040e58f1111a8a529b9589c820ac367ef24d406c`.
