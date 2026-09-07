@@ -140,6 +140,27 @@ affected-system `impacts` (`system`, stable key/label key, value, delta, unit).
 matching. Epidemic impact includes the authoritative Mandatory medical fee per
 Character.
 
+### Authoritative Residence snapshot/map contract
+
+Public `game.residenceDirectory` is keyed by stable `residenceId` and retains
+every Residence, including reclaimed historical records. Each record exposes its
+authoritative lifecycle state/origin/rounds, stable presentation coordinates,
+parent-Residence references, current occupants and server-derived Residence role
+keys plus family Character references. `activeOnMap` and
+`currentNavigationAllowed` are false only after reclamation.
+
+Public `game.activeMapResidenceIds` is the authoritative current-map selection
+set. Public Character records and active room-player records expose
+`currentResidenceId`. Private `currentResidenceId` is the requesting Human's
+current Home and is null in the lobby or Waiting Queue. Reclaimed Residence IDs
+remain resolvable through `residenceDirectory` for Chronicle/history links but
+must not be restored to the active map.
+
+Clients must not derive Residence or co-residence from Economic Household,
+parent links or map proximity. Residence role/family references are display
+data; they do not create gameplay-distance or property mechanics. Hidden NPC
+Persona is not exposed.
+
 The public World Event field is `game.eventName` and is `null` when no event is
 active. Private display quotes are side-effect-free; submitted actions are still
 revalidated against the then-current authoritative state.

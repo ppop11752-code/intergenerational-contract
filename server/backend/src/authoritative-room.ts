@@ -203,23 +203,53 @@ export class AuthoritativeRoom{
   private ageLabel(stage:number){const from=(stage-1)*10,to=from+9;const group=stage<=2?"Trẻ em":stage<=6?"Lao động":"Cao tuổi";return`${group} · ${from}–${to} tuổi`}
   private resourceAccess(status:Status){return status==="noble"?["low","mid","high"]:status==="middle"?["low","mid"]:["low"]}
   private marketSnapshot(){const e=this.engine!;const grades=["low","mid","high"] as const,types=["renewable","nonrenewable"] as const;return Object.fromEntries(types.map(type=>[type,Object.fromEntries(grades.map(grade=>[grade,{price:e.marketPrice(grade,type),successReturn:e.resourceInterest(type,grade)+e.state.eventInterestDelta,failureRate:e.cfg.investmentFailureRate[grade],pool:e.resourcePool(type)[grade],subsidyRate:e.state.government.subsidyRate[grade]}]))]))}
+  private familyReferences(c:Character){
+    const e=this.engine!;
+    const parentCharacterIds=Object.values(e.state.characters).filter(parent=>parent.childrenIds.includes(c.id)).map(parent=>parent.id).sort();
+    const spouse=e.spouseOf(c);
+    return{parentCharacterIds,spouseCharacterIds:spouse?[spouse.id]:[],childCharacterIds:[...c.childrenIds].sort()};
+  }
+  private residenceRoleKeys(c:Character){
+    const e=this.engine!,family=this.familyReferences(c),sameResidence=(id:string)=>e.state.characters[id]?.alive===true&&e.state.characters[id]?.currentResidenceId===c.currentResidenceId;
+    const keys:Array<"spouse"|"parent"|"child"|"resident">=[];
+    if(family.spouseCharacterIds.some(sameResidence))keys.push("spouse");
+    if(family.childCharacterIds.some(sameResidence))keys.push("parent");
+    if(family.parentCharacterIds.some(sameResidence))keys.push("child");
+    return keys.length?keys:["resident"];
+  }
+  private residenceSnapshot(){
+    const e=this.engine!;
+    const entries=Object.values(e.state.residences).sort((a,b)=>a.residenceId.localeCompare(b.residenceId)).map(residence=>{
+      const activeOnMap=residence.status!=="reclaimed";
+      return[residence.residenceId,{
+        residenceId:residence.residenceId,status:residence.status,origin:residence.origin,createdRound:residence.createdRound,
+        coordinates:{...residence.coordinates},activeOnMap,currentNavigationAllowed:activeOnMap,
+        emptySinceRound:residence.emptySinceRound,abandonedRound:residence.abandonedRound,reclaimedRound:residence.reclaimedRound,
+        parentResidenceIds:[...residence.parentResidenceIds],occupants:[...residence.occupantIds].sort().map(characterId=>{
+          const c=e.state.characters[characterId]!;
+          return{characterId,roleKeys:this.residenceRoleKeys(c),...this.familyReferences(c)};
+        })
+      }] as const;
+    });
+    return{residenceDirectory:Object.fromEntries(entries),activeMapResidenceIds:entries.filter(([,record])=>record.activeOnMap).map(([residenceId])=>residenceId)};
+  }
 
   publicSnapshot(){
     const e=this.engine,current=e?.currentTurnCharacter();
     return{code:this.code,started:this.started,hostPlayerId:this.hostPlayerId,initialPopulationTarget:this.initialPopulationTarget,initialNpcCount:this.initialNpcCount,founderDraw:this.founderDraw,
-      players:[...this.players.values()].map(p=>({playerId:p.playerId,displayName:p.displayName,host:p.host,connected:p.connected,activeCharacterId:this.activeCharacterFor(p.playerId)?.id??null,aiTakeoverCharacterId:p.aiTakeoverCharacterId,queuePosition:e&&e.state.waitingQueue.includes(p.playerId)?e.state.waitingQueue.indexOf(p.playerId)+1:null})),
+      players:[...this.players.values()].map(p=>{const active=this.activeCharacterFor(p.playerId);return{playerId:p.playerId,displayName:p.displayName,host:p.host,connected:p.connected,activeCharacterId:active?.id??null,currentResidenceId:active?.currentResidenceId??null,aiTakeoverCharacterId:p.aiTakeoverCharacterId,queuePosition:e&&e.state.waitingQueue.includes(p.playerId)?e.state.waitingQueue.indexOf(p.playerId)+1:null}}),
       game:e?{round:e.state.round,year:(e.state.round-1)*10,phase:e.phase(),ended:e.state.ended,endingReason:e.state.endingReason??null,eventName:e.state.eventName,worldEvent:e.state.worldEventOccurrences.at(-1)?.round===e.state.round?e.state.worldEventOccurrences.at(-1)??null:null,currentTurnCharacterId:current?.id??null,currentTurnPlayerId:current?.ownerId??null,phaseDeadlineAt:this.phaseDeadlineAt,phaseDeadlineKind:this.phaseDeadlineKind,
         debt:e.state.debt,government:{budget:e.state.government.budget,reserveFloor:e.state.government.reserveFloor,taxCollectedThisRound:e.state.government.taxCollectedThisRound,maintenancePaidThisRound:e.state.government.maintenancePaidThisRound,borrowedThisRound:e.state.government.borrowedThisRound,debtRepaidThisRound:e.state.government.debtRepaidThisRound,subsidySpentThisRound:e.state.government.subsidySpentThisRound,subsidyRate:e.state.government.subsidyRate,turnCard:e.state.government.turnCard,purchaseTurnPosition:e.state.government.purchaseTurnPosition,interventions:e.state.government.interventions,fiscalCrisis:e.state.government.fiscalCrisis,debtCeiling:e.debtCeiling(),fiscalHistory:e.state.government.fiscalHistory},
         pool:e.state.pool,nonRenewablePool:e.state.nonRenewablePool,market:this.marketSnapshot(),policy:{inflationRate:e.state.inflationRate,priceIndex:e.state.priceIndex,economicIncomeFactor:e.state.economicIncomeFactor,economicIncomeReasons:e.state.economicIncomeReasons,noblePopulationShare:e.cfg.status.noblePopulationShare,roundAverageAssetsSnapshot:e.state.roundAverageAssetsSnapshot},
         waitingQueue:[...e.state.waitingQueue],population:{total:e.alive().length,humanControlled:e.alive().filter(c=>!c.npc).length,npc:e.alive().filter(c=>c.npc).length,immigrantsAlive:e.alive().filter(c=>c.immigrant).length},
         socialSecurity:{payg:e.state.socialSecurity.payg,support:e.state.socialSecurity.support,pensionReserve:e.state.socialSecurity.pensionReserve,pensionTarget:e.state.socialSecurity.pensionTargetThisRound,pensionPaid:e.state.socialSecurity.pensionPaidThisRound,pensionStateTransfer:e.state.socialSecurity.pensionStateTransferThisRound,pensionPayoutRatio:e.state.socialSecurity.pensionPayoutRatio,pensionCrisis:e.state.socialSecurity.pensionCrisis,investmentReturn:e.state.socialSecurity.investmentReturnRate,workers:e.workers().length,elders:e.elders().length},
         turnOrder:e.state.turnState.entries.map(x=>({...x})),marriageProposals:Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"||p.status==="accepted"),birthProposals:Object.values(e.state.birthProposals).filter(p=>p.round===e.state.round),statusPurchases:Object.values(e.state.statusPurchases),
-        characters:e.alive().map(c=>{const h=e.household(c);return{characterId:c.id,ownerId:c.ownerId,npc:c.npc,immigrant:!!c.immigrant,ageStage:c.ageStage,ageLabel:this.ageLabel(c.ageStage),status:h.status,pendingStatus:h.pendingStatus,householdId:h.id,householdAssets:e.householdAssets(h),cash:h.sharedCash,fundedSocialSecurity:h.memberIds.reduce((a,id)=>a+(e.state.socialSecurity.personalBalances[id]??0),0),married:e.isMarried(c),spouseCharacterIds:e.spouseOf(c)?[e.spouseOf(c)!.id]:[],childCharacterIds:[...c.childrenIds],parentHouseholdId:c.parentsHouseholdId,renewableResources:{...h.sharedResources},nonRenewableResources:{...h.sharedNonRenewableResources},taxPaidThisRound:e.state.government.taxPaidByCharacter[c.id]??0,elderlyMedicalDue:c.elderlyMedicalDueThisRound,elderlyMedicalPaid:c.elderlyMedicalPaidThisRound,mortalityRisk:c.lastMortalityRisk}}),
-        historySnapshots:e.state.historySnapshots,worldEventOccurrences:e.state.worldEventOccurrences,lifecycleResults:e.state.lifecycleResults.slice(-120),rankings:e.rankings(),chronology:e.state.chronology.slice(-120)}:null};
+        characters:e.alive().map(c=>{const h=e.household(c);return{characterId:c.id,ownerId:c.ownerId,npc:c.npc,immigrant:!!c.immigrant,ageStage:c.ageStage,ageLabel:this.ageLabel(c.ageStage),status:h.status,pendingStatus:h.pendingStatus,householdId:h.id,currentResidenceId:c.currentResidenceId,householdAssets:e.householdAssets(h),cash:h.sharedCash,fundedSocialSecurity:h.memberIds.reduce((a,id)=>a+(e.state.socialSecurity.personalBalances[id]??0),0),married:e.isMarried(c),...this.familyReferences(c),parentHouseholdId:c.parentsHouseholdId,renewableResources:{...h.sharedResources},nonRenewableResources:{...h.sharedNonRenewableResources},taxPaidThisRound:e.state.government.taxPaidByCharacter[c.id]??0,elderlyMedicalDue:c.elderlyMedicalDueThisRound,elderlyMedicalPaid:c.elderlyMedicalPaidThisRound,mortalityRisk:c.lastMortalityRisk}}),
+        ...this.residenceSnapshot(),historySnapshots:e.state.historySnapshots,worldEventOccurrences:e.state.worldEventOccurrences,lifecycleResults:e.state.lifecycleResults.slice(-120),rankings:e.rankings(),chronology:e.state.chronology.slice(-120)}:null};
   }
 
   privateSnapshot(playerId:string){
-    const e=this.engine;if(!e)return{playerId,character:null,household:null,recentLifecycleResults:[],queuePosition:null,canInitiateBirth:false,eligibleSupportTargets:[],supportUnavailableReason:null,marketQuotes:[],mandatoryQuote:null,recoveryQuotes:[],birthQuote:null,statusQuote:null};const c=this.activeCharacterFor(playerId),h=c?e.household(c):null;
+    const e=this.engine;if(!e)return{playerId,character:null,currentResidenceId:null,household:null,recentLifecycleResults:[],queuePosition:null,canInitiateBirth:false,eligibleSupportTargets:[],supportUnavailableReason:null,marketQuotes:[],mandatoryQuote:null,recoveryQuotes:[],birthQuote:null,statusQuote:null};const c=this.activeCharacterFor(playerId),h=c?e.household(c):null;
     const marriageCandidates=c&&c.ageStage>=3&&!e.isMarried(c)&&!e.hasAcceptedMarriagePending(c)?e.alive().filter(x=>x.id!==c.id&&x.ageStage>=3&&!e.isMarried(x)&&!e.hasAcceptedMarriagePending(x)&&!e.areCloseFamily(c,x)).map(x=>({characterId:x.id,ownerId:x.ownerId,npc:x.npc,ageStage:x.ageStage,ageLabel:this.ageLabel(x.ageStage),status:e.household(x).status,householdAssets:e.householdAssets(e.household(x))})):[];
     const ownsCurrentTurn=!!c&&e.currentTurnCharacter()?.id===c.id;
     const inOwnVoluntary=!!c&&ownsCurrentTurn&&e.phase()==="voluntary";
@@ -232,7 +262,7 @@ export class AuthoritativeRoom{
     const statusQuote=c&&h?.representativeCharacterId===c.id&&ownsCurrentTurn&&e.phase()==="status"?e.statusSelectionQuote(c):null;
     const personalIncome=c?(e.state.realizedNetIncomeByCharacter[c.id]??0):0;
     const limit=c?(e.state.spendingLimitByCharacter[c.id]??null):null,sharedCharge=c?(e.state.sharedQuotaChargeByCharacter[c.id]??0):0,voluntarySpent=c?(e.state.voluntarySpentByCharacter[c.id]??0):0;
-    return{playerId,character:c?{...c,ageLabel:this.ageLabel(c.ageStage)}:null,household:h,history:e.state.histories[playerId]??null,recentLifecycleResults:e.state.lifecycleResults.filter(result=>result.playerId===playerId||result.characterIds.some(id=>e.state.characters[id]?.ownerId===playerId)).slice(-40),queuePosition:e.state.waitingQueue.includes(playerId)?e.state.waitingQueue.indexOf(playerId)+1:null,
+    return{playerId,character:c?{...c,ageLabel:this.ageLabel(c.ageStage)}:null,currentResidenceId:c?.currentResidenceId??null,household:h,history:e.state.histories[playerId]??null,recentLifecycleResults:e.state.lifecycleResults.filter(result=>result.playerId===playerId||result.characterIds.some(id=>e.state.characters[id]?.ownerId===playerId)).slice(-40),queuePosition:e.state.waitingQueue.includes(playerId)?e.state.waitingQueue.indexOf(playerId)+1:null,
       financial:h?{householdAssets:e.householdAssets(h),roundStartAssets:h.roundStartAssets,cash:h.sharedCash,householdNetIncome:e.netIncome(h),personalNetIncome:personalIncome,fundedSocialSecurity:c?(e.state.socialSecurity.personalBalances[c.id]??0):0,spendingLimit:limit,sharedQuotaCharge:sharedCharge,voluntarySpent,spendingRemaining:limit==null?null:Math.max(0,limit-sharedCharge-voluntarySpent),resourceAccess:this.resourceAccess(h.status),representative:h.representativeCharacterId===c?.id}:null,
       incomingMarriageProposals:c?Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"&&p.targetCharacterId===c.id):[],outgoingMarriageProposals:c?Object.values(e.state.marriageProposals).filter(p=>p.status==="pending"&&p.proposerCharacterId===c.id):[],incomingBirthProposals:c?Object.values(e.state.birthProposals).filter(p=>p.status==="pending"&&p.responderCharacterId===c.id):[],marriageCandidates,eligibleSupportTargets,supportUnavailableReason,marketQuotes,mandatoryQuote,recoveryQuotes,birthQuote,statusQuote,
       canSendMarriage:c?e.currentTurnCharacter()?.id!==c.id:false,canInitiateBirth:!!h&&e.canInitiateBirth(h),currentPhase:e.phase(),phaseDeadlineAt:this.phaseDeadlineAt};
