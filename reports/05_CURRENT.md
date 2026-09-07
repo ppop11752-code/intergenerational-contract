@@ -3,67 +3,60 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN. Landing/Lobby/Room/HUD, Mandatory, Status Purchase, Voluntary shell, Market, Recovery và Support now have direct user-approved V1 specs. Chat 05 is currently running Source Validation for Birth.
+Đang làm — Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN. Landing/Lobby/Room/HUD, Mandatory, Status, Voluntary shell, Market, Recovery, Support và Birth đã có direct user-approved V1. Chat 05 hiện chuyển sang Source Validation cho Marriage.
 
 ### Changed
-- User approved Support SP1–SP7 with custom presentation choices.
-- Support V1 = large centered panel where **each authoritative eligible recipient Character is represented by a separate card**; no fixed parent/child section grouping is required.
-- Recipient cards show portrait/player-facing identity, relation, age/stage, Status and only safe authoritative financial context.
-- Persistent note distinguishes voluntary Support from Mandatory support.
-- Every recipient card owns its own `− / editable amount / + / MAX / CHU CẤP` controls at card bottom.
-- Footer always shows authoritative available cash + remaining spending quota where applicable.
-- If no target is eligible, `CHU CẤP` remains discoverable/selectable and shows an explanation that there is no eligible recipient; action is not hidden.
-- Successful transfer keeps Support open, refreshes authoritative financial state and shows inline result on the recipient card.
-- `docs/UI_SUPPORT_SOURCE_VALIDATION_V1.md` CLOSED — USER VERIFIED.
-- Created `docs/UI_SUPPORT_APPROVED_V1.md`.
-- Created handoff `H-20260907-052-06-SUPPORT-DESIGN-IMPLEMENTATION` → OPEN for Chat 06.
-- Updated `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`: Support = USER-APPROVED V1; Birth = SOURCE VALIDATION ACTIVE.
-- Created `docs/UI_BIRTH_SOURCE_VALIDATION_V1.md`.
-- Birth authoritative semantics cross-checked: representative proposes separate child #1/#2/(#3 under Khuyến sinh); later spouse independently Accept/Rejects; no response defaults Accept; accepted birth executes end round; bankruptcy before execution invalidates.
-- Identified potential Birth contract dependency: proposer-side outgoing proposal status may require a narrow server snapshot addition if not currently exposed cleanly; Chat 06 must not invent it locally.
-- No gameplay, Rule Ledger, protocol, timers, Support/Birth rules, kinship or authoritative calculations changed.
+- User approved Birth B1–B7.
+- Birth V1 = large centered panel with separate proposal cards `CON #1/#2` and conditional `#3` under authoritative `Khuyến sinh` max=3.
+- Earlier spouse proposes per card; successful proposal becomes `ĐÃ ĐỀ XUẤT — CHỜ PHẢN HỒI`.
+- Later spouse responds independently per proposal with `ĐỒNG Ý / TỪ CHỐI`.
+- Default-Accept warning is shown only when authoritative Voluntary timer is below 10 seconds.
+- Unavailable Birth remains discoverable but locked/dimmed with authoritative reason.
+- Accepted/default-accepted state communicates `SINH CON CUỐI VÒNG`; no newborn preview before authoritative execution.
+- `docs/UI_BIRTH_SOURCE_VALIDATION_V1.md` CLOSED — USER VERIFIED.
+- Created `docs/UI_BIRTH_APPROVED_V1.md`.
+- Created handoff `H-20260907-053-06-BIRTH-DESIGN-IMPLEMENTATION` → OPEN for Chat 06.
+- Updated `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`: Birth = USER-APPROVED V1; Marriage = SOURCE VALIDATION ACTIVE.
+- Created `docs/UI_MARRIAGE_SOURCE_VALIDATION_V1.md` using A1+B1+C1 authoritative lifecycle and current world-first shell constraints.
+- No gameplay, Rule Ledger, protocol, timers, marriage/birth semantics or authoritative calculations changed.
 
 ### Source
 - Latest direct user decisions in Chat 05.
-- `docs/UI_SUPPORT_APPROVED_V1.md`.
-- `docs/UI_SUPPORT_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_BIRTH_APPROVED_V1.md`.
 - `docs/UI_BIRTH_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_MARRIAGE_SOURCE_VALIDATION_V1.md`.
 - `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
-- `docs/UI_VOLUNTARY_APPROVED_V1.md`.
 - `docs/RULE_LEDGER.md`.
-- `server/backend/src/engine.ts` birth proposal/response behavior.
-- `server/backend/src/authoritative-room.ts` private Birth state contract.
+- `server/backend/src/engine.ts` and `server/backend/src/authoritative-room.ts`.
 - `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
 
 ### Impact
-- Chat 06 may implement Support V1 but must not use raw Character IDs or client-side kinship/economic inference.
-- Support unavailable state must explain absence of eligible targets rather than hiding the mechanic.
-- Birth is now the active direct-approval gate; Chat 06 must not invent final Birth proposer/responder UX before approval.
-- If approved Birth UX needs outgoing proposal truth not present in current snapshot, Chat 06 should create a narrow Chat 03 contract handoff.
+- Chat 06 may implement Birth V1 but must not create local outgoing-proposal truth if snapshot support is insufficient; request narrow Chat 03 contract support instead.
+- Voluntary action family now has approved shell + Market + Recovery + Support + Birth UX.
+- Marriage is the next direct-approval gate and must preserve world-first discovery plus authoritative persistent proposal lifecycle.
 - Full-game UX coverage remains incomplete.
 
 ### Verified
-- Support SP1–SP7 are direct user decisions.
-- Support V1 preserves one shared Voluntary 60s timer and direct parent/child-only semantics.
-- Engine has separate birth proposal objects and separate responder Accept/Reject action.
-- Authoritative fallback treats pending/no-response proposal as accepted for execution unless later invalidated; UI must communicate default-Accept behavior without creating local truth.
+- Birth B1–B7 are direct user decisions.
+- Birth V1 preserves one shared Voluntary 60s timer, default Accept, separate proposal semantics and end-round execution.
+- Marriage authoritative lifecycle A1+B1+C1 rechecked: one outgoing pending, multiple incoming, no timeout, pending Cancel/Accept/Reject rules, accepted binding, end-acceptedRound execution, immediate invalidation on eligibility loss, disconnect/NPC takeover not automatic invalidation, executed history retained.
 
 ### Unverified
-- Birth B1–B7 final presentation choices.
-- Sufficiency of current proposer-side Birth proposal snapshot for polished waiting/result states.
-- Marriage and remaining gameplay surfaces #4–#12 in coverage matrix.
-- Client implementation/visual fidelity for approved gameplay surfaces.
+- Marriage MR1–MR8 final presentation choices.
+- Sufficiency of client-facing identity/proposal state for polished Marriage/Birth implementation may require narrow server contract additions.
+- Residence/Queue/Government/mortality/immigration/event/Niên sử/end-report coverage remains open.
+- Client implementation/visual fidelity for approved gameplay surfaces remains open.
 - Mandatory reading-duration gameplay dependency remains external to Chat 05.
 
 ### Handoff
-- Chat 06: `H-20260907-052-06-SUPPORT-DESIGN-IMPLEMENTATION` — OPEN.
-- Chat 06: existing approved Recovery/Market/Voluntary/Status/Mandatory implementation handoffs remain active.
-- Chat 01: `H-20260907-047-01-MANDATORY-READING-DURATION` — external gameplay timing dependency.
-- Chat 05: resolve Birth B1–B7, then continue Marriage.
+- Chat 06: `H-20260907-053-06-BIRTH-DESIGN-IMPLEMENTATION` — OPEN.
+- Chat 06: existing Support/Recovery/Market/Voluntary/Status/Mandatory implementation handoffs remain active.
+- Chat 01: `H-20260907-047-01-MANDATORY-READING-DURATION` — external timing dependency.
+- Chat 05: resolve Marriage MR1–MR8, then continue Residence/Family.
 - Parent `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN.
 
 ### Open Issues
-- Birth direct design approval OPEN.
-- Birth proposer-side contract sufficiency may need verification during implementation.
-- Marriage/Residence/Queue/Government/event/Niên sử/end-report and remaining gameplay surface approvals OPEN.
+- Marriage direct design approval OPEN.
+- Birth proposer-side snapshot sufficiency may need implementation verification.
+- Residence/Queue/Government/event/Niên sử/end-report and other remaining gameplay surface approvals OPEN.
 - Implementation/visual verification for approved specs remains OPEN.
