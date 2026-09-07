@@ -1,49 +1,50 @@
 # 06 — CLIENT IMPLEMENTATION — CURRENT REPORT
 
 ### Status
-Hoàn thành ở phạm vi implementation — Approved UI V1 Client batch đã hoàn tất; H074/H076 pointer regressions, H079 World Event drift, H081 focus-ID mismatch, H082 focus-clobber và H083 focus-rerender defect đều đã được sửa. H080 (Chat 07) OPEN cho fresh targeted production/browser verification; H072 (Chat 08) vẫn OPEN cho audit độc lập Residence lifecycle.
+Hoàn thành ở phạm vi implementation — Approved UI V1 Client batch đã hoàn tất; H074/H076 pointer regressions, H079 World Event drift, H081 focus-ID mismatch, H082 focus-clobber, H083 Chronicle focus-rerender defect và H084 Marriage profile rerender loop đều đã được sửa. H080 đã được mở lại cho Chat 07 ghi nhận final QA acceptance; H072 (Chat 08) vẫn OPEN cho audit độc lập Residence lifecycle.
 
 ### Changed
 - Giữ toàn bộ approved UI V1 shell và H063–H066/H071 integrations đã hoàn tất.
 - H074/H076 giữ pointer hit-area corrections cho HUD/Turn Track/Mandatory.
 - H079 giữ direct World Event banner semantics và Marriage own-turn visible-disabled affordance.
-- H082 giữ single-owner exact Chronicle focus trong `client/src/resolved-ui-contracts.ts`.
-- H083 sửa lifecycle focus qua Approved UI rerender:
-  - `chronicleFocus` là persistent exact selection state;
-  - thêm `chronicleScrollPending` làm one-shot scroll state;
-  - click `XEM TRONG NIÊN SỬ` set cả hai từ authoritative `ev.chronicleEntryId`;
-  - `.focused-event` luôn derive từ `row.dataset.chronicleEntryId === chronicleFocus` trên mỗi render/rerender;
-  - chỉ `chronicleScrollPending` được clear sau khi exact target tồn tại và scroll thành công;
-  - `chronicleFocus` không còn bị clear trong `chronicle()`.
-- `data-world-event-id` tiếp tục chỉ phục vụ event identity/filtering; không dùng làm navigation fallback.
-- Thêm `client/test/world-event-chronicle-rerender.test.mjs` và cập nhật H082 regression để khóa integrated runtime ordering, persistent focus, one-shot scroll và no-name/event-id fallback.
-- Không thêm runtime focus owner thứ hai, timer workaround hoặc local inference.
+- H082/H083 giữ single-owner exact Chronicle focus và persistent focus qua Approved UI rerender.
+- H084 sửa `client/src/approved-ui-finalize.ts` `marriageFromProfile()`:
+  - thêm `profileStateSig` từ exact profile target + authoritative `canSendMarriage`;
+  - nếu state signature không đổi thì return trước mọi DOM mutation;
+  - `data-target`, `disabled`, `textContent`, `title` chỉ cập nhật khi giá trị thực sự khác;
+  - giữ nguyên disabled affordance khi `canSendMarriage=false` với exact copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN`;
+  - giữ nguyên existing `marriage:propose` action khi gửi được.
+- Đồng thời tránh một text write lặp tương tự trong Chronicle empty-filter note bằng value guard; chỉ là ổn định presentation dưới cùng MutationObserver, không đổi semantics.
+- Thêm source regression `client/test/marriage-profile-rerender-loop.test.mjs`.
+- Thêm real-browser integration regression `qa/marriage-profile-rerender-loop.mjs` và workflow `.github/workflows/marriage-profile-rerender-loop.yml`.
+- Không đổi gameplay, Marriage lifecycle, protocol, timer hoặc World Event mechanics.
 
 ### Source
-- `handoffs/H-20260908-083-06-WORLD-EVENT-CHRONICLE-FOCUS-RERENDER.md`.
-- H080 QA run `34154976166`: exact row ID mapping PASS nhưng `.focused-event` mất sau Approved UI rerender.
-- `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`.
-- Existing H066 structured World Event/Chronicle contract.
+- `handoffs/H-20260908-084-06-MARRIAGE-PROFILE-RERENDER-LOOP.md`.
+- H080 QA run `34156430047`: World Event/Chronicle/timer checks PASS nhưng browser bị starve sau khi mở candidate profile và dispatch stable snapshot.
+- Existing approved Marriage profile semantics from Chat05/H079 and authoritative `canSendMarriage`/`marriageCandidates` Client contract.
 
 ### Impact
-- Exact World Event → Chronicle selection state sống qua DOM/history-sheet rerender thay vì chỉ tồn tại ở first render.
-- Scroll vẫn chỉ chạy một lần cho mỗi navigation, tránh repeated scroll trên MutationObserver passes.
-- Một focus owner duy nhất vẫn được giữ trong `resolved-ui-contracts.ts`.
-- Không đổi gameplay, protocol, phase timer, World Event mechanics hoặc Chronicle authority.
+- Candidate profile có thể nhận lặp cùng authoritative snapshot mà không tự tạo `MutationObserver -> decorate -> text mutation` loop.
+- Browser/event loop tiếp tục phản hồi; snapshot processing không còn bị starve ở path này.
+- Candidate vẫn hiện đúng; own-turn/non-send state vẫn disabled với copy approved.
+- World Event/Chronicle behavior của H079–H083 không bị thay đổi.
 
 ### Verified
-- H083 implementation commit `44a776eaff695976a0aca7d18d4ce130ef747150`.
-- Regression HEAD `7d42c5d00c618a9f87a226230fa5c017815e9355`.
-- GitHub Actions `UIUX Art Final E2E` run `34155621103`: TypeScript build / clean Client suite PASS.
-- Initial H083 CI run exposed only two stale regex assertions; implementation compiled successfully. Assertions were aligned to the persistent-focus/one-shot-scroll design and clean suite then passed.
+- H084 implementation commit `ac2affa621b68cf0021830412a772153d61c9b79`.
+- Source regression commit `300b94351e2c1a2a0501345641aaddaae4702037`.
+- Browser regression/workflow HEAD `478455ab1b2af1943cc3b7495f5e2117c94b1932`.
+- GitHub Actions `Marriage Profile Rerender Loop QA` run `34156898583`: SUCCESS.
+  - clean Client regression PASS;
+  - real-browser repeated-identical-snapshot regression PASS.
+- Existing `World Event Approved UI QA` run `34156855982` on H084 implementation commit: SUCCESS.
 
 ### Unverified
-- Fresh deployed browser assertion that `.focused-event` survives the actual production Approved UI rerender after H083 is pending Chat 07/H080.
-- H080 must still finish timer continuity, mobile reflow and Marriage disabled-affordance browser checks.
+- Chat 07 still owns the final formal H080 acceptance record despite the fresh workflow success.
 - H072 independent Residence lifecycle audit remains OPEN.
 
 ### Handoff
-- Chat 07: `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` — OPEN; rerun after production deploy containing H083.
+- Chat 07: `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` — OPEN/unblocked; record final acceptance after H084.
 - Chat 08: `H-20260907-072-08-RESIDENCE-LIFECYCLE-AUDIT` — unchanged, OPEN.
 
 ### Open Issues
@@ -52,7 +53,7 @@ Hoàn thành ở phạm vi implementation — Approved UI V1 Client batch đã h
 - H079 DONE.
 - H081 DONE/superseded by unified focus ownership.
 - H082 DONE.
-- H083 DONE at Client implementation + clean regression level.
-- H080 OPEN to Chat 07 for targeted production verification.
+- H083 DONE.
+- H084 DONE.
+- H080 OPEN to Chat 07 for final QA ownership/acceptance.
 - H072 OPEN to Chat 08 for independent audit.
-- Do not claim fresh World Event/Chronicle production acceptance until H080 completes.
