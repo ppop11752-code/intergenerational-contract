@@ -1,7 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {GameEngine} from "../src/engine.js";
 
-describe("turn order engine v0.4",()=>{
+describe("turn order engine legacy coverage",()=>{
   it("sorts by status first, then unique card descending",()=>{
     const g=new GameEngine();
     g.joinPlayer("a");g.joinPlayer("b");g.joinPlayer("c");
@@ -11,7 +11,6 @@ describe("turn order engine v0.4",()=>{
     g.household(chars[2]!).status="middle";
     g.startRound();
 
-    // deterministic pseudo-random
     let x=0;
     const order=g.buildTurnOrder(()=>((x++*37)%100)/100);
     expect(order[0]!.statusRank).toBe(3);
@@ -20,7 +19,7 @@ describe("turn order engine v0.4",()=>{
     expect(new Set(order.map(x=>x.card)).size).toBe(order.length);
   });
 
-  it("enforces round phases in the required sequence",()=>{
+  it("enforces current round phases in the required sequence",()=>{
     const g=new GameEngine();
     g.joinPlayer("a");
     g.startRound();
@@ -30,8 +29,8 @@ describe("turn order engine v0.4",()=>{
     g.beginMandatoryPhase();
     expect(g.phase()).toBe("mandatory");
     g.resolveCurrentMandatory();
-    expect(g.phase()).toBe("marriage");
-    g.completeMarriageTurn();
+    expect(g.phase()).toBe("status");
+    g.autoSelectStatusForCurrent();
     expect(g.phase()).toBe("voluntary");
     g.completeVoluntaryTurn();
     expect(g.phase()).toBe("round_end");
@@ -46,17 +45,21 @@ describe("turn order engine v0.4",()=>{
     expect(()=>g.buyResource(c,"low",1)).toThrow("invalid phase");
   });
 
-  it("converts resources before mandatory obligations",()=>{
+  it("converts eligible resource lots after turn order and before mandatory obligations",()=>{
     const g=new GameEngine();
+    g.setRandomSource(()=>0.99);
     g.joinPlayer("a");
     const c=Object.values(g.state.characters)[0]!;
     const h=g.household(c);
     h.sharedResources.low=1;
+    h.sharedResourceCostBasis.low=10;
+    h.investmentLots=[{type:"renewable",grade:"low",units:1,costBasis:10,purchaseRound:0,buyerCharacterId:c.id,purchaseAgeStage:c.ageStage}];
     const before=h.sharedCash;
     g.startRound();
     g.buildTurnOrder(()=>0.5);
     g.beginMandatoryPhase();
     expect(h.sharedResources.low).toBe(0);
+    expect(h.investmentLots).toHaveLength(0);
     expect(h.sharedCash).toBeGreaterThan(before);
   });
 
@@ -65,7 +68,6 @@ describe("turn order engine v0.4",()=>{
     g.joinPlayer("a");g.joinPlayer("b");
     const a=Object.values(g.state.characters).find(c=>c.ownerId==="a")!;
     const b=Object.values(g.state.characters).find(c=>c.ownerId==="b")!;
-    // marriage before round for test setup
     g.marry(a,b);
     g.startRound();
     const order=g.buildTurnOrder(()=>Math.random());
