@@ -33,6 +33,10 @@ User selected **WSA — Thế giới là màn hình** as the base Room / World s
 
 The minimap must **not** collapse into an ordinary button/icon in its normal state.
 
+Placement:
+- The minimap is moved to an **upper corner of the screen**, rather than the lower-right control cluster.
+- Exact upper-left versus upper-right placement remains to be confirmed in the final detail pass, taking HUD/Turn Track collision into account.
+
 Default/compact state requirements:
 - Always visibly renders a real simplified overview of the current settlement/world area.
 - Must provide useful spatial information even before any hover/click expansion.
@@ -53,8 +57,8 @@ Still requires direct user approval before Room V1 can be locked:
 - Government plaza/world composition;
 - Residence density and visual grouping;
 - exact Turn Track chrome integration;
-- minimap size, information density, expanded interaction and marker set;
-- quick-nav icon arrangement relative to minimap;
+- exact upper-corner minimap side, size, information density, expanded interaction and marker set;
+- quick-nav icon arrangement;
 - drawer anchoring/width and map-dimming behavior;
 - mobile/compact Room shell treatment;
 - final frame ornament and typography density.
