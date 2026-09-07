@@ -1,6 +1,6 @@
 # UI LOBBY — SOURCE VALIDATION V1
 
-Status: USER VERIFICATION REQUIRED
+Status: CLOSED — USER VERIFIED
 Date: 2026-09-07
 Owner: 05 — UI/UX & ART
 
@@ -8,13 +8,11 @@ This document applies `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md` before concrete L
 
 ## Scope
 
-Lobby + Founder reveal only. No redesign handoff to Chat 06 until user verification and direct design approval are complete.
+Lobby + Founder reveal only. No redesign handoff to Chat 06 until direct Lobby design approval is complete.
 
 ## Source findings
 
 ### CURRENT_USER_CONFIRMED
-
-Already re-confirmed in the current design-approval phase; do not ask again unless a real contradiction appears:
 
 - Lobby keeps a large room PIN and QR; PIN is visually primary, QR secondary.
 - Lobby roster shows Human players only.
@@ -25,6 +23,14 @@ Already re-confirmed in the current design-approval phase; do not ask again unle
 - Lobby roster direction is a compact portrait grid; portraits/names remain readable, with more detail available on hover/click rather than large full cards.
 - Overall visual direction: pixel art + Japanese anime/chibi, bright/lively world and darker fantasy UI chrome/panels.
 - Motion must be non-blocking and must not alter authoritative game timing.
+- Per-Human identity uses a distinct but subtle accent color, primarily in border/nameplate treatment rather than filling the whole card.
+- Lobby portraits are temporary Lobby-only visual portraits; they disappear after the game starts and do not represent assigned Characters.
+- Connection status is always available through a small status dot; technical text appears only when there is a problem.
+- Host uses a fantasy icon/seal; the local player still has a clear `BẠN` text marker.
+- Share controls include both `SAO CHÉP MÃ` and `SAO CHÉP LIÊN KẾT` in addition to PIN + QR.
+- Founder reveal for >10 Humans reveals the 10 selected founders first, then informs non-founders of their authoritative Waiting Queue position; do not present a long global ranking by default.
+- Founder transition wording keeps `XÃ HỘI ĐÃ ĐƯỢC THÀNH LẬP`.
+- Non-host Start area keeps layout stability through a status card such as `Đang chờ Chủ phòng bắt đầu…`, rather than a disabled Start button.
 
 ### HISTORICAL_USER_CONFIRMED
 
@@ -51,7 +57,7 @@ The Migration Pack `04_UI_UX_SPEC.md` states:
 - Founder reveal auto-reveals after a few seconds.
 - Founder transition text: `XÃ HỘI ĐÃ ĐƯỢC THÀNH LẬP`.
 
-Some of these are compatible with current decisions/gameplay, but their exact presentation provenance is not independently verified as direct user approval.
+The exact presentation details above were re-validated where materially relevant through the current user decisions in this document. Any remaining implementation specifics still require design approval.
 
 ### PROTOTYPE_ONLY / IMPLEMENTATION REFERENCE
 
@@ -68,24 +74,22 @@ This current implementation is not design authority.
 
 ## Resolved without additional user question
 
-The following do not need re-validation because newer direct decisions or gameplay already resolve them:
-
 - No fixed 10 founder slots in the visual roster: Lobby supports the dynamic Human roster up to room capacity; a fixed 10-slot founder grid would misleadingly imply only 10 Humans may join.
 - Society-start information remains compact.
 - Founder Draw remains non-blocking.
 - PIN remains primary over QR.
 
-## User verification questions still open
+## User verification result
 
-1. **Per-Human color identity:** should each Human receive a distinct accent color in Lobby, or should the roster use one shared palette/style with identity carried mostly by portrait/name?
-2. **Lobby portrait semantics:** before Founder/Character assignment, what does a portrait represent? A purely cosmetic player avatar, a temporary lobby portrait that disappears at game start, or something else?
-3. **Connection status visibility:** should Lobby visibly show connected/disconnected state for each Human, or keep this information mostly hidden unless there is a problem?
-4. **Self/Host marking:** should `BẠN` and Host be explicitly marked on each roster item, and if so should Host use a fantasy icon/seal rather than technical text?
-5. **Share controls:** besides large PIN + QR, should Lobby include explicit `SAO CHÉP MÃ` and/or `SAO CHÉP LIÊN KẾT` actions?
-6. **Founder reveal detail (>10 Humans):** reveal only the 10 selected founders, or reveal the full authoritative rank including Waiting Queue order?
-7. **Founder transition wording:** keep the historical phrase `XÃ HỘI ĐÃ ĐƯỢC THÀNH LẬP`, replace it with different wording, or use visual reveal without a fixed slogan?
-8. **Non-host Start area:** should non-host players see a disabled `BẮT ĐẦU` control, or only a waiting/status message while the Host owns the Start action?
+1. Per-Human color identity → subtle individual accent color only.
+2. Lobby portrait semantics → temporary Lobby-only portrait; disappears after game start.
+3. Connection status → small persistent status dot; text only on problems.
+4. Self/Host marking → Host fantasy seal/icon + explicit `BẠN` marker.
+5. Share controls → both `SAO CHÉP MÃ` and `SAO CHÉP LIÊN KẾT`.
+6. Founder reveal → founders first, then each non-founder receives Waiting Queue position.
+7. Founder transition wording → keep `XÃ HỘI ĐÃ ĐƯỢC THÀNH LẬP`.
+8. Non-host Start area → waiting/status card, not disabled button.
 
-## Gate
+## Gate result
 
-Do not propose concrete Lobby layouts until the above materially relevant source ambiguities are resolved by the user.
+Source Validation Gate is CLOSED. Chat 05 may now inspect the current implementation, identify weaknesses, and propose concrete Lobby design alternatives for direct user approval.
