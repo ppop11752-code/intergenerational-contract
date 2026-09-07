@@ -1,0 +1,42 @@
+name: World Event Approved UI QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/world-event-approved-ui-qa.mjs"
+      - ".github/workflows/world-event-approved-ui-qa.yml"
+      - "client/src/resolved-ui-contracts.ts"
+      - "client/src/approved-ui-finalize.ts"
+      - "client/src/resolved-ui-contracts.css"
+      - "client/test/resolved-ui-contracts.test.mjs"
+
+jobs:
+  h080-world-event-approved-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      LIVE_URL: https://intergenerational-contract.onrender.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Clean client regression
+        working-directory: client
+        run: |
+          npm install
+          npm test
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run H080 World Event approved UI QA
+        run: node qa/world-event-approved-ui-qa.mjs
+      - name: Upload H080 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h080-world-event-approved-ui-evidence
+          path: qa/world-event-approved-ui-artifacts
+          if-no-files-found: warn
