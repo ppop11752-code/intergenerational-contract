@@ -24,14 +24,14 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 | # | Gameplay surface group | Current UX status | Next action |
 |---|---|---|---|
 | 1 | Mandatory presentation / obligations / liquidation / bankruptcy | **USER-APPROVED V1** — `docs/UI_MANDATORY_APPROVED_V1.md`; exact reading-duration gameplay dependency external | Chat 06 implement; Chat 01 owns timing decision |
-| 2 | Status Purchase / 15s / next-round effect / married rep / fallback / Noble cap-refund | **USER-APPROVED V1** — `docs/UI_STATUS_APPROVED_V1.md` | Chat 06 implement via `H-20260907-048-06-STATUS-DESIGN-IMPLEMENTATION` |
-| 3 | Voluntary shell + shared 60s timer | **USER-APPROVED V1** — `docs/UI_VOLUNTARY_APPROVED_V1.md` | Chat 06 implement via `H-20260907-049-06-VOLUNTARY-SHELL-DESIGN-IMPLEMENTATION` |
-| 3a | Market | **USER-APPROVED V1** — `docs/UI_MARKET_APPROVED_V1.md` | Chat 06 implement via `H-20260907-050-06-MARKET-DESIGN-IMPLEMENTATION` |
-| 3b | Recovery | **USER-APPROVED V1** — `docs/UI_RECOVERY_APPROVED_V1.md` | Chat 06 implement via `H-20260907-051-06-RECOVERY-DESIGN-IMPLEMENTATION` |
-| 3c | Support | **USER-APPROVED V1** — `docs/UI_SUPPORT_APPROVED_V1.md` | Chat 06 implement via `H-20260907-052-06-SUPPORT-DESIGN-IMPLEMENTATION` |
-| 3d | Birth | **SOURCE VALIDATION ACTIVE** — `docs/UI_BIRTH_SOURCE_VALIDATION_V1.md` | Obtain direct B1–B7 approval |
-| 4 | Marriage lifecycle / proposals / notices | NOT DIRECTLY APPROVED | Source validate after Birth |
-| 5 | Residence / Family / child-orphan-current Residence semantics | PARTIAL — shell interaction approved only | Source validate detail surface |
+| 2 | Status Purchase / 15s / next-round effect / married rep / fallback / Noble cap-refund | **USER-APPROVED V1** — `docs/UI_STATUS_APPROVED_V1.md` | Chat 06 implement |
+| 3 | Voluntary shell + shared 60s timer | **USER-APPROVED V1** — `docs/UI_VOLUNTARY_APPROVED_V1.md` | Chat 06 implement |
+| 3a | Market | **USER-APPROVED V1** — `docs/UI_MARKET_APPROVED_V1.md` | Chat 06 implement |
+| 3b | Recovery | **USER-APPROVED V1** — `docs/UI_RECOVERY_APPROVED_V1.md` | Chat 06 implement |
+| 3c | Support | **USER-APPROVED V1** — `docs/UI_SUPPORT_APPROVED_V1.md` | Chat 06 implement |
+| 3d | Birth | **USER-APPROVED V1** — `docs/UI_BIRTH_APPROVED_V1.md` | Chat 06 implement via `H-20260907-053-06-BIRTH-DESIGN-IMPLEMENTATION` |
+| 4 | Marriage lifecycle / proposals / notices | **SOURCE VALIDATION ACTIVE** — `docs/UI_MARRIAGE_SOURCE_VALIDATION_V1.md` | Obtain direct Marriage presentation approval |
+| 5 | Residence / Family / child-orphan-current Residence semantics | PARTIAL — shell interaction approved only | Source validate after Marriage |
 | 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate |
 | 7 | Government / ASXH / PAYG / reserves / support/crisis explanation | PARTIAL — Government access approved, detail UX not approved | Source validate |
 | 8 | Elderly medical / mortality / Grief / inheritance results | NOT DIRECTLY APPROVED | Source validate |
@@ -47,11 +47,12 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 - Status has authoritative max 15s; Status V1 shows that timer only in HUD.
 - Voluntary has one authoritative 60s total timer shared across Market/Recovery/Support/Birth; switching surfaces never resets/pauses it.
 - Voluntary V1 uses a persistent desktop right-edge action dock below/clear of minimap and mobile bottom action rail.
-- Market, Recovery and Support consume authoritative quotes/targets/results and no independent timer.
-- Support targets come only from authoritative direct-parent/direct-child eligibility; internal Character IDs are not player-facing selectors.
+- Market, Recovery, Support and Birth use authoritative state/results and no independent timers.
+- Birth default-Accept warning appears only in the final <10s of the responder's Voluntary window; accepted Birth executes end round.
 - Residence/Government/Niên sử/marriage notifications do not pause Voluntary timer.
+- Marriage actions are social actions outside the sender's own economic turn for sending, while recipients may Accept/Reject pending proposals; Marriage must not create or pause a gameplay phase timer.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
-- Chat 06 must never invent missing gameplay semantics, kinship eligibility or economic limits.
+- Chat 06 must never invent missing gameplay semantics, eligibility or economic limits.
 
 ## Active external dependency from Mandatory
 
