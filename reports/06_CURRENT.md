@@ -1,50 +1,65 @@
 # 06 — CLIENT IMPLEMENTATION — CURRENT REPORT
 
 ### Status
-Đang làm — H019/UIUX implementation đã hoàn thành trước đó; `H-20260907-050-06-MANDATORY-5S-CLIENT` vừa DONE với một presentation mismatch được sửa. Chờ Chat 07 chạy `H-20260907-051-07-MANDATORY-5S-CLIENT-QA` để xác minh runtime 5 giây/no-countdown.
+Đang làm — batch USER-APPROVED UI V1 từ Chat 05 đã được triển khai ở Client theo thứ tự ưu tiên. Các phần độc lập đã đóng; các phần cần dữ liệu server được chuyển BLOCKED sang 4 handoff hẹp H063–H066. Chờ Chat 03 contract additions và Chat 07 clean/browser QA H067.
 
 ### Changed
-- Giữ nguyên toàn bộ closure trước của H019/Wave 4 art và các QA PASS liên quan.
-- D-052 / `docs/UI_MANDATORY_APPROVED_V1.md` khóa Mandatory 5 giây server-authoritative, không countdown/progress/skip.
-- Rà client xác nhận không có local Mandatory 5s/5000ms hardcode và không có local phase-transition timeout.
-- Phát hiện generic HUD timer vẫn hiển thị `phaseDeadlineAt` trong Mandatory, trái approved UI.
-- `client/src/display-contract.ts` hiện khi authoritative phase là `mandatory` sẽ bỏ `data-timer` khỏi HUD và hiển thị `TỰ ĐỘNG`; không thêm client delay/timing state.
-- Status/Voluntary authoritative timer display không đổi.
-- `client/test/display-contract.test.mjs` bổ sung regression bảo vệ no-countdown/no-local-duration cho Mandatory.
-- Tạo `H-20260907-051-07-MANDATORY-5S-CLIENT-QA` cho browser/runtime verification.
+- Mở rộng `client/src/types.ts` để khai báo các field server hiện đã gửi: immigration, elderly medical/risk, waiting queue, ranking `average/activeRounds/lives`, social/Government/history data.
+- Bổ sung helper `marriageCancelAction` cho server action `marriage:cancel` đã tồn tại; không mở rộng protocol.
+- Tạo `client/src/approved-ui-v1.ts` làm presentation layer idempotent trên DOM/snapshot hiện tại.
+- Tạo `client/src/approved-ui-v1-followups.ts` cho Status quote per-card, HUD trends, Birth outgoing state, NPC takeover notice và post-game Chronicle.
+- Tạo `client/approved-ui-v1.css` cho Landing/Lobby/HUD/Room/Voluntary/surfaces/Chronicle/End Report desktop + mobile.
+- `client/index.html` tải approved UI CSS/runtime trước `main.js`.
+- Tạo `client/test/approved-ui-v1.test.mjs` để khóa script order, Queue idempotence, no invented MAX, marriage cancel, extinction/no-life/replay semantics và no client timer constants.
+- Phát hiện và sửa MutationObserver Queue rewrite loop bằng `data-approved-sig` idempotence.
+- H038 Landing DONE.
+- H041 Lobby DONE.
+- H043 HUD shell DONE; detailed World Event remains H060/H066.
+- H046 Mandatory DONE.
+- H057 Government/social systems DONE.
+- H062 End Report DONE.
+- H042 Room BLOCKED → H063.
+- H048 Status, H049 Voluntary, H050 Market, H051 Recovery, H052 Support, H053 Birth BLOCKED → H064.
+- H054 Marriage, H055 Residence/Family BLOCKED → H063.
+- H056 Queue/Reconnect BLOCKED → H063 + H065.
+- H058 mortality/inheritance BLOCKED → H065.
+- H059 immigration/takeover BLOCKED → H063.
+- H060 World Event + H061 Chronicle linkage BLOCKED → H066.
 
 ### Source
-- handoffs/H-20260907-050-06-MANDATORY-5S-CLIENT.md
-- handoffs/H-20260907-051-07-MANDATORY-5S-CLIENT-QA.md
-- docs/UI_MANDATORY_APPROVED_V1.md
-- docs/UI_MANDATORY_SOURCE_VALIDATION_V1.md
-- docs/RULE_LEDGER.md
-- client/src/main.ts
-- client/src/display-contract.ts
+- `docs/UI_*_APPROVED_V1.md` corresponding to H038–H062.
+- `docs/RULE_LEDGER.md`.
+- current `server/backend/src/authoritative-room.ts` public/private snapshot contract.
+- current `server/backend/src/model.ts` structured PlayerHistory/HistorySnapshot state.
 
 ### Impact
-- Mandatory vẫn chuyển phase hoàn toàn theo authoritative server room/game state.
-- Client không sở hữu hay hardcode thời lượng 5 giây.
-- Người chơi không còn nhìn thấy countdown của Mandatory trên HUD; presentation đúng nghĩa tự động.
-- Normal / projected forced-liquidation / projected bankruptcy content không có timing branch riêng và vẫn render từ authoritative snapshot.
-- Gameplay/actions/protocol/server timers không thay đổi.
+- Client presentation now follows the newly approved Landing→End Report design direction without changing gameplay rules, server authority or timer ownership.
+- Existing main action bindings/transport remain the execution path; presentation layer reuses them rather than replacing engine/server logic.
+- MAX controls remain disabled where authoritative maximum is absent instead of being locally calculated.
+- Queue/reconnect wording no longer implies reclaim of old Character.
+- End Report consumes authoritative ranking order/value and distinguishes true extinction from normal completion.
 
 ### Verified
-- Source inspection: không tìm thấy Mandatory `5000`/5s local hardcode hoặc local phase transition.
-- Mandatory card hiện không có skip/continue/confirm và không có timer/progress riêng.
-- Generic HUD countdown mismatch đã được xác định và sửa ở presentation layer.
-- Regression source-level đã được thêm cho `TỰ ĐỘNG`, removal of `data-timer`, và absence of local 5000/progress/timeout logic.
-- Prior H019 final UI/UX QA remains historically PASS for its scope.
+- GitHub source inspection confirms `approved-ui-v1.js` and followup runtime are loaded before `main.js`.
+- Queue decorator now has idempotence signature, preventing the self-triggered rewrite loop found during review.
+- No `5_000`, `15_000`, `60_000` or local phase timer ownership was added to approved UI runtime.
+- Marriage Cancel maps to existing server `marriage:cancel`; no new event/protocol was invented.
+- Server source confirms rankings expose `average`, `activeRounds`, `lives`; public snapshot exposes elderly/immigration/Government/social/history fields consumed by Client.
 
 ### Unverified
-- Latest H050 regression commit chưa có automatic CI status.
-- Browser/runtime chưa xác nhận post-fix Mandatory không còn countdown và server thực tế chuyển phase ở khoảng 5 giây.
-- Normal/forced-liquidation/bankruptcy post-D052 browser timing compatibility cần Chat 07 xác minh trong H051.
+- Clean `client/npm test` / full TypeScript build for the latest batch has NOT run: local container cannot resolve `github.com`, and GitHub reports no automatic workflow run for the latest Client commits.
+- Desktop/mobile browser visual/runtime QA has NOT run for this new approved-design batch.
+- Therefore DONE statuses above mean implementation handoff closure, not release/visual certification.
+- Server-dependent acceptance points remain intentionally incomplete until H063–H066 are resolved.
 
 ### Handoff
-- Chat 07: `H-20260907-051-07-MANDATORY-5S-CLIENT-QA` — clean client/browser verification of server-authoritative ~5s Mandatory and no visible countdown.
+- Chat 03: `H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT`.
+- Chat 03: `H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT`.
+- Chat 03: `H-20260907-065-03-UI-LIFECYCLE-RESULT-CONTRACT`.
+- Chat 03: `H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT`.
+- Chat 07: `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` for clean build + desktop/mobile browser smoke of all currently implemented surfaces.
 
 ### Open Issues
-- `H-20260907-050-06-MANDATORY-5S-CLIENT` DONE.
-- `H-20260907-051-07-MANDATORY-5S-CLIENT-QA` OPEN.
-- `H-20260906-019-06-FULL-UIUX-IMPLEMENTATION` remains DONE at its prior UI/UX scope.
+- H063–H066 are authoritative server contract dependencies and must be resolved by Chat 03 before Chat 06 can finish the corresponding BLOCKED handoffs.
+- H067 is the verification gate for the current approved UI V1 Client integration.
+- Do not mark the whole approved UI batch release-ready until both contract dependencies and H067 QA are complete.
