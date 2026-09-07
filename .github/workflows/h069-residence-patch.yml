@@ -1,0 +1,40 @@
+name: H069 Residence Patch Verification
+
+on:
+  push:
+    branches:
+      - chat02/h069-residence-lifecycle
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-test:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chat02/h069-residence-lifecycle
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply authoritative Residence hooks
+        run: python server/backend/scripts/apply-h069-residence.py
+      - name: Install engine dependencies
+        working-directory: server/backend
+        run: npm install --no-audit --no-fund
+      - name: Typecheck and full configured regression suite
+        working-directory: server/backend
+        run: npm run typecheck && npm test
+      - name: Commit verified engine integration
+        run: |
+          if git diff --quiet -- server/backend/src/engine.ts; then
+            echo "No engine patch required"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/backend/src/engine.ts
+          git commit -m "feat(engine): integrate D-053 Residence lifecycle"
+          git push origin HEAD:chat02/h069-residence-lifecycle
