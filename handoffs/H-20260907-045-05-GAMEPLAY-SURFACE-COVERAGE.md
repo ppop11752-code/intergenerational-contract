@@ -1,56 +1,62 @@
 handoff_id: H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE
 from: 08
 to: 05
-status: OPEN
+status: DONE
 title: Hoàn thiện UX coverage cho các gameplay surface ngoài Landing/Lobby/Room/HUD
 
 ## Context
 
-Independent audit `H-20260907-044-08-UI-RULE-LEDGER-AUDIT` found that the direct user-approved `Landing → Lobby → Room → HUD` cluster is broadly rule-consistent, but it is not full-game UX coverage.
-
-The project must not treat completion of these four approved specs as completion of all authoritative gameplay UX.
+Independent audit `H-20260907-044-08-UI-RULE-LEDGER-AUDIT` found that the direct user-approved `Landing → Lobby → Room → HUD` cluster was broadly rule-consistent, but it was not full-game UX coverage.
 
 ## Required work
 
-Source-validate and obtain direct user approval, in a sensible sequence, for the remaining gameplay surfaces required by the Rule Ledger:
+Source-validate and obtain direct user approval for:
 
 1. Mandatory presentation + obligation breakdown + forced liquidation + bankruptcy outcome.
-2. Status Purchase + 15s timer + next-round effect + married representative + timeout fallback + Noble cap/refund.
-3. Voluntary action surfaces sharing one 60s total timer:
-   - Market;
-   - Recovery;
-   - Support;
-   - Birth.
+2. Status Purchase + timer/next-round/married/fallback/Noble cap-refund semantics.
+3. Voluntary shell + Market / Recovery / Support / Birth.
 4. Marriage proposals/lifecycle/notifications.
-5. Residence / Family detail, including child/orphan/current Residence semantics and economic-household distinction.
-6. Waiting Queue / reconnect state, explicitly communicating permanent NPC takeover of the old Character and no reclaim on reconnect.
-7. Government / ASXH / PAYG / Pension Reserve / Support Fund / crisis explanation surfaces.
-8. Elderly medical / mortality / Grief / inheritance result communication.
+5. Residence / Family detail.
+6. Waiting Queue / reconnect / permanent NPC takeover / no reclaim.
+7. Government / ASXH / PAYG / Pension Reserve / Support Fund / crisis explanation.
+8. Elderly medical / mortality / Grief / inheritance.
 9. Immigration / NPC takeover communication.
-10. World Event effect detail beyond the temporary banner.
-11. Niên sử detailed contents/coverage and authoritative source traceability.
-12. End Report / scoring / extinction outcome / Host-only same-room replay.
+10. World Event effect presentation.
+11. Niên sử detailed coverage.
+12. End Report / scoring / extinction / Host-only replay.
 
-## Specific ambiguities to resolve in design
+## Result — 2026-09-07
 
-- HUD `phase + remaining time` must not make Mandatory look like a gameplay decision timer. Mandatory may only show reading/presentation progress/countdown if desired; no skip/decision semantics.
-- Room wording `child maps to parents' Residence` must resolve using authoritative current Residence semantics so orphan/survivor and Stage2→3 transitions are correct.
-- Landing reconnect wording such as `TIẾP TỤC PHÒNG` must not imply reclaiming the old Character.
+**DONE — SOURCE/DESIGN COVERAGE COMPLETE.**
 
-## Constraints
+All required gameplay groups now have direct user-approved V1 UX sources recorded in `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
 
-- Do not change gameplay to make UX easier.
-- Use latest user decisions + Rule Ledger as source.
-- Do not ask Chat 06 to invent missing semantics before approval.
-- Existing Landing/Lobby/Room/HUD approved specs remain valid unless a specific contradiction is later found.
+Resolved specific ambiguities:
+- Mandatory is presentation-only with no decision countdown/skip; canonical duration is 5s.
+- Character/Turn Track focus resolves to current authoritative Residence rather than hard-coded parents' Residence.
+- Landing reconnect copy now says `KẾT NỐI LẠI PHÒNG` and explicitly communicates permanent NPC takeover/no reclaim.
+- World Event uses concrete effects in the main banner; no separate desktop detail surface.
+- End Report uses authoritative rankings/endingReason and never declares a standard winner on early extinction.
 
-## Exit criteria
+Final design surface added:
+- `docs/UI_END_REPORT_APPROVED_V1.md`
+- implementation handoff `H-20260907-062-06-END-REPORT-DESIGN-IMPLEMENTATION`
 
-- Every authoritative gameplay group above has a current approved UX path or an explicit documented decision that no dedicated surface is required.
-- Navigation/access to each surface is clear.
-- Timers and automatic phases are semantically correct.
-- Full UX completion is not claimed until these gaps are closed.
+Coverage source:
+- `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md` — `COMPLETE — SOURCE/DESIGN APPROVAL COVERAGE`.
+
+## Verification boundary
+
+This handoff is complete at **source/design approval level only**.
+
+It does not claim:
+- Chat 06 implementation complete;
+- structured server contract sufficiency for every approved UI field;
+- integration/E2E/visual QA complete;
+- release readiness.
+
+Remaining implementation/verification belongs to Chat 06 / Chat 03 where narrow contract additions are required / Chat 07 QA, with Chat 08 available for independent re-audit when requested.
 
 ## Audit source
 
-`reports/08_CURRENT.md`, commit `12e2b29365b02045f28981cb01e34dd6d0016b0a`.
+Original source: `reports/08_CURRENT.md`, commit `12e2b29365b02045f28981cb01e34dd6d0016b0a`.
