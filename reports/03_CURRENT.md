@@ -4,103 +4,99 @@
 
 ### Status
 
-- `H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT`: **BLOCKED**.
-- `H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT`: **BLOCKED BY H069**.
-- `H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT`: **DONE**.
-- `H-20260907-065-03-UI-LIFECYCLE-RESULT-CONTRACT`: **DONE**.
-- `H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT`: **DONE**.
+- `H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT`: **DONE**.
+- `H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT`: **DONE**.
+- H071 client integration is now unblocked.
 
 ### Changed
 
-- H064: private snapshot now exposes authoritative Market purchase maximums,
-  Recovery limits, Support transfer maximums, Birth proposal slots and Status
-  affordability, with stable reason codes. Every submitted action is still
-  revalidated by the server.
-- H065: canonical state now records structured elderly-medical, death,
-  inheritance, Government transfer, joint-spouse death, queue-entry and
-  new-life-assignment results. Public/private snapshots expose bounded result
-  data suitable for exact client rendering.
-- H066: every World Event occurrence now has a stable ID, round/year, ambience
-  key, typed affected-system rows and an exact Chronicle linkage. The snapshot
-  does not require fuzzy parsing of event prose.
-- H063/H070: Chat 01 has closed H068 after the user selected option A and locked
-  D-053. The current `main` model/engine still has no Residence state or lifecycle;
-  H069 remains OPEN under Chat 02. Chat 03 made no speculative snapshot change.
+- Public `game.residenceDirectory` is keyed by stable `residenceId` and retains
+  active plus reclaimed historical Residence records.
+- Each Residence record exposes lifecycle state/origin/rounds, stable
+  presentation coordinates, parent-Residence references, current occupants,
+  authoritative family references and server-derived Residence role keys.
+- `game.activeMapResidenceIds`, `activeOnMap` and
+  `currentNavigationAllowed` define active map/current navigation explicitly.
+- Bounded `game.residenceTransitions` provides `adult_move` and
+  `adult_retained` events with exact source/destination Residence IDs.
+- Public living Character and active room-player records expose
+  `currentResidenceId`; private `currentResidenceId` is null in Lobby or Waiting
+  Queue, including reconnect after permanent NPC takeover.
+- Multiplayer protocol now prohibits client Residence inference and documents
+  stable Chronicle/history resolution for reclaimed IDs.
 
 ### Source
 
-- `docs/RULE_LEDGER.md`
-- `docs/DECISION_LOG.md` — D-053.
-- `docs/OPEN_ISSUES.md` — OI-007.
-- Approved UI specifications referenced by H063–H066.
-- `server/backend/src/model.ts`
-- `server/backend/src/engine.ts`
-- `server/backend/src/authoritative-room.ts`
-- `server/backend/MULTIPLAYER_PROTOCOL_V50.md`
-- Implementation commit `0d43bd8f73db9fce53617d36bb793a05aed2fcf7`
+- D-053 and `docs/RULE_LEDGER.md`.
+- Completed H069 Residence state/lifecycle implementation at
+  `c6e2415684dcab45b8d66446eaf8a24a50c2f783`.
+- Approved Room, Residence/Family, Marriage and Waiting Queue/Reconnect UI specs.
+- H070 implementation commits `db271a1e86fd979cb8a085bb032a9833204e8965`
+  and `07659f60713f84f0f22a6255901d2c0561424f8c`.
 
 ### Impact
 
-Chat 06 can render H064–H066 from typed snapshot fields without recomputing
-limits, guessing eligibility, or parsing narrative strings. Gameplay formulas,
-phase order, timers and action authority were not changed. Residence/map client
-work remains blocked until H069 implements the locked Residence model/lifecycle.
+Chat 06 can bind map placement, Home/current Residence, Residence occupants,
+family navigation, empty/abandoned/reclaimed presentation and Chronicle lookup
+directly to server fields. Economic Household remains separate from Residence.
+No gameplay formula, Residence assignment, phase, timer or action was changed.
 
 ### Verified
 
 - Backend `npm run release:check`: PASS.
-- Typecheck: PASS.
+- Typecheck/build: PASS.
 - Rule Ledger: PASS 42/42.
 - OI-002 regression: PASS 6/6.
 - OI-001 regression: PASS 9/9.
-- Birth eligibility, Support target and UI display regressions: PASS.
-- H064 action-limit/reason contract: PASS.
-- H065 lifecycle-result contract: PASS.
-- H066 World Event/Chronicle contract: PASS for all nine events.
+- Existing Birth, Support, display, action-limit, lifecycle-result and World
+  Event contracts: PASS.
+- D-053 Residence lifecycle: PASS 10/10.
+- H070 Residence snapshot/map contract: PASS.
+- Both authoritative Stage2→3 transition event variants: PASS.
 - Fuzz: PASS 20 games.
 - Final simulation: PASS 30 games.
 - Nested server typecheck/build: PASS.
-- Socket event contract: PASS 9/9.
+- Socket transport contract: PASS 9/9.
 
 ### Audit
 
-- Authoritative source: D-053, Rule Ledger, approved H063–H066 UI contracts and
-  existing canonical engine mutations; no client-supplied calculation accepted.
-- Blast radius checked: model serialization, engine mutations, public/private
-  room snapshots, reconnect snapshots, multiplayer protocol and client consumers.
-- Dependencies checked: Rule Ledger precedence, current household/family model,
-  action revalidation, Chronicle identity and queue/new-life transitions.
-- Falsification checked: H064 quote/action parity plus insufficient/locked/cap
-  reasons; H065 joint death, no-heir Government transfer, queue and new life;
-  H066 all nine events, unaffected-system omission, inactive null snapshot and
-  snapshot no-side-effects.
-- `docs/OPEN_ISSUES.md`: OI-007 is OPEN — SOURCE LOCKED / IMPLEMENTATION
-  PENDING; OI-001–OI-006 remain closed.
-- Other specialist impact: Chat 02 must complete H069 before Chat 03 can execute
-  H070; Chat 06 may consume H064–H066 immediately.
-- Regression impact: gameplay formulas, eligibility rules, timers and phase
-  ordering are unchanged for H064–H066. H063 has no implementation change.
-- Verification level: source, deterministic contract tests and full local server
-  regression complete; deployed runtime and live browser integration unverified.
+- Authoritative source: D-053, Rule Ledger, completed H069 and approved UI specs.
+- Blast radius checked: public/private room snapshots, reconnect/queue state,
+  Character/family references, map selection, Chronicle lookup and protocol.
+- Dependencies checked: canonical `residences`, Character
+  `currentResidenceId`, occupant state, stable coordinates and H069 lifecycle.
+- Falsification checked: child co-resides without Household merge; queued and
+  reconnected Human has null Home; NPC takeover retains old Character Residence;
+  reclaimed ID remains resolvable but leaves active map/navigation; snapshot is
+  side-effect-free; both adulthood variants are explicit; no NPC Persona appears.
+- `docs/OPEN_ISSUES.md`: OI-007 remains OPEN only for client integration and
+  independent audit; OI-001–OI-006 remain closed.
+- Other specialist impact: H071 is unblocked for Chat 06; H072 remains blocked
+  until client integration is complete.
+- Regression impact: no gameplay, economic, lifecycle timing or room action
+  semantics changed; only authoritative display serialization was added.
+- Verification level: source and deterministic local server integration complete;
+  deployed runtime, client rendering and live browser verification pending.
 
 AUDIT: PASS WITH WARNINGS
 
 ### Warning / Unverified
 
-- Residence rules are source-complete, but H063/H070 remain blocked by the OPEN
-  H069 engine/state implementation.
-- Client integration, reconnect rendering in a deployed room and live-browser QA
-  for the new H064–H066 fields have not yet been verified.
+- H071 client integration is not yet implemented.
+- Deployed reconnect/map/Chronicle behavior and live-browser rendering are not
+  verified.
+- OI-007 cannot close before H071 and independent H072 audit.
 
 ### Handoff
 
-- Chat 01: H068/D-053 complete; no further rule decision is pending.
-- Chat 02: implement H069 canonical Residence state/transitions.
-- Chat 03: execute H070 and close/reconcile H063 after H069 is complete.
-- Chat 06: integrate H064–H066 now; consume server fields/reason codes verbatim.
-- Chat 07: perform deployed reconnect and live-browser regression afterward.
+- Chat 06: execute H071 using `residenceDirectory`, `activeMapResidenceIds`,
+  `currentResidenceId` and `residenceTransitions`; do not derive Residence or
+  adulthood notice variants locally.
+- Chat 08: execute H072 after H071, including protocol/client drift checks.
+- Chat 07: verify deployed queue/reconnect, map navigation and reclaimed-history
+  behavior after client integration/deployment.
 
 ### Open Issues
 
-- OI-007 is open at implementation stage; OI-001–OI-006 remain closed.
-- H063/H070 remain blocked on H069; H064–H066 await client/deployed QA gates.
+- OI-007 remains OPEN for downstream client integration and independent audit.
+- OI-001–OI-006 remain CLOSED.

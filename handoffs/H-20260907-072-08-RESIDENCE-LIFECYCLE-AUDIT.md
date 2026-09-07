@@ -2,12 +2,17 @@ handoff_id: H-20260907-072-08-RESIDENCE-LIFECYCLE-AUDIT
 from: 01
 to: 08
 status: OPEN
-blocked_by: H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE, H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT, H-20260907-071-06-RESIDENCE-CLIENT-INTEGRATION
+blocked_by: H-20260907-071-06-RESIDENCE-CLIENT-INTEGRATION
 title: Independently audit Residence identity and lifecycle
 
 ## Authority
 
 D-053 and `docs/RULE_LEDGER.md`.
+
+## Dependency status
+
+H069 and H070 are DONE. Independent end-to-end audit remains blocked only by
+H071 client integration.
 
 ## Required audit
 

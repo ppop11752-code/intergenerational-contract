@@ -1,8 +1,7 @@
 handoff_id: H-20260907-063-03-UI-RESIDENCE-MAP-CONTRACT
 from: 06
 to: 03
-status: BLOCKED
-blocked_by: H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE
+status: DONE
 title: Expose authoritative Residence / map-location contract for approved UI
 
 ## Source
@@ -32,20 +31,21 @@ H042, H054 visual relationship line/navigation, H055, parts of H056 and H059.
 
 ## Result
 
-Still BLOCKED, but the original rule ambiguity is resolved.
+Completed and reconciled through H070 after D-053 and H069.
 
-- Chat 01 closed H068 through user-selected option A and locked D-053 in the
-  Rule Ledger: Residence is independent, has stable identity, and follows the
-  explicit creation/marriage/child/adulthood/empty lifecycle.
-- OI-007 is now `SOURCE LOCKED / IMPLEMENTATION PENDING`.
-- Current `main` still has no canonical Residence state or transition code in
-  `GameState`/engine. H069 is OPEN and owned by Chat 02.
-- H063 is reconciled into H070. Chat 03 will expose and test the typed public/
-  private snapshot only after the completed H069 implementation is available.
-
-No `householdId`, parent-link or map-proximity inference has been exposed.
+- Public snapshot exposes stable Residence identity/lifecycle/coordinates,
+  current occupants, family references and server-derived Residence role keys.
+- Server-authored `residenceTransitions` distinguishes normal adult move from
+  retained-orphan adulthood without client inference.
+- Living Character and active room-player records expose `currentResidenceId`.
+- Private `currentResidenceId` is null in Lobby/Waiting Queue and after reconnect
+  while the old Character remains NPC-controlled at its own Residence.
+- Reclaimed Residence records stay resolvable by stable ID for Chronicle/history
+  but are excluded from authoritative active-map/current-navigation state.
+- Co-residence stays independent from Economic Household; no `householdId`,
+  parent-link or map-proximity Residence inference is exposed.
 
 ## Result commit/ref
 
-Source decision: D-053 / commit `626f1c58de5eb08b518628d1acf6f54106b1d74e`.
-Implementation dependency: H069; server-contract continuation: H070.
+`db271a1e86fd979cb8a085bb032a9833204e8965` and
+`07659f60713f84f0f22a6255901d2c0561424f8c`

@@ -1,7 +1,7 @@
 handoff_id: H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT
 from: 01
 to: 03
-status: OPEN
+status: DONE
 title: Expose authoritative Residence snapshot and map contract
 
 ## Authority
@@ -32,3 +32,29 @@ Client must not infer Residence from Economic Household, parent ID, family relat
 ## Completion
 
 Add contract tests, record commit/evidence, update Chat 03 report, then unblock H-071.
+
+## Result
+
+Completed by Chat 03.
+
+- `game.residenceDirectory` provides a stable-ID lookup for active and reclaimed
+  Residence records, including lifecycle rounds, origin, coordinates, parent
+  Residence references, occupants, family references and Residence role keys.
+- `game.activeMapResidenceIds`, `activeOnMap` and
+  `currentNavigationAllowed` define the authoritative active map/navigation set.
+- Public Characters/active room players and private player state expose
+  `currentResidenceId`; lobby, death queue and reconnect queue return null Home.
+- Bounded `game.residenceTransitions` explicitly distinguishes `adult_move`
+  from `adult_retained`, with exact source/destination Residence IDs.
+- Reclaimed records remain resolvable but cannot return to active navigation.
+- Hidden NPC Persona is excluded, and snapshot generation is side-effect-free.
+
+Regression `residence-snapshot-map-contract.mjs`: PASS for co-resident separate
+Households, family/role references, authoritative coordinate parity, both
+Stage2→3 notice variants, queue, reconnect NPC takeover, reclamation/history
+resolution and no Persona leak.
+
+## Result commit/ref
+
+`db271a1e86fd979cb8a085bb032a9833204e8965` and
+`07659f60713f84f0f22a6255901d2c0561424f8c`
