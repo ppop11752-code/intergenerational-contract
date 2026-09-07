@@ -1,18 +1,15 @@
 handoff_id: H-20260907-060-06-WORLD-EVENT-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement user-approved World Event presentation V1
+status: DONE
+title: Implement approved World Event Detail V1
 
-## Source
-- `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`
-- `docs/UI_HUD_APPROVED_V1.md`
+## Result
+- Current World Event detail consumes authoritative `game.worldEvent` occurrence.
+- Detail shows only structured affected-system `impacts` with authoritative value/delta/unit.
+- Epidemic Mandatory medical amount comes from structured impact; no local event-name inference.
+- `XEM TRONG NIÊN SỬ` uses exact `chronicleEntryId` linkage.
+- Event UI adds no timers or gameplay actions.
 
-## Implemented
-- event appears only when authoritative `eventName` is active;
-- compact upper-center banner is separate from phase/timer;
-- currently exposed authoritative economic-income factor can be shown without inferring event meaning;
-- no event-specific controls/timers are added.
-
-## Blocker
-`H-20260907-066-03-UI-WORLD-EVENT-CHRONICLE-CONTRACT` is required for exact affected-system rows, epidemic medical fee and stable Chronicle focus linkage. Client will not infer effects/duration from event name.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
