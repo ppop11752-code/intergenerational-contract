@@ -3,65 +3,66 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN. Gameplay surfaces #1–#10 hiện đã có direct user-approved V1. Chat 05 đang chạy Source Validation cho Niên sử detail.
+Đang làm — Parent handoff `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` vẫn OPEN. Gameplay surfaces #1–#11 hiện đã có direct user-approved V1. Chat 05 đang chạy Source Validation cho End Report / scoring / extinction / Host replay — surface chính cuối cùng trong coverage matrix.
 
 ### Changed
-- User approved World Event WE1–WE8 with custom presentation.
-- WE1 custom: no separate desktop `view details` feature/surface.
-- WE2 custom A: main temporary banner shows Event name + concrete impacts, specific enough to understand gameplay change rather than an ultra-short slogan.
-- WE3 custom A: concise `TÁC ĐỘNG VÒNG NÀY` content is integrated directly into the main event banner.
-- WE4 A: authoritative direct-cost values such as epidemic Mandatory medical fee may be shown where exposed; client never estimates.
-- WE5 A: subtle authoritative event ambience is allowed.
-- WE6 A: main banner may navigate directly to matching `THẾ GIỚI` Niên sử entry.
-- WE7 A: show only systems actually affected by the event.
-- WE8 A reconciled with WE1 as mobile responsive reflow only: mobile tap may show the same banner content in a small bottom sheet/card, with no extra detail/formulas/truth.
-- `docs/UI_WORLD_EVENT_DETAIL_SOURCE_VALIDATION_V1.md` CLOSED — USER VERIFIED.
-- Created `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`.
-- Created `H-20260907-060-06-WORLD-EVENT-DESIGN-IMPLEMENTATION` → OPEN for Chat 06.
-- Coverage row #10 = USER-APPROVED V1; row #11 Niên sử = SOURCE VALIDATION ACTIVE.
-- Created `docs/UI_CHRONICLE_SOURCE_VALIDATION_V1.md` using current authoritative PlayerHistory, scoreSnapshots, historySnapshots and chronology state.
-- No gameplay, Rule Ledger, protocol, timers, Event mechanics, scoring or history semantics changed by Chat 05.
+- User approved Niên sử N1–N9 = option A.
+- Niên sử desktop = large centered parchment/ledger over persistent lightly dimmed World Map.
+- Top-level tabs remain exactly `HÀNH TRÌNH / THẾ GIỚI`.
+- `HÀNH TRÌNH` groups personal history by `KIẾP #1/#2/...` with Round/Year timelines and authoritative milestone types; routine transactions stay out.
+- `HÀNH TRÌNH` shows authoritative `ĐIỂM TÀI SẢN TRUNG BÌNH QUA CÁC KIẾP` plus compact score trend; no cash-only or full-married-household mislabeling.
+- `THẾ GIỚI` uses Round/Year timeline plus `DÒNG THỜI GIAN / CHỈ SỐ`; indicator mode uses selected authoritative historical charts.
+- World timeline has compact category filters and map/profile deep links only when authoritative structured linkage exists.
+- World Event `XEM TRONG NIÊN SỬ` opens `THẾ GIỚI` at the matching authoritative Round/Event when supported.
+- Mobile Niên sử uses full-height sheet, sticky tabs and one-at-a-time chart selector.
+- `docs/UI_CHRONICLE_SOURCE_VALIDATION_V1.md` CLOSED — USER VERIFIED.
+- Created `docs/UI_CHRONICLE_APPROVED_V1.md`.
+- Created `H-20260907-061-06-CHRONICLE-DESIGN-IMPLEMENTATION` → OPEN for Chat 06.
+- Updated coverage row #11 = USER-APPROVED V1; row #12 End Report = SOURCE VALIDATION ACTIVE.
+- Created `docs/UI_END_REPORT_SOURCE_VALIDATION_V1.md` after cross-checking authoritative ranking/end-state/replay behavior.
+- Confirmed engine `rankings()` sorts authoritative Human history by average score; early zero-living-Character end uses `Tuyệt chủng — Thất bại chung`; full-duration end uses `Kết thúc sau 32 vòng`.
+- Confirmed same-room replay is Host-only after game end and clears ended engine state while retaining room/player connections.
+- No gameplay, Rule Ledger, protocol, timers, scoring, end-condition or replay semantics changed by Chat 05.
 
 ### Source
 - Latest direct user decisions in Chat 05.
-- `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`.
-- `docs/UI_WORLD_EVENT_DETAIL_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_CHRONICLE_APPROVED_V1.md`.
 - `docs/UI_CHRONICLE_SOURCE_VALIDATION_V1.md`.
-- `docs/UI_HUD_APPROVED_V1.md`.
+- `docs/UI_END_REPORT_SOURCE_VALIDATION_V1.md`.
 - `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
-- `docs/RULE_LEDGER.md`.
-- `server/backend/src/model.ts` PlayerHistory / PlayerScoreSnapshot / HistorySnapshot structures.
+- `docs/RULE_LEDGER.md` scoring/session rules.
+- `server/backend/src/model.ts` PlayerHistory / score snapshot structures.
+- `server/backend/src/engine.ts` authoritative end conditions and `rankings()`.
+- `server/backend/src/authoritative-room.ts` Host-only replay and public ending/ranking state.
 - `handoffs/H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE.md`.
 
 ### Impact
-- Chat 06 may implement World Event V1 but must not create a separate desktop detail panel or infer event effects from Event name.
-- Mobile event sheet is responsive reflow only; implementation must not make it richer than desktop event truth.
-- Niên sử is now the active direct-approval gate.
-- Chronicle implementation should separate Human personal history (`HÀNH TRÌNH`) from authoritative world timeline/snapshots (`THẾ GIỚI`) and hide raw internal IDs.
-- Any structured map/profile deep link or normalized world-history category must be based on authoritative structured state; client must not parse raw Chronicle strings to invent causality.
-- Full-game UX coverage remains incomplete only for Niên sử detail and End Report after this gate.
+- Chat 06 may implement Niên sử V1 but must not parse raw chronology strings to invent structure/identity/causality or recalculate scoring truth.
+- End Report is now the final direct design approval gate in the current gameplay-surface coverage sequence.
+- End Report must use authoritative `endingReason` and ranking order; early extinction must never be converted into a standard winner state.
+- Same-room replay UI must expose Host-only authority before interaction and communicate a fresh game rather than continuation of the ended world.
+- After End Report approval, design coverage matrix can close at the source/design level, but implementation/visual QA remains separate.
 
 ### Verified
-- WE1–WE8 are direct user decisions under the explicit responsive-reflow compatibility rule.
-- HUD V1 already provides the temporary World Event banner and Niên sử entry point.
-- Current backend model separately exposes personal PlayerHistory/scoreSnapshots and world HistorySnapshots/chronology.
-- Personal history event types include life start, reincarnation, marriage, child birth, Status milestone, death, bankruptcy and disconnect.
+- N1–N9 are direct user decisions.
+- Personal history and world history use separate authoritative backend structures.
+- Engine ranking average uses accumulated authoritative score assets / active rounds and sorts descending.
+- True extinction sets common-failure ending reason; full Round32 completion is the standard game end.
+- Replay method is Host-only and available only after ended state; it resets engine/game state while preserving room connections.
 
 ### Unverified
-- Niên sử N1–N9 final presentation choices.
-- Whether every desired categorized world entry/map deep link has sufficient structured contract support without parsing raw chronology strings.
-- End Report/scoring/extinction/replay UX approval.
-- Client implementation/visual fidelity for approved gameplay surfaces remains open.
-- Previously noted inheritance/Residence/Birth structured contract details may still require narrow Chat 03 support during implementation.
+- End Report ER1–ER9 final presentation choices.
+- Whether every desired End Report personal/statistic field is already surfaced cleanly to the client; implementation may need a narrow Chat 03 contract addition.
+- Client implementation/visual fidelity for all approved surfaces remains open.
+- Previously noted inheritance/Residence/Birth/Chronicle structured contract details may still require narrow Chat 03 support during implementation.
 
 ### Handoff
-- Chat 06: `H-20260907-060-06-WORLD-EVENT-DESIGN-IMPLEMENTATION` — OPEN.
-- Chat 06: existing Immigration/Elderly/Government/Queue/Residence/Marriage/Birth/Support/Recovery/Market/Voluntary/Status/Mandatory implementation handoffs remain active.
-- Chat 05: resolve Niên sử N1–N9, then continue End Report.
-- Parent `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN.
+- Chat 06: `H-20260907-061-06-CHRONICLE-DESIGN-IMPLEMENTATION` — OPEN.
+- Chat 06: existing World Event/Immigration/Elderly/Government/Queue/Residence/Marriage/Birth/Support/Recovery/Market/Voluntary/Status/Mandatory implementation handoffs remain active.
+- Chat 05: resolve End Report ER1–ER9; if approved, create final End Report implementation handoff and close parent gameplay-surface design coverage at source/design level.
+- Parent `H-20260907-045-05-GAMEPLAY-SURFACE-COVERAGE` remains OPEN until End Report approval.
 
 ### Open Issues
-- Niên sử direct design approval OPEN.
-- Some structured Chronicle/map-deep-link fields may require narrow Chat 03 support during implementation.
-- End Report approval OPEN.
+- End Report direct design approval OPEN.
+- Some End Report / Chronicle structured client fields may require narrow Chat 03 support during implementation.
 - Implementation/visual verification for approved specs remains OPEN.
