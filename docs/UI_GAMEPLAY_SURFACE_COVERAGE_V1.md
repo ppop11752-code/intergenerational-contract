@@ -36,9 +36,9 @@ The approved shell specs do **not** imply full-game UX completion.
 | 7 | Government / ASXH / PAYG / reserves / support/crisis | **USER-APPROVED V1** — `docs/UI_GOVERNMENT_SOCIAL_SYSTEMS_APPROVED_V1.md` | Chat 06 implement |
 | 8 | Elderly medical / mortality / Grief / inheritance results | **USER-APPROVED V1** — `docs/UI_ELDERLY_MORTALITY_GRIEF_INHERITANCE_APPROVED_V1.md` | Chat 06 implement |
 | 9 | Immigration / NPC takeover communication | **USER-APPROVED V1** — `docs/UI_IMMIGRATION_NPC_TAKEOVER_APPROVED_V1.md` | Chat 06 implement |
-| 10 | World Event effect detail | **USER-APPROVED V1** — `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md` | Chat 06 implement via `H-20260907-060-06-WORLD-EVENT-DESIGN-IMPLEMENTATION` |
-| 11 | Niên sử detailed contents / provenance | **SOURCE VALIDATION ACTIVE** — `docs/UI_CHRONICLE_SOURCE_VALIDATION_V1.md` | Obtain direct N1–N9 approval |
-| 12 | End Report / scoring / extinction / Host replay | NOT DIRECTLY APPROVED | Source validate after Niên sử |
+| 10 | World Event effect detail | **USER-APPROVED V1** — `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md` | Chat 06 implement |
+| 11 | Niên sử detailed contents / provenance | **USER-APPROVED V1** — `docs/UI_CHRONICLE_APPROVED_V1.md` | Chat 06 implement via `H-20260907-061-06-CHRONICLE-DESIGN-IMPLEMENTATION` |
+| 12 | End Report / scoring / extinction / Host replay | **SOURCE VALIDATION ACTIVE** — `docs/UI_END_REPORT_SOURCE_VALIDATION_V1.md` | Obtain direct End Report presentation approval |
 
 ## Cross-surface constraints already locked
 
@@ -55,10 +55,11 @@ The approved shell specs do **not** imply full-game UX completion.
 - Inheritance distribution must use authoritative settlement result; client never recalculates estate/beneficiaries/resource conversion.
 - Immigration V1 uses one short/small non-blocking notification, subtle Residence arrival highlight, no camera hijack and no Waiting Queue semantics.
 - Disconnect NPC takeover preserves the same Character identity/history and changes controller presentation only.
-- World Event V1 has **no separate desktop detail surface**; authoritative concrete effects are integrated into the temporary banner itself.
-- Mobile World Event bottom sheet/card, if used, is same-content responsive reflow only, never an extra detail layer.
-- World Event effects/numbers are never inferred from Event name.
-- Niên sử top-level tabs remain exactly `HÀNH TRÌNH / THẾ GIỚI`; personal history and world history must come from authoritative history/chronology/snapshot state rather than client-invented narratives.
+- World Event V1 has no separate desktop detail surface; authoritative concrete effects are integrated into the temporary banner itself.
+- Mobile World Event bottom sheet/card is same-content responsive reflow only, never an extra detail layer.
+- Niên sử uses authoritative personal history/score snapshots and world history snapshots/chronology; client does not invent history causality or score truth.
+- End Report must use authoritative rankings/endingReason. Standard winner exists only after the full 32-round game; true extinction early is common failure with no standard winner.
+- Same-room replay is Host-only after game end, creates a fresh engine/game while retaining room connections.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
 
 ## Exit criteria
