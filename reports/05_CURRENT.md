@@ -3,49 +3,57 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-Đang làm — Landing V1 và Lobby V1 đã được user duyệt. Lobby đã được handoff sang Chat 06 để triển khai. Bước thiết kế tiếp theo của Chat 05 là Room / World shell, bắt đầu bằng Source Validation Gate theo workflow V2 trước khi đưa phương án.
+Đang làm — Landing V1 và Lobby V1 đã được user duyệt và handoff sang Chat 06. Room / World shell đang ở Source Validation Gate theo workflow V2; chưa được phép đi sang concrete design alternatives trước khi user xác minh các map/presentation semantics còn mơ hồ. HUD sẽ xử lý sau khi Room shell direction đủ rõ.
 
 ### Changed
-- User đã chốt final Lobby detail pass F1–F5.
-- Tạo `docs/UI_LOBBY_APPROVED_V1.md` làm spec authoritative cho Lobby V1 đã được user duyệt.
-- F1: portrait grid desktop responsive khoảng 5–7 cột tùy chiều rộng.
-- F2: chỉ roster scroll khi đông người; invitation header và bottom society/start strip giữ ổn định.
-- F3: QR hiển thị nhỏ mặc định và có thể hover/click để phóng lớn.
-- F4: society/start strip chia hai khối: thông tin xã hội bên trái, Host Start hoặc non-host wait/status card bên phải.
-- F5: Founder reveal rất nhanh, gần như đồng thời; không dùng ceremony reveal tuần tự kéo dài.
-- Các quyết định Lobby trước đó vẫn giữ: LBA `Đại sảnh tập hợp`; PIN trái/QR phải; fantasy gathering-hall background; circular/oval pixel portraits + nameplate dưới; subtle per-Human accent; connection dot; Host fantasy seal; `BẠN` marker; copy code + copy link; temporary Lobby-only portraits; Human-only roster; no Ready; no manual NPC controls; top10 Founder reveal + Waiting Queue position; phrase `XÃ HỘI ĐÃ ĐƯỢC THÀNH LẬP`.
-- Tạo handoff `H-20260907-041-06-LOBBY-DESIGN-IMPLEMENTATION` → OPEN cho Chat 06 triển khai đúng Lobby V1.
-- Không thay gameplay, protocol, room capacity, Founder logic, timers hoặc authoritative server behavior.
+- Đã kiểm tra `reports/05_CURRENT.md` và handoffs; không có handoff OPEN mới gửi tới Chat 05 làm thay đổi ưu tiên hiện tại.
+- Đã chạy historical/source sweep cho Room / World shell theo `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md`.
+- Đã rà lại phần liên quan trong `Game mô phỏng nhân sinh`, Migration Pack (`04_UI_UX_SPEC.md`, `06_DECISION_LOG.md`, `10_SOURCE_INDEX.md`) và `docs/UI_PROTOTYPE_V5_V10_1_REFERENCE.md`.
+- Tạo `docs/UI_ROOM_SOURCE_VALIDATION_V1.md` để phân loại nguồn và cô lập các điểm chưa kiểm định.
+- Xác nhận các current-user decisions đã đủ chắc và không hỏi lại: direct Lobby→World Map; whole-settlement initial camera; left vertical Turn Track; Turn Track focus-only behavior; Government central + click-to-open; Market no building; mainland/open expansion + fog; natural Residence placement + near parents; Status architecture + bounded wealth scale; pan/zoom; no forced camera; persistent map behind drawers/sheets; icon-led quick nav; Human/NPC map distinction; local green marker; Government red active outline; subtle world evolution/ambience/event atmosphere; pixel rendering; mobile Turn Track/sheets.
+- Xác định các Migration-normalized statements chưa có direct-user provenance: strict top-down perspective; Government `2–2.5× house`; Residence hover name/member count; exact Residence click/open behavior; Character Profile/back-to-family behavior; exact quick-nav placement/visibility; minimap policy; ambient walking inhabitants; fog camera-boundary semantics.
+- Không thay gameplay, protocol, timers, authoritative state hoặc map/game rules.
 
 ### Source
-- Quyết định trực tiếp mới nhất của user trong Chat 05 ngày 2026-09-07.
-- `docs/UI_LOBBY_APPROVED_V1.md`.
-- `docs/UI_LOBBY_DIRECTION_V1.md`.
-- `docs/UI_LOBBY_SOURCE_VALIDATION_V1.md`.
+- Quyết định trực tiếp mới nhất của user trong Chat 05.
+- Historical conversation `Game mô phỏng nhân sinh`.
+- Project Migration Pack v1.0.
 - `docs/UI_DESIGN_APPROVAL_WORKFLOW_V2.md`.
+- `docs/UI_ROOM_SOURCE_VALIDATION_V1.md`.
+- `docs/UI_V5_V10_1_DECISION_RECONCILIATION_A_B.md`.
+- `docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md`.
+- `docs/UI_PROTOTYPE_V5_V10_1_REFERENCE.md`.
 
 ### Impact
-- Chat 06 được phép triển khai Lobby V1 theo approved spec.
-- Chat 06 không được suy diễn redesign sang Room / World shell hoặc HUD.
-- QA cũ/baseline cũ không thay thế approved Lobby spec.
-- Chat 05 có thể chuyển sang Room / World shell nhưng phải chạy historical/source validation trước khi trình design alternatives.
+- Room / World shell chưa được phép khóa layout hoặc handoff Chat 06 cho redesign.
+- Chỉ còn cần user xác minh 9 map/presentation semantics chưa có provenance chắc chắn.
+- Sau khi Source Validation Gate đóng, Chat 05 mới audit implementation hiện tại, chỉ ra điểm yếu và đưa 2–3 phương án Room / World shell cụ thể.
+- HUD detailed composition vẫn chưa được thiết kế/duyệt; chỉ các shell constraints đã confirmed được dùng ở giai đoạn này.
 
 ### Verified
-- Lobby Source Validation Gate đã CLOSED.
-- Lobby concept LBA, E1–E4 và F1–F5 đều được user xác nhận trực tiếp.
-- Approved Lobby V1 không thay gameplay/protocol/timers/server authority.
-- Handoff Lobby implementation đã được tạo cho Chat 06.
+- Frozen V5–V10.1 prototypes vẫn NON-AUTHORITATIVE.
+- Migration Pack normalized several Room/Map statements nhưng không chứng minh direct-user provenance cho từng chi tiết chưa hỏi.
+- Current direct decisions A10–A25 và C-related world decisions đã loại bỏ phần lớn câu hỏi trùng lặp.
+- No new Chat 05 OPEN handoff overrides this task.
 
 ### Unverified
-- Chưa có client implementation/visual verification cho Lobby V1.
-- Room / World shell và HUD chưa có concrete user-approved composition.
+- Map perspective: strict top-down vs 3/4/isometric-like.
+- Ambient chibi inhabitants on map.
+- Exact Human/NPC map-marker location/treatment.
+- Residence label visibility policy.
+- Residence click/open interaction.
+- Government exact relative visual scale.
+- Quick-nav placement/visibility policy.
+- Minimap policy.
+- Fog/camera boundary semantics.
 
 ### Handoff
 - Chat 06: `H-20260907-038-06-LANDING-DESIGN-IMPLEMENTATION` — Landing V1.
 - Chat 06: `H-20260907-041-06-LOBBY-DESIGN-IMPLEMENTATION` — Lobby V1.
-- Chat 05: tiếp theo chạy Source Validation Gate cho Room / World shell.
+- Chat 05: chờ user trả lời Room source-validation questions; chưa có Room implementation handoff.
 
 ### Open Issues
 - Landing implementation/visual verification OPEN.
 - Lobby implementation/visual verification OPEN.
+- Room / World shell Source Validation Gate OPEN.
 - User design approval cho Room / World shell và HUD OPEN.
