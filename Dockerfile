@@ -12,9 +12,11 @@ RUN npm run build
 
 FROM node:22-alpine AS client-build
 WORKDIR /app/client
+COPY client/package.json ./
 COPY client/tsconfig.json ./
+RUN npm install --no-audit --no-fund
 COPY client/src ./src
-RUN npx --yes -p typescript@5.7.2 tsc -p tsconfig.json
+RUN npm run build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app/server
