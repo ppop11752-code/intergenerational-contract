@@ -2,12 +2,15 @@ handoff_id: H-20260907-070-03-RESIDENCE-SNAPSHOT-MAP-CONTRACT
 from: 01
 to: 03
 status: OPEN
-blocked_by: H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE
 title: Expose authoritative Residence snapshot and map contract
 
 ## Authority
 
 D-053, `docs/RULE_LEDGER.md`, and the completed H-069 implementation.
+
+## Dependency status
+
+H-20260907-069-02-RESIDENCE-STATE-LIFECYCLE is DONE and merged to `main` at `c6e2415684dcab45b8d66446eaf8a24a50c2f783`. This handoff is now unblocked.
 
 ## Required work
 
