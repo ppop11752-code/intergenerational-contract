@@ -1,6 +1,6 @@
 # UI ROOM / WORLD SHELL — SOURCE VALIDATION V1
 
-Status: USER VERIFICATION REQUIRED
+Status: CLOSED — USER VERIFIED
 Date: 2026-09-07
 Owner: 05 — UI/UX & ART
 
@@ -13,8 +13,6 @@ Room = the in-game World Map / game shell entered directly after Lobby/Founder r
 ## Source findings
 
 ### CURRENT_USER_CONFIRMED
-
-Do not ask again unless a genuine contradiction appears:
 
 - Lobby/Founder reveal enters World Map directly; there is no extra standalone pre-game Room screen.
 - Initial camera shows the whole settlement at a useful overview scale.
@@ -30,7 +28,7 @@ Do not ask again unless a genuine contradiction appears:
 - No forced camera tracking for every event; only light focus where useful.
 - Government / Residence / Niên sử / feature surfaces appear over a persistent map rather than replacing/shrinking it.
 - Government opens by clicking the Government building on the World Map.
-- Quick navigation for Government / Home / Zoom In / Zoom Out remains, but should use compact icon-led controls rather than prototype-style text buttons.
+- Quick navigation for Government / Home / Zoom In / Zoom Out remains, rendered as compact icon-led controls.
 - Human and NPC should be visually distinguishable in avatar/map presentation through both styling and UI marker treatment, while staying in the same art world.
 - Local Residence/map uses a green marker with shape/icon support.
 - Government turn gets a subtle red outline/glow, not a full-building recolor.
@@ -42,51 +40,32 @@ Do not ask again unless a genuine contradiction appears:
 - Core pixel art uses nearest-neighbor / integer-friendly scaling.
 - Mobile uses a compact horizontal Turn Track and sheet-based surfaces rather than shrinking desktop layout.
 
-### HISTORICAL / MIGRATION-NORMALIZED BUT NOT DIRECTLY VERIFIED
+### USER-VERIFIED SOURCE VALIDATION — 2026-09-07
 
-Migration Pack `04_UI_UX_SPEC.md` contains several specific statements for which direct-user provenance was not independently recovered:
+The user resolved the remaining Room / World shell ambiguities:
 
-- `Asset-driven top-down pixel-art map`.
-- Government center landmark approximately `2–2.5× house`.
-- Residence has no Human/NPC marker.
-- Residence hover shows name/member count.
-- Clicking Residence opens a right Residence/Family drawer.
-- Clicking Character opens Character Profile with `← GIA ĐÌNH`.
-- Quick-navigation semantic controls `[Government] [Home] [+] [-]` but no direct-user-verified exact placement/visibility policy.
-- Outer fog/darkened terrain, but no direct-user-verified camera-boundary semantics.
-- No explicit direct-user evidence for a minimap policy.
-- No explicit direct-user evidence for whether ambient chibi inhabitants physically move through the map.
+- **R1 — Perspective:** use **3/4 top-down**. The camera still reads as a map view, but buildings may show façades/height rather than strict orthographic top-down.
+- **R2 — Ambient inhabitants:** **do not show generic chibi inhabitants walking/idling around the map**. World life comes primarily from environmental ambience and authoritative/focused character presentation.
+- **R3 — Human/NPC distinction:** keep Human/NPC distinction primarily in **focus/hover Character/Residence presentation**, not as always-on marker clutter across the whole map.
+- **R4 — Residence labels:** use **selective persistence**. Local/current/focused Residence may keep a light persistent label/marker; other Residences show details on hover/focus.
+- **R5 — Residence click:** clicking a Residence **opens the Residence/Family drawer directly**.
+- **R6 — Government prominence:** **do not lock a fixed Government-to-house ratio**. Government should feel dominant through architecture, central placement, plaza/grounds and composition rather than simple overscaling.
+- **R7 — Quick-nav:** place Government / Home / Zoom controls at the **bottom-right** as a compact icon group; keep them available but reduce opacity when idle.
+- **R8 — Minimap:** provide an **optional/collapsible minimap**, default compact/closed rather than permanently occupying map space.
+- **R9 — Fog/camera:** allow a **short pan into fogged outer space with elastic return** to the useful world area rather than a hard stop or unrestricted drift.
 
-These details may be useful references but must not be silently inherited.
+## Historical statements now resolved
 
-### PROTOTYPE-ONLY / REFERENCE
+- Strict top-down is superseded by user-approved 3/4 top-down.
+- Government `2–2.5× house` is not authoritative; architectural/plaza prominence is preferred.
+- Always-on Human/NPC markers are rejected in favor of focus/hover distinction.
+- Residence information is selective, not always globally visible.
+- Residence click opens the Residence/Family drawer directly.
+- Quick-nav is bottom-right with reduced idle opacity.
+- Minimap is optional/collapsible.
+- Generic ambient chibi inhabitants are not part of the Room map presentation.
+- Fog permits limited overscroll with elastic return.
 
-- V6 introduced drag/pan, zoom indication, map focus pulse and clickable turn avatars.
-- V9 consolidated the persistent map as the visual base with top HUD, left Turn Track and floating panels.
-- V10/V10.1 preserved/corrected the persistent world-shell information architecture.
-- All V5–V10.1 prototypes remain frozen/non-authoritative and do not prove user approval of exact map composition or perspective.
+## Gate result
 
-## Resolved without additional user question
-
-The following historical details are already superseded/resolved by newer user decisions:
-
-- `No Human/NPC marker` cannot be treated as authoritative because the current user explicitly requires Human/NPC distinction in map presentation.
-- Text quick-nav buttons are superseded by current icon-led quick navigation.
-- Government click behavior is already directly confirmed by the user.
-- Settlement/fog/open-mainland structure, Residence placement/status architecture, camera overview, pan/zoom and persistent map are already directly confirmed.
-
-## User verification questions still open
-
-1. **Map perspective:** strict top-down, 3/4 top-down with visible building façades, or isometric-like view?
-2. **Ambient inhabitants:** should generic chibi inhabitants visibly walk/idle in the settlement, or should movement be limited mostly to environmental ambience?
-3. **Human/NPC distinction on the map:** should the distinction live on Residence markers/nameplates, focused Character UI, or both?
-4. **Residence labels:** always visible, hover-only, or selectively persistent for local/current/focused Residence while others appear on hover?
-5. **Residence click behavior:** direct-open Residence/Family drawer, focus-first then second action, or small preview card before full drawer?
-6. **Government visual scale:** keep normalized 2–2.5× house size, use a more moderate fixed scale, or make prominence come from architecture/plaza/placement rather than a fixed ratio?
-7. **Quick-nav placement/visibility:** where should Government/Home/Zoom controls live, and should they remain always visible or partially collapse when idle?
-8. **Minimap policy:** no minimap, optional/collapsible minimap, or always-visible minimap?
-9. **Fog/camera boundary:** stop camera before dense fog, allow a short pan into fog with elastic return, or allow free panning into fogged space?
-
-## Gate
-
-Do not propose concrete Room / World shell compositions until these materially relevant source ambiguities are resolved by the user.
+Source Validation Gate is CLOSED. Chat 05 may now audit the current implementation and present concrete Room / World shell design alternatives. No design may be handed to Chat 06 until the user selects and approves a concrete Room composition.
