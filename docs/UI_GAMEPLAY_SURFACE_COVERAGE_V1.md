@@ -23,17 +23,17 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 
 | # | Gameplay surface group | Current UX status | Next action |
 |---|---|---|---|
-| 1 | Mandatory presentation / obligations / liquidation / bankruptcy | **USER-APPROVED V1** — `docs/UI_MANDATORY_APPROVED_V1.md`; exact reading-duration gameplay dependency external | Chat 06 implement; Chat 01 owns timing decision |
+| 1 | Mandatory presentation / obligations / liquidation / bankruptcy | **USER-APPROVED V1** — `docs/UI_MANDATORY_APPROVED_V1.md`; canonical presentation duration now 5s | Chat 06/03/04/07 follow current implementation handoffs |
 | 2 | Status Purchase / 15s / next-round effect / married rep / fallback / Noble cap-refund | **USER-APPROVED V1** — `docs/UI_STATUS_APPROVED_V1.md` | Chat 06 implement |
 | 3 | Voluntary shell + shared 60s timer | **USER-APPROVED V1** — `docs/UI_VOLUNTARY_APPROVED_V1.md` | Chat 06 implement |
 | 3a | Market | **USER-APPROVED V1** — `docs/UI_MARKET_APPROVED_V1.md` | Chat 06 implement |
 | 3b | Recovery | **USER-APPROVED V1** — `docs/UI_RECOVERY_APPROVED_V1.md` | Chat 06 implement |
 | 3c | Support | **USER-APPROVED V1** — `docs/UI_SUPPORT_APPROVED_V1.md` | Chat 06 implement |
-| 3d | Birth | **USER-APPROVED V1** — `docs/UI_BIRTH_APPROVED_V1.md` | Chat 06 implement via `H-20260907-053-06-BIRTH-DESIGN-IMPLEMENTATION` |
-| 4 | Marriage lifecycle / proposals / notices | **USER-APPROVED V1** — `docs/UI_MARRIAGE_APPROVED_V1.md` | Chat 06 implement via `H-20260907-054-06-MARRIAGE-DESIGN-IMPLEMENTATION` |
-| 5 | Residence / Family / child-orphan-current Residence semantics | **SOURCE VALIDATION ACTIVE** — `docs/UI_RESIDENCE_FAMILY_SOURCE_VALIDATION_V1.md` | Obtain direct RF1–RF8 approval |
-| 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | PARTIAL — room semantics known, UX not approved | Source validate after Residence |
-| 7 | Government / ASXH / PAYG / reserves / support/crisis explanation | PARTIAL — Government access approved, detail UX not approved | Source validate |
+| 3d | Birth | **USER-APPROVED V1** — `docs/UI_BIRTH_APPROVED_V1.md` | Chat 06 implement |
+| 4 | Marriage lifecycle / proposals / notices | **USER-APPROVED V1** — `docs/UI_MARRIAGE_APPROVED_V1.md` | Chat 06 implement |
+| 5 | Residence / Family / child/current Residence semantics | **USER-APPROVED V1** — `docs/UI_RESIDENCE_FAMILY_APPROVED_V1.md` | Chat 06 implement via `H-20260907-055-06-RESIDENCE-FAMILY-DESIGN-IMPLEMENTATION` |
+| 6 | Waiting Queue / reconnect / permanent NPC takeover / no reclaim | **SOURCE VALIDATION ACTIVE** — `docs/UI_WAITING_QUEUE_RECONNECT_SOURCE_VALIDATION_V1.md` | Obtain direct Q1–Q8 approval |
+| 7 | Government / ASXH / PAYG / reserves / support/crisis explanation | PARTIAL — Government access approved, detail UX not approved | Source validate after Queue/Reconnect |
 | 8 | Elderly medical / mortality / Grief / inheritance results | NOT DIRECTLY APPROVED | Source validate |
 | 9 | Immigration / NPC takeover communication | NOT DIRECTLY APPROVED | Source validate |
 | 10 | World Event effect detail | PARTIAL — temporary banner approved | Approve detail surface |
@@ -43,7 +43,7 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 ## Cross-surface constraints already locked
 
 - No gameplay/protocol/timer changes to make UI easier.
-- Mandatory is presentation-only and has no gameplay decision timer.
+- Mandatory is presentation-only, no skip/decision timer, no visible countdown/progress; canonical server presentation duration is now **5 seconds** per latest Rule Ledger / D-052.
 - Status has authoritative max 15s; Status V1 shows that timer only in HUD.
 - Voluntary has one authoritative 60s total timer shared across Market/Recovery/Support/Birth; switching surfaces never resets/pauses it.
 - Voluntary V1 uses a persistent desktop right-edge action dock below/clear of minimap and mobile bottom action rail.
@@ -51,13 +51,14 @@ The four approved shell specs are valid but do **not** imply full-game UX comple
 - Birth default-Accept warning appears only in the final <10s of the responder's Voluntary window; accepted Birth executes end round.
 - Marriage pending proposals have no expiry countdown; accepted proposals are binding and settle end acceptedRound.
 - Residence/Government/Niên sử/marriage notifications do not pause Voluntary timer.
-- Residence focus must resolve to current authoritative Residence, including survivor/orphan/Stage2→3 rules; map proximity never defines household/kinship.
+- Residence focus resolves to current authoritative Residence; co-residence does not imply shared Economic Household.
+- Residence V1 uses minimal portrait/name/role occupant overview, then deeper Character detail on selection.
 - Current approved HUD/Room shell remains valid unless a concrete contradiction is found.
 - Chat 06 must never invent missing gameplay semantics, eligibility, kinship, residence assignment or economic limits.
 
-## Active external dependency from Mandatory
+## Mandatory timing dependency resolved
 
-The user requested a shorter Mandatory reading duration than the earlier canonical value. Exact timing is outside Chat 05 and remains owned by `H-20260907-047-01-MANDATORY-READING-DURATION`. Mandatory V1 displays no countdown/progress and follows authoritative server timing.
+`H-20260907-047-01-MANDATORY-READING-DURATION` is DONE. User selected **5 seconds**; latest Rule Ledger now uses 5 seconds. Mandatory V1 remains unchanged visually because it shows no countdown/progress and follows authoritative server timing.
 
 ## Exit criteria
 
