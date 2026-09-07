@@ -133,6 +133,17 @@ export interface HistorySnapshot{
   publicDebt:number;governmentBudget:number;pensionPayoutRatio:number;renewable:Resources;nonRenewable:Resources;eventName:string|null;immigration:number;
 }
 
+export interface LifecycleBeneficiary{characterId:string;householdId:string;relation:"spouse"|"child";amount:number}
+export interface LifecycleResult{
+  id:string;round:number;year:number;type:"elderly_medical"|"death"|"inheritance"|"queue_entry"|"new_life_assignment";
+  characterIds:string[];householdId:string|null;cause:string|null;joint:boolean;
+  medicalDue:number|null;medicalPaid:number|null;estateTotal:number|null;
+  beneficiaries:LifecycleBeneficiary[];governmentTransfer:number;
+  playerId:string|null;queuePosition:number|null;assignmentReason:"birth"|"death"|"bankruptcy"|null;
+}
+export interface WorldEventImpact{system:"MARKET"|"RECOVERY"|"BIRTH"|"GOVERNMENT"|"MANDATORY";key:string;labelKey:string;value:number;delta:number|null;unit:"currency"|"ratio"|"count"}
+export interface WorldEventOccurrence{id:string;round:number;year:number;name:string;ambienceKey:string|null;impacts:WorldEventImpact[];chronicleEntryId:string}
+
 export interface GameState{
   round:number;debt:number;government:GovernmentState;pool:Resources;nonRenewablePool:Resources;pendingRecovery:PendingRecovery;
   realizedNetIncomeByHousehold:Record<string,number>;
@@ -154,6 +165,8 @@ export interface GameState{
   eventInterestDelta:number;priceIndex:number;inflationRate:number;eventName:string|null;epidemicMedicalCostPerCharacter:number;eventBirthLimit:number;recoveryCostMultiplier:number;debtXMultiplier:number;marketBounds:{min:number;max:number};economicIncomeFactor:number;economicIncomeReasons:string[];
   roundAverageAssetsSnapshot:number;
   historySnapshots:HistorySnapshot[];
+  lifecycleResults:LifecycleResult[];
+  worldEventOccurrences:WorldEventOccurrence[];
   disconnectedScoreSnapshots:Record<string,{round:number;assets:number}>;
   ended:boolean;
   telemetry:{births:number;bankruptcies:number;bankruptcyByStage:Record<string,number>;bankruptcyRecords:BankruptcyRecord[];cashFlow:CashFlowTotals;lifecycle:{created:Record<string,number>;deaths:Record<string,number>};socialCrisisCauses:Record<string,number>;familyFlows:FamilyFlowRecord[];cohortTransitions:Record<string,{born:number;reachedStage2:number;reachedWorker:number;reachedElder:number;diedBeforeWorker:number;workerDeaths:number;elderDeaths:number}>;marriage:{proposals:number;accepted:number;rejected:number;stagePairs:Record<string,number>};demography:{rounds:Array<{round:number;workers:number;singleWorkers:number;workerWorkerCouples:number;workerElderCouples:number;elderElderCouples:number;fertileCouples:number;eligibleWorkerPairs:number;kinBlockedWorkerPairs:number;birthsCumulative:number;replacementRatio:number}>;birthsByParentStagePair:Record<string,number>};elderlyMedical:{due:number;paid:number;deaths:number;survivals:number;mortalityByStage:Record<string,{exposed:number;deaths:number;avgRisk:number}>};incomeFactor:{rounds:Array<{round:number;factor:number;reasons:string[]}>};immigration:{arrivals:number;wealthInflow:number;bankruptcies:number;byRound:Record<string,number>;byStage:Record<string,number>;rounds:Array<{round:number;populationBefore:number;totalResidentAssets:number;wealthPerCapita:number;wealthReference:number;wealthRatio:number;populationFactor:number;rate:number;quota:number;accumulatorBefore:number;accumulatorAfter:number;arrivals:number}>}};

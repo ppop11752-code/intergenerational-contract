@@ -44,8 +44,8 @@ function supportRoom() {
   const { room, game, actor, parent, child, unrelated } = supportRoom();
   const before = JSON.stringify(game.state);
   assert.deepEqual(room.privateSnapshot("A").eligibleSupportTargets, [
-    { characterId: parent.id, relation: "parent", ageLabel: "Cao tuổi · 60–69 tuổi", status: "poor" },
-    { characterId: child.id, relation: "child", ageLabel: "Trẻ em · 10–19 tuổi", status: "poor" }
+    { characterId: parent.id, relation: "parent", ageLabel: "Cao tuổi · 60–69 tuổi", status: "poor", transferableMax: 100, unavailableReason: null },
+    { characterId: child.id, relation: "child", ageLabel: "Trẻ em · 10–19 tuổi", status: "poor", transferableMax: 100, unavailableReason: null }
   ]);
   assert.equal(JSON.stringify(game.state), before, "support target snapshot must not mutate game state");
   assert.equal(game.isEligibleVoluntarySupportTarget(actor, parent), true);

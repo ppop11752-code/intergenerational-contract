@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "npm run build && node test/rule-ledger-v5.mjs && node test/scarcity-inflation-oi002.mjs && node test/marriage-proposal-oi001.mjs && node test/birth-eligibility-snapshot.mjs && node test/support-targets-snapshot.mjs && node test/uiux-display-contract.mjs",
+    "test": "npm run build && node test/rule-ledger-v5.mjs && node test/scarcity-inflation-oi002.mjs && node test/marriage-proposal-oi001.mjs && node test/birth-eligibility-snapshot.mjs && node test/support-targets-snapshot.mjs && node test/uiux-display-contract.mjs && node test/ui-action-limits-contract.mjs && node test/ui-lifecycle-results-contract.mjs && node test/ui-world-event-contract.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "smoke": "npm run build && node test/rule-ledger-v5.mjs && node test/scarcity-inflation-oi002.mjs && node test/marriage-proposal-oi001.mjs && node test/birth-eligibility-snapshot.mjs && node test/support-targets-snapshot.mjs && node test/uiux-display-contract.mjs",
+    "smoke": "npm run build && node test/rule-ledger-v5.mjs && node test/scarcity-inflation-oi002.mjs && node test/marriage-proposal-oi001.mjs && node test/birth-eligibility-snapshot.mjs && node test/support-targets-snapshot.mjs && node test/uiux-display-contract.mjs && node test/ui-action-limits-contract.mjs && node test/ui-lifecycle-results-contract.mjs && node test/ui-world-event-contract.mjs",
     "simulate": "npm run build && node dist/run-simulation.js 100",
     "diagnose": "npm run build && node dist/run-diagnostics.js 30 2026",
     "test:final": "npm test && node dist/run-simulation.js 30",

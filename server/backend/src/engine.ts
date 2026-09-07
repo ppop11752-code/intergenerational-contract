@@ -1,5 +1,5 @@
 import {AgeStage,DEFAULT_CONFIG,GameConfig,Persona,ResourceGrade,ResourceType,Status,nominal} from "./config.js";
-import {Character,GameState,Household,MarriageProposal,Resources,ResourceLot} from "./model.js";
+import {Character,GameState,Household,LifecycleBeneficiary,LifecycleResult,MarriageProposal,Resources,ResourceLot,WorldEventImpact} from "./model.js";
 import {livingCost,marketPrice,regeneratePool,resourceLiquidationValue,scarcityInflationIndex,statusFee,resourceCfg} from "./economy.js";
 import {socialContribution} from "./social-security.js";
 import {maintainGovernment,convertGovernmentResources,recoverScarceResourcesBeforeSubsidy,prepareGovernmentSubsidies,runGovernmentTurn,applyResourceSubsidy,quoteResourceSubsidy,accruePublicDebt,taxPerPerson} from "./government.js";
@@ -56,6 +56,8 @@ export class GameEngine{
       histories:{},
       roundAverageAssetsSnapshot:0,
       historySnapshots:[],
+      lifecycleResults:[],
+      worldEventOccurrences:[],
       disconnectedScoreSnapshots:{},
       realPlayerIds:[],
       waitingQueue:[],
@@ -129,6 +131,9 @@ export class GameEngine{
   }
 
   private historyYear(atRoundEnd=false){return Math.max(0,atRoundEnd?this.state.round*10:(this.state.round-1)*10)}
+  private recordLifecycleResult(result:Omit<LifecycleResult,"id"|"round"|"year">){
+    this.state.lifecycleResults.push({id:`lifecycle-${crypto.randomUUID()}`,round:this.state.round,year:this.historyYear(true),...result});
+  }
   private pushPlayerHistory(playerId:string|undefined|null,type:import("./model.js").PlayerHistoryEventType,characterId:string|null,detail:string,atRoundEnd=false){
     if(!playerId)return;const h=this.state.histories[playerId];if(!h)return;h.events.push({round:this.state.round,year:this.historyYear(atRoundEnd),type,characterId,detail});
   }
@@ -709,6 +714,27 @@ export class GameEngine{
     if(amount<0)throw Error("invalid spend");const limit=this.state.spendingLimitByCharacter[c.id];if(limit==null)return;const spent=(this.state.voluntarySpentByCharacter[c.id]??0)+(this.state.sharedQuotaChargeByCharacter[c.id]??0);if(spent+amount>limit+1e-9)throw Error("action exceeds 50% start-of-round household-asset cap");
   }
 
+  voluntarySpendingRemaining(c:Character){
+    const limit=this.state.spendingLimitByCharacter[c.id];if(limit==null)return Number.POSITIVE_INFINITY;
+    return Math.max(0,limit-(this.state.voluntarySpentByCharacter[c.id]??0)-(this.state.sharedQuotaChargeByCharacter[c.id]??0));
+  }
+
+  private quotedResourceCost(type:ResourceType,g:ResourceGrade,units:number){
+    const grossCost=this.marketPrice(g,type)*units;
+    return grossCost-quoteResourceSubsidy(this,g,grossCost);
+  }
+
+  marketPurchaseQuote(c:Character,type:ResourceType,g:ResourceGrade){
+    const h=this.household(c),allowed:Record<Status,ResourceGrade[]>={poor:["low"],middle:["low","mid"],noble:["low","mid","high"]};
+    const pool=Math.max(0,Math.floor(this.resourcePool(type)[g])),price=this.marketPrice(g,type),spendingRemaining=this.voluntarySpendingRemaining(c);
+    if(!allowed[h.status].includes(g))return{resourceType:type,grade:g,price,purchasableMax:null,unavailableReason:"MARKET_GRADE_LOCKED" as const};
+    if(pool<=0)return{resourceType:type,grade:g,price,purchasableMax:null,unavailableReason:"MARKET_OUT_OF_SUPPLY" as const};
+    let low=0,high=pool;
+    while(low<high){const mid=Math.ceil((low+high)/2),cost=this.quotedResourceCost(type,g,mid);if(cost<=h.sharedCash+1e-9&&cost<=spendingRemaining+1e-9)low=mid;else high=mid-1}
+    if(low<=0){const oneCost=this.quotedResourceCost(type,g,1),reason=oneCost>h.sharedCash+1e-9?"MARKET_INSUFFICIENT_CASH":"MARKET_SPENDING_LIMIT_REACHED";return{resourceType:type,grade:g,price,purchasableMax:null,unavailableReason:reason as "MARKET_INSUFFICIENT_CASH"|"MARKET_SPENDING_LIMIT_REACHED"}}
+    return{resourceType:type,grade:g,price,purchasableMax:low,unavailableReason:null};
+  }
+
   private recordVoluntarySpend(c:Character,amount:number){
     this.state.voluntarySpentByCharacter[c.id]=(this.state.voluntarySpentByCharacter[c.id]??0)+amount;
   }
@@ -727,7 +753,8 @@ export class GameEngine{
 
   statusFeeQuote(c:Character,status:Status){
     const h=this.household(c),personsCharged=this.isCoupleHousehold(h)?2:1,fee=statusFee(status,this.state.roundAverageAssetsSnapshot,this.state.priceIndex,this.cfg)*personsCharged;
-    return{status,fee,personsCharged,affordable:h.sharedCash+1e-9>=fee};
+    const affordable=h.sharedCash+1e-9>=fee;
+    return{status,fee,personsCharged,affordable,unavailableReason:affordable?null:"STATUS_INSUFFICIENT_CASH" as const};
   }
 
   statusSelectionQuote(c:Character){
@@ -781,8 +808,23 @@ export class GameEngine{
     return{grade:g,currentPool,carryingCapacity,pendingNextRound,capacityRemaining:Math.max(0,carryingCapacity-currentPool-pendingNextRound),costPerUnit:this.marketPrice(g)*this.cfg.recovery.marketPriceRate*this.state.recoveryCostMultiplier};
   }
 
+  recoveryActionQuote(c:Character,g:ResourceGrade){
+    const quote=this.recoveryQuote(g),h=this.household(c),spendingRemaining=this.voluntarySpendingRemaining(c),capacity=Math.max(0,Math.floor(quote.capacityRemaining));
+    if(capacity<=0)return{...quote,acceptedMax:null,unavailableReason:"RECOVERY_AT_CAPACITY" as const};
+    const financialMax=quote.costPerUnit<=0?capacity:Math.floor(Math.min(h.sharedCash,spendingRemaining)/quote.costPerUnit+1e-9),acceptedMax=Math.min(capacity,Math.max(0,financialMax));
+    if(acceptedMax<=0){const reason=h.sharedCash+1e-9<quote.costPerUnit?"RECOVERY_INSUFFICIENT_CASH":"RECOVERY_SPENDING_LIMIT_REACHED";return{...quote,acceptedMax:null,unavailableReason:reason as "RECOVERY_INSUFFICIENT_CASH"|"RECOVERY_SPENDING_LIMIT_REACHED"}}
+    return{...quote,acceptedMax,unavailableReason:null};
+  }
+
   isEligibleVoluntarySupportTarget(c:Character,target:Character){
     return c.alive&&target.alive&&(c.childrenIds.includes(target.id)||target.childrenIds.includes(c.id));
+  }
+
+  supportTransferQuote(c:Character,target:Character){
+    if(!this.isEligibleVoluntarySupportTarget(c,target))return{transferableMax:null,unavailableReason:"SUPPORT_TARGET_INELIGIBLE" as const};
+    const h=this.household(c),spendingRemaining=this.voluntarySpendingRemaining(c),transferableMax=Math.max(0,Math.min(h.sharedCash,spendingRemaining));
+    if(transferableMax<=0){const reason=h.sharedCash<=1e-9?"SUPPORT_INSUFFICIENT_CASH":"SUPPORT_SPENDING_LIMIT_REACHED";return{transferableMax:null,unavailableReason:reason as "SUPPORT_INSUFFICIENT_CASH"|"SUPPORT_SPENDING_LIMIT_REACHED"}}
+    return{transferableMax,unavailableReason:null};
   }
 
   voluntaryFamilySupport(c:Character,target:Character,amount:number){
@@ -839,6 +881,22 @@ export class GameEngine{
     if(spouses.length!==2||!spouses.every(x=>this.isWorkerAge(x)))return false;
     const existing=Object.values(this.state.birthProposals).filter(p=>p.householdId===h.id&&p.round===this.state.round&&!["cancelled","invalidated"].includes(p.status));
     return existing.length<this.state.eventBirthLimit;
+  }
+
+  birthSelectionQuote(c:Character){
+    const h=this.household(c),current=this.currentTurnCharacter(),ownsCurrent=current?.id===c.id,representative=h.representativeCharacterId===c.id;
+    const spouses=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive&&x.ageStage>=3),couple=this.isCoupleHousehold(h),workerAges=couple&&spouses.length===2&&spouses.every(x=>this.isWorkerAge(x));
+    const proposals=Object.values(this.state.birthProposals).filter(p=>p.householdId===h.id&&p.round===this.state.round).sort((a,b)=>a.index-b.index),activeForCap=proposals.filter(p=>!["cancelled","invalidated"].includes(p.status)),maxProposals=this.state.eventBirthLimit;
+    let unavailableReason:string|null=null;
+    if(this.phase()!=="voluntary")unavailableReason="BIRTH_NOT_VOLUNTARY";
+    else if(!ownsCurrent)unavailableReason="BIRTH_NOT_CURRENT_TURN";
+    else if(!representative)unavailableReason="BIRTH_REPRESENTATIVE_ONLY";
+    else if(!couple)unavailableReason="BIRTH_REQUIRES_COUPLE";
+    else if(!workerAges)unavailableReason="BIRTH_WORKER_AGE_REQUIRED";
+    else if(activeForCap.length>=maxProposals)unavailableReason="BIRTH_PROPOSAL_LIMIT_REACHED";
+    const canInitiate=unavailableReason===null;
+    const slots=Array.from({length:maxProposals},(_,i)=>{const index=i+1,proposal=activeForCap.find(p=>p.index===index)??null;return{index,proposalId:proposal?.id??null,status:proposal?.status??"available",available:proposal===null&&canInitiate,unavailableReason:proposal?"BIRTH_SLOT_ALREADY_USED":proposal===null&&!canInitiate?unavailableReason:null}});
+    return{maxProposals,promotionalThirdSlot:maxProposals===3,canInitiate,unavailableReason,slots,outgoingProposals:proposals.filter(p=>p.proposerCharacterId===c.id).map(p=>({...p}))};
   }
 
   attemptBirth(h:Household){
@@ -899,16 +957,19 @@ export class GameEngine{
 
   drawEvent(){
     const n=["Thiên tai","Khủng hoảng tài chính","Bùng nổ công nghệ","Mở rộng phúc lợi","Dịch bệnh","Khuyến sinh","Khủng hoảng nợ công","Đầu tư công","Biến động thị trường"][Math.floor(this.random()*9)]!;
-    if(n==="Thiên tai"){for(const p of [this.state.pool,this.state.nonRenewablePool]){p.low*=this.cfg.events.disasterPoolMultiplier;p.mid*=this.cfg.events.disasterPoolMultiplier;p.high*=this.cfg.events.disasterPoolMultiplier}}
-    if(n==="Khủng hoảng tài chính")this.state.eventInterestDelta=this.cfg.events.financialCrisisInterestDelta;
-    if(n==="Bùng nổ công nghệ")this.state.eventInterestDelta=this.cfg.events.techBoomInterestDelta;
-    if(n==="Mở rộng phúc lợi")this.fundSocialSupport(nominal(this.cfg.events.welfareInjection,this.state.priceIndex),"Mở rộng phúc lợi");
-    if(n==="Khuyến sinh")this.state.eventBirthLimit=3;
-    if(n==="Khủng hoảng nợ công")this.state.debtXMultiplier=2;
-    if(n==="Đầu tư công")this.state.recoveryCostMultiplier=this.cfg.events.publicInvestmentRecoveryMultiplier;
-    if(n==="Biến động thị trường")this.state.marketBounds={min:this.cfg.events.marketMin,max:this.cfg.events.marketMax};
-    if(n==="Dịch bệnh")this.state.epidemicMedicalCostPerCharacter=nominal(this.cfg.events.epidemicMedicalCost,this.state.priceIndex);
+    const impacts:WorldEventImpact[]=[];let ambienceKey:string|null=null;
+    if(n==="Thiên tai"){const renewableBefore=this.state.pool.low+this.state.pool.mid+this.state.pool.high,nonRenewableBefore=this.state.nonRenewablePool.low+this.state.nonRenewablePool.mid+this.state.nonRenewablePool.high;for(const p of [this.state.pool,this.state.nonRenewablePool]){p.low*=this.cfg.events.disasterPoolMultiplier;p.mid*=this.cfg.events.disasterPoolMultiplier;p.high*=this.cfg.events.disasterPoolMultiplier}const renewableAfter=this.state.pool.low+this.state.pool.mid+this.state.pool.high,nonRenewableAfter=this.state.nonRenewablePool.low+this.state.nonRenewablePool.mid+this.state.nonRenewablePool.high;impacts.push({system:"MARKET",key:"renewable_pool",labelKey:"EVENT_RENEWABLE_POOL",value:renewableAfter,delta:renewableAfter-renewableBefore,unit:"count"},{system:"MARKET",key:"nonrenewable_pool",labelKey:"EVENT_NONRENEWABLE_POOL",value:nonRenewableAfter,delta:nonRenewableAfter-nonRenewableBefore,unit:"count"});ambienceKey="disaster"}
+    if(n==="Khủng hoảng tài chính"){this.state.eventInterestDelta=this.cfg.events.financialCrisisInterestDelta;impacts.push({system:"MARKET",key:"success_return_delta",labelKey:"EVENT_MARKET_RETURN_DELTA",value:this.state.eventInterestDelta,delta:this.state.eventInterestDelta,unit:"ratio"});ambienceKey="financial_crisis"}
+    if(n==="Bùng nổ công nghệ"){this.state.eventInterestDelta=this.cfg.events.techBoomInterestDelta;impacts.push({system:"MARKET",key:"success_return_delta",labelKey:"EVENT_MARKET_RETURN_DELTA",value:this.state.eventInterestDelta,delta:this.state.eventInterestDelta,unit:"ratio"});ambienceKey="tech_boom"}
+    if(n==="Mở rộng phúc lợi"){const funded=this.fundSocialSupport(nominal(this.cfg.events.welfareInjection,this.state.priceIndex),"Mở rộng phúc lợi");impacts.push({system:"GOVERNMENT",key:"support_fund_injection",labelKey:"EVENT_SUPPORT_FUND_INJECTION",value:funded,delta:funded,unit:"currency"});ambienceKey="welfare"}
+    if(n==="Khuyến sinh"){const before=this.state.eventBirthLimit;this.state.eventBirthLimit=3;impacts.push({system:"BIRTH",key:"proposal_limit",labelKey:"EVENT_BIRTH_PROPOSAL_LIMIT",value:this.state.eventBirthLimit,delta:this.state.eventBirthLimit-before,unit:"count"});ambienceKey="pronatalist"}
+    if(n==="Khủng hoảng nợ công"){const before=this.state.debtXMultiplier;this.state.debtXMultiplier=2;impacts.push({system:"GOVERNMENT",key:"debt_interest_multiplier",labelKey:"EVENT_DEBT_INTEREST_MULTIPLIER",value:this.state.debtXMultiplier,delta:this.state.debtXMultiplier-before,unit:"ratio"});ambienceKey="debt_crisis"}
+    if(n==="Đầu tư công"){const before=this.state.recoveryCostMultiplier;this.state.recoveryCostMultiplier=this.cfg.events.publicInvestmentRecoveryMultiplier;impacts.push({system:"RECOVERY",key:"cost_multiplier",labelKey:"EVENT_RECOVERY_COST_MULTIPLIER",value:this.state.recoveryCostMultiplier,delta:this.state.recoveryCostMultiplier-before,unit:"ratio"});ambienceKey="public_investment"}
+    if(n==="Biến động thị trường"){const before={...this.state.marketBounds};this.state.marketBounds={min:this.cfg.events.marketMin,max:this.cfg.events.marketMax};impacts.push({system:"MARKET",key:"price_bound_min",labelKey:"EVENT_MARKET_MIN_PRICE",value:this.state.marketBounds.min,delta:this.state.marketBounds.min-before.min,unit:"currency"},{system:"MARKET",key:"price_bound_max",labelKey:"EVENT_MARKET_MAX_PRICE",value:this.state.marketBounds.max,delta:this.state.marketBounds.max-before.max,unit:"currency"});ambienceKey="market_volatility"}
+    if(n==="Dịch bệnh"){this.state.epidemicMedicalCostPerCharacter=nominal(this.cfg.events.epidemicMedicalCost,this.state.priceIndex);impacts.push({system:"MANDATORY",key:"epidemic_medical_fee_per_character",labelKey:"EVENT_MANDATORY_MEDICAL_PER_CHARACTER",value:this.state.epidemicMedicalCostPerCharacter,delta:this.state.epidemicMedicalCostPerCharacter,unit:"currency"});ambienceKey="epidemic"}
     this.state.eventName=n;
+    const id=`world-event-r${this.state.round}-${crypto.randomUUID()}`;
+    this.state.worldEventOccurrences.push({id,round:this.state.round,year:(this.state.round-1)*10,name:n,ambienceKey,impacts,chronicleEntryId:id});
     this.state.chronology.push(`[Vòng ${this.state.round}] Sự kiện: ${n}`);
     return n;
   }
@@ -976,9 +1037,10 @@ export class GameEngine{
       this.adjustStatusRefundForDeath(h,c);
       const cohort=this.cohort(c);if(c.ageStage<3)cohort.diedBeforeWorker++;else if(c.ageStage<=6)cohort.workerDeaths++;else cohort.elderDeaths++;
       for(const parent of this.parentCharactersOf(c))if(parent.alive)parent.griefFeeDue++;
-      c.alive=false;this.invalidateMarriageProposalsForCharacter(c.id);this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"death",c.id,reason,true);this.queueOwner(c);
+      c.alive=false;this.invalidateMarriageProposalsForCharacter(c.id);this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"death",c.id,reason,true);this.queueOwner(c,"death");
     }
-    this.settleEstate(h);
+    this.recordLifecycleResult({type:"death",characterIds:[a.id,b.id],householdId:h.id,cause:reason,joint:true,medicalDue:null,medicalPaid:null,estateTotal:null,beneficiaries:[],governmentTransfer:0,playerId:null,queuePosition:null,assignmentReason:null});
+    this.settleEstate(h,h.childrenIds,[a.id,b.id],true);
     this.state.chronology.push(`[Vòng ${this.state.round}] ${a.id} và ${b.id}: tử vong cùng cuối vòng; di sản hộ chia cho các con còn sống`);
   }
 
@@ -1001,6 +1063,7 @@ export class GameEngine{
       const livingAdultsBefore=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive&&x.ageStage>=3);
       if(willDie.length===2&&livingAdultsBefore.length===2&&willDie.every(c=>livingAdultsBefore.some(x=>x.id===c.id))&&this.isCoupleHousehold(h))this.dieCoupleTogether(willDie[0]!,willDie[1]!,"old-age mortality");
       else for(const c of willDie)if(c.alive)this.die(c,"old-age mortality");
+      this.recordLifecycleResult({type:"elderly_medical",characterIds:dues.map(x=>x.c.id),householdId:h.id,cause:null,joint:false,medicalDue:totalDue,medicalPaid:totalPaid,estateTotal:null,beneficiaries:[],governmentTransfer:0,playerId:null,queuePosition:null,assignmentReason:null});
       if(totalDue>0)this.state.chronology.push(`[Vòng ${this.state.round}] Y tế tuổi già hộ ${h.id}: ${totalPaid.toFixed(2)}/${totalDue.toFixed(2)}`);
     }
   }
@@ -1016,7 +1079,7 @@ export class GameEngine{
       if(spouses.length!==2||!spouses.every(x=>this.isWorkerAge(x))){p.status="invalidated";continue}
       const already=this.state.birthsThisRoundByHousehold[h.id]??0;if(already>=this.state.eventBirthLimit){p.status="invalidated";continue}
       const q=popQueue(this.state.waitingQueue);this.state.waitingQueue=q.queue;let child:Character;
-      if(q.playerId){child=this.createCharacter(q.playerId,1,0,h.id,false);this.state.realPlayerIds.push(q.playerId);const hist=this.state.histories[q.playerId]!;hist.lives++;this.pushPlayerHistory(q.playerId,"reincarnation",child.id,`Tái sinh vào Kiếp #${hist.lives}`,true)}
+      if(q.playerId){child=this.createCharacter(q.playerId,1,0,h.id,false);this.state.realPlayerIds.push(q.playerId);const hist=this.state.histories[q.playerId]!;hist.lives++;this.pushPlayerHistory(q.playerId,"reincarnation",child.id,`Tái sinh vào Kiếp #${hist.lives}`,true);this.recordLifecycleResult({type:"new_life_assignment",characterIds:[child.id],householdId:h.id,cause:null,joint:false,medicalDue:null,medicalPaid:null,estateTotal:null,beneficiaries:[],governmentTransfer:0,playerId:q.playerId,queuePosition:null,assignmentReason:"birth"})}
       else child=this.createNpc(h.id);
       h.childrenIds.push(child.id);for(const parent of spouses){if(!parent.childrenIds.includes(child.id))parent.childrenIds.push(child.id);if(parent.ownerId){const hist=this.state.histories[parent.ownerId];if(hist){hist.children++;this.pushPlayerHistory(parent.ownerId,"child_birth",parent.id,`Có con: ${child.id}`,true)}}}
       const pair=spouses.map(x=>x.ageStage).sort((a,b)=>a-b).join("-");this.state.telemetry.demography.birthsByParentStagePair[pair]=(this.state.telemetry.demography.birthsByParentStagePair[pair]??0)+1;this.cohort(child).born++;
@@ -1089,22 +1152,24 @@ export class GameEngine{
     else if(this.state.round>=this.cfg.game.totalRounds){this.state.ended=true;this.state.endingReason="Kết thúc sau 32 vòng"}
   }
 
-  private queueOwner(c:Character){
+  private queueOwner(c:Character,assignmentReason:"death"|"bankruptcy"){
     if(!c.ownerId)return;
     this.state.realPlayerIds=this.state.realPlayerIds.filter(x=>x!==c.ownerId);
     this.state.waitingQueue=insertAtQueueEnd(this.state.waitingQueue,c.ownerId);
+    this.recordLifecycleResult({type:"queue_entry",characterIds:[c.id],householdId:c.householdId,cause:assignmentReason,joint:false,medicalDue:null,medicalPaid:null,estateTotal:null,beneficiaries:[],governmentTransfer:0,playerId:c.ownerId,queuePosition:this.state.waitingQueue.indexOf(c.ownerId)+1,assignmentReason});
   }
 
-  private settleEstate(h:Household,heirChildIds:string[]=h.childrenIds){
+  private settleEstate(h:Household,heirChildIds:string[]=h.childrenIds,sourceCharacterIds:string[]=h.memberIds,joint=false){
     if(!h.active)return;this.materializeEstateResources(h);
     // Move all remaining funded subaccounts into the estate because no member survives.
     for(const id of h.memberIds){const bal=this.state.socialSecurity.personalBalances[id]??0;h.sharedCash+=bal;this.state.socialSecurity.personalBalances[id]=0}
     // Natural death uses the deceased Character's direct children. Whole-Household
     // bankruptcy may pass the Household child union explicitly/default. This prevents
     // a stepchild from silently becoming heir to a later step-parent's terminal estate.
-    const estate=h.sharedCash;const children=[...new Set(heirChildIds)].map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive);
-    if(children.length){for(const ch of children){const amount=estate/children.length;this.household(ch).sharedCash+=amount;this.state.telemetry.cashFlow.inheritanceReceived+=amount;this.state.telemetry.familyFlows.push({round:this.state.round,type:"inheritance",fromHouseholdId:h.id,toHouseholdId:ch.householdId,amount})}}
+    const estate=h.sharedCash;const children=[...new Set(heirChildIds)].map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive),beneficiaries:LifecycleBeneficiary[]=[];
+    if(children.length){for(const ch of children){const amount=estate/children.length;this.household(ch).sharedCash+=amount;beneficiaries.push({characterId:ch.id,householdId:ch.householdId,relation:"child",amount});this.state.telemetry.cashFlow.inheritanceReceived+=amount;this.state.telemetry.familyFlows.push({round:this.state.round,type:"inheritance",fromHouseholdId:h.id,toHouseholdId:ch.householdId,amount})}}
     else{this.state.government.budget+=estate;this.state.chronology.push(`[Vòng ${this.state.round}] Di sản ${estate.toFixed(2)} không có con/người phối ngẫu → Ngân sách Nhà nước`)}
+    this.recordLifecycleResult({type:"inheritance",characterIds:[...sourceCharacterIds],householdId:h.id,cause:null,joint,medicalDue:null,medicalPaid:null,estateTotal:estate,beneficiaries,governmentTransfer:children.length?0:estate,playerId:null,queuePosition:null,assignmentReason:null});
     h.sharedCash=0;h.active=false;
   }
 
@@ -1124,16 +1189,18 @@ export class GameEngine{
     const deceasedSs=this.state.socialSecurity.personalBalances[c.id]??0;
     this.state.socialSecurity.personalBalances[c.id]=0;
     h.sharedCash+=deceasedSs;
-    c.alive=false;this.invalidateMarriageProposalsForCharacter(c.id);this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"death",c.id,reason,true);this.queueOwner(c);
+    c.alive=false;this.invalidateMarriageProposalsForCharacter(c.id);this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"death",c.id,reason,true);this.queueOwner(c,"death");this.recordLifecycleResult({type:"death",characterIds:[c.id],householdId:h.id,cause:reason,joint:false,medicalDue:null,medicalPaid:null,estateTotal:null,beneficiaries:[],governmentTransfer:0,playerId:c.ownerId,queuePosition:null,assignmentReason:null});
     if(spouse?.alive){
       const estate=divisibleJointAssets*.5+deceasedSs;const heirs=[spouse,...children];const share=heirs.length?estate/heirs.length:estate;
+      const beneficiaries:LifecycleBeneficiary[]=[{characterId:spouse.id,householdId:spouse.householdId,relation:"spouse",amount:share}];
       // The survivor retains their own funded ASXH and baseline half of divisible joint assets.
       // Their inherited share stays in the same household; only child shares leave shared Cash.
-      for(const child of children){const amount=share;h.sharedCash-=amount;this.household(child).sharedCash+=amount;this.state.telemetry.cashFlow.inheritanceReceived+=amount;this.state.telemetry.familyFlows.push({round:this.state.round,type:"inheritance",fromHouseholdId:h.id,toHouseholdId:child.householdId,amount})}
+      for(const child of children){const amount=share;h.sharedCash-=amount;this.household(child).sharedCash+=amount;beneficiaries.push({characterId:child.id,householdId:child.householdId,relation:"child",amount});this.state.telemetry.cashFlow.inheritanceReceived+=amount;this.state.telemetry.familyFlows.push({round:this.state.round,type:"inheritance",fromHouseholdId:h.id,toHouseholdId:child.householdId,amount})}
+      this.recordLifecycleResult({type:"inheritance",characterIds:[c.id],householdId:h.id,cause:null,joint:false,medicalDue:null,medicalPaid:null,estateTotal:estate,beneficiaries,governmentTransfer:0,playerId:null,queuePosition:null,assignmentReason:null});
       this.state.chronology.push(`[Vòng ${this.state.round}] Di sản ${c.id}: 50% tài sản chung có thể phân chia + ASXH riêng của người mất, chia ${heirs.length} người thừa kế (người phối ngẫu + con)`);
     }else{
       const surviving=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive);
-      if(surviving.length===0)this.settleEstate(h,c.childrenIds);
+      if(surviving.length===0)this.settleEstate(h,c.childrenIds,[c.id]);
     }
     this.state.chronology.push(`[Vòng ${this.state.round}] ${c.id}: ${reason}`);
   }
@@ -1144,8 +1211,8 @@ export class GameEngine{
     for(const p of Object.values(this.state.birthProposals))if(p.householdId===h.id&&p.round===this.state.round&&["pending","accepted"].includes(p.status))p.status="invalidated";
     for(const p of Object.values(this.state.marriageProposals)){const a=this.state.characters[p.proposerCharacterId],b=this.state.characters[p.targetCharacterId];if(["pending","accepted"].includes(p.status)&&(a?.householdId===h.id||b?.householdId===h.id))p.status="invalidated"}
     const members=h.memberIds.map(id=>this.state.characters[id]).filter((x):x is Character=>!!x&&x.alive);if(members.some(c=>c.immigrant))this.state.telemetry.immigration.bankruptcies++;this.state.telemetry.bankruptcies++;
-    for(const c of members){const cohort=this.cohort(c);if(c.ageStage<3)cohort.diedBeforeWorker++;else if(c.ageStage<=6)cohort.workerDeaths++;else cohort.elderDeaths++;this.state.telemetry.bankruptcyByStage[String(c.ageStage)]=(this.state.telemetry.bankruptcyByStage[String(c.ageStage)]??0)+1;this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"bankruptcy",c.id,"Hộ gia đình phá sản");c.alive=false;this.queueOwner(c)}
-    this.settleEstate(h);this.state.chronology.push(`[Vòng ${this.state.round}] Hộ ${h.id}: phá sản; mọi lượt còn lại bị hủy.`);
+    for(const c of members){const cohort=this.cohort(c);if(c.ageStage<3)cohort.diedBeforeWorker++;else if(c.ageStage<=6)cohort.workerDeaths++;else cohort.elderDeaths++;this.state.telemetry.bankruptcyByStage[String(c.ageStage)]=(this.state.telemetry.bankruptcyByStage[String(c.ageStage)]??0)+1;this.state.telemetry.lifecycle.deaths[String(c.ageStage)]=(this.state.telemetry.lifecycle.deaths[String(c.ageStage)]??0)+1;this.pushPlayerHistory(c.ownerId,"bankruptcy",c.id,"Hộ gia đình phá sản");c.alive=false;this.queueOwner(c,"bankruptcy")}
+    this.settleEstate(h,h.childrenIds,members.map(c=>c.id),members.length>1);this.state.chronology.push(`[Vòng ${this.state.round}] Hộ ${h.id}: phá sản; mọi lượt còn lại bị hủy.`);
   }
 
   rankings(){

@@ -101,6 +101,45 @@ The private snapshot contains:
   - `statusQuote` during the representative's Status phase, containing all three
     fees plus the current Noble slot, priority, fallback and potential-refund facts.
 
+### Authoritative action-limit display contract
+
+During the current Character's Voluntary phase, the private snapshot also exposes:
+
+- `marketQuotes`: six resource entries with `purchasableMax` or `null` and a
+  copy-safe `unavailableReason` covering Status access, supply, Cash and spending cap;
+- `recoveryQuotes`: the existing ecological quote plus `acceptedMax` or `null`
+  and a capacity/Cash/spending-cap reason;
+- `eligibleSupportTargets`: each eligible direct parent/child now includes
+  `transferableMax` or `null` and an unavailable reason; when the list is empty,
+  `supportUnavailableReason` is `SUPPORT_NO_ELIGIBLE_TARGETS`;
+- `birthQuote`: authoritative proposal cap, conditional third-slot state, slot
+  states, proposer-side outgoing proposals and a phase/turn/representative/
+  couple/worker-age/cap reason;
+- `statusQuote.cards[].unavailableReason` for unaffordable Status cards.
+
+All maxima are snapshot-time quotes. Every submitted action is revalidated by
+the server against current room state and concurrent resource changes.
+
+### Structured lifecycle result contract
+
+Public `game.lifecycleResults` contains recent structured results for elderly
+medical payment, death, inheritance, Government estate transfer, queue entry and
+new-life assignment. Inheritance results contain exact `estateTotal`, beneficiary
+Character/Household/relation/amount rows, `governmentTransfer`, and `joint=true`
+for one combined two-spouse settlement. Private `recentLifecycleResults` is the
+bounded subset connected to the requesting Human/Character. Clients must not
+reconstruct these results from `chronology` strings.
+
+### Structured World Event contract
+
+Public `game.worldEvent` is the current occurrence or `null`; each occurrence has
+a stable `id`, Round/Year, display name, optional `ambienceKey`, and only its
+affected-system `impacts` (`system`, stable key/label key, value, delta, unit).
+`chronicleEntryId` equals the exact occurrence ID used by
+`game.worldEventOccurrences`, allowing direct Chronicle focus without fuzzy text
+matching. Epidemic impact includes the authoritative Mandatory medical fee per
+Character.
+
 The public World Event field is `game.eventName` and is `null` when no event is
 active. Private display quotes are side-effect-free; submitted actions are still
 revalidated against the then-current authoritative state.
