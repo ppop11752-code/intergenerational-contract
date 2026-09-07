@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - "qa/approved-ui-v1-e2e.mjs"
+      - "qa/approved-ui-v1-live-smoke.mjs"
+      - "qa/approved-ui-v1-fixture.mjs"
       - ".github/workflows/approved-ui-v1-e2e.yml"
 
 jobs:
@@ -32,8 +34,10 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
-      - name: Run approved UI V1 independent browser QA
-        run: node qa/approved-ui-v1-e2e.mjs
+      - name: Run live approved UI V1 smoke
+        run: node qa/approved-ui-v1-live-smoke.mjs
+      - name: Run authoritative-state approved UI V1 fixture
+        run: node qa/approved-ui-v1-fixture.mjs
       - name: Upload approved UI V1 evidence
         if: always()
         uses: actions/upload-artifact@v4
