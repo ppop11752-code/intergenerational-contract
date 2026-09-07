@@ -1,22 +1,17 @@
 handoff_id: H-20260907-059-06-IMMIGRATION-NPC-TAKEOVER-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: OPEN
+status: DONE
 title: Implement approved Immigration / NPC Takeover V1 UI
 
-## Source
-- `docs/UI_IMMIGRATION_NPC_TAKEOVER_APPROVED_V1.md`
-- H070 authoritative Residence contract.
+## Result
+- New immigrant Residence is highlighted from authoritative Residence `origin=immigrant` and current creation round.
+- Aggregated immigrant-arrival notice is presentation-only and based on authoritative Residence records.
+- Character profile keeps the authoritative `NGƯỜI NHẬP CƯ` flag.
+- Reconnect/takeover uses authoritative `aiTakeoverCharacterId`; old Character Residence is identifiable for spectator focus while that Character remains NPC-controlled.
+- No hidden Persona is exposed.
 
-## Implemented
-- round transition can show one aggregated immigration count from authoritative history snapshot;
-- Character profile supports `NGƯỜI NHẬP CƯ` from authoritative `immigrant` flag;
-- takeover notice uses authoritative `aiTakeoverCharacterId` and preserves player-facing identity;
-- reconnect remains no-reclaim and Queue-owned;
-- no hidden Persona is exposed;
-- H071 now provides authoritative Residence IDs/coordinates/navigation, so the previous H063 blocker is resolved.
+No immigration or takeover gameplay rule changed.
 
-## Remaining work
-Bind new immigrant Residence arrival/highlight to the authoritative Residence record/origin and ensure old/new Residence focus behavior uses H070 data in all takeover/arrival paths. No client inference is allowed.
-
-No immigration/takeover gameplay rule is changed.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
