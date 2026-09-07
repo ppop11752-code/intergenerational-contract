@@ -1,40 +1,40 @@
 # 04 — DEPLOYMENT & DEVOPS — CURRENT REPORT
 
 ### Status
-Bị chặn khi hoàn tất `H-20260907-049-04-MANDATORY-5S-DEPLOY`; production config đã được đặt 5.000 ms nhưng deploy API của Render chưa hoàn tất.
+Hoàn thành `H-20260907-049-04-MANDATORY-5S-DEPLOY`; production deployment đã được cấu hình và redeploy thành công với Mandatory 5 giây. Bàn giao live timing QA cho Chat 07.
 
 ### Changed
-- Set Render service environment variable `MANDATORY_PRESENTATION_MS=5000` using merge semantics (`replace=false`), preserving all unrelated production variables.
-- Render accepted the environment update and automatically requested a deploy to apply it.
-- No gameplay, protocol, client timing workaround, or source semantics were changed by Chat 04.
+- Set Render production environment variable `MANDATORY_PRESENTATION_MS=5000` using merge semantics, preserving unrelated production variables.
+- Aligned `server/backend/docker-compose.yml` from `7000` to `5000` to remove deployment-config drift.
+- No gameplay calculations, protocol semantics, client timing workaround, or UI behavior were changed by Chat 04.
 
 ### Source
 - `docs/RULE_LEDGER.md`.
 - `docs/DECISION_LOG.md` D-052.
 - Handoff `H-20260907-049-04-MANDATORY-5S-DEPLOY`.
-- Dependency handoff `H-20260907-048-03-MANDATORY-5S-SERVER`.
+- Completed upstream handoff `H-20260907-048-03-MANDATORY-5S-SERVER`.
+- Server implementation commit `5213e871cfa8210985a7772e2e0de50f32080820`.
 - Render service `srv-daem578u01pc73f35dbg`.
 
 ### Impact
-Render production configuration is now explicitly pinned to 5.000 ms for Mandatory presentation once the requested environment deploy successfully reaches runtime. This avoids relying on an old server default and preserves server-side timing authority.
+Source default, production Render override, and repository Docker Compose configuration now all resolve Mandatory presentation to 5,000 ms. Server-side timing authority remains intact. Remaining work is independent live timing verification, not a deployment blocker.
 
 ### Verified
-- Render environment update API accepted `MANDATORY_PRESENTATION_MS=5000` and requested a deploy.
-- Deploy created for the environment update: `dep-daf74gucveuc73f9qlm0`, trigger `api`.
-- Existing commit deploy `dep-daf748favr4c73bp7h7g` reached LIVE and server logged `Intergenerational Contract server listening on :3001`; service remained healthy before the environment-deploy attempt.
-- Render build logs for the env deploy show repository clone started, but the deploy has not reached runtime yet.
-- A preceding Render clone attempt in the same deployment sequence logged a transient GitHub connectivity failure (`Failed to connect to github.com port 443`) and retried successfully for the commit deploy.
+- Chat 03 completed H-048 and changed canonical authoritative default to `5_000` with deterministic fake-clock coverage.
+- Chat 03 verification confirms: no advance at 4,999 ms; automatic advance at 5,000 ms; `turn:complete` rejected during Mandatory; server override remains supported.
+- Render production environment update API accepted `MANDATORY_PRESENTATION_MS=5000`.
+- `server/backend/docker-compose.yml` aligned to `MANDATORY_PRESENTATION_MS: 5000` in commit `f6e145093e76bd6ecac228eb7e61df180b2a326f`.
+- Render auto-deploy for that commit: `dep-daf9m217lnhs73ffcqpg`.
+- Deploy status: `live`.
+- Runtime log: `Intergenerational Contract server listening on :3001`.
+- Render declared service live at `https://intergenerational-contract.onrender.com`.
+- Previous transient GitHub clone connectivity issue is no longer blocking current production deployment.
 
 ### Unverified
-- `dep-daf74gucveuc73f9qlm0` has not yet reached LIVE, so effective runtime use of the new 5.000 ms environment value is not yet independently verified.
-- Live Mandatory phase duration has not yet been measured by Chat 07.
-- `H-20260907-048-03-MANDATORY-5S-SERVER` is still OPEN in GitHub and current server source still falls back to `7_000` when `MANDATORY_PRESENTATION_MS` is absent; Chat 03 still owns changing the authoritative source default to 5.000 ms and deterministic server coverage.
+- Exact observed live Mandatory phase elapsed time in browser/network runtime has not yet been independently measured by Chat 07.
 
 ### Handoff
-- Chat 04 must retry/check `dep-daf74gucveuc73f9qlm0` and verify LIVE/runtime after Render/GitHub clone connectivity recovers.
-- Chat 03 must complete `H-20260907-048-03-MANDATORY-5S-SERVER` so source default matches D-052.
-- Only after both are satisfied should Chat 07 receive live verification for the 5-second Mandatory phase.
+Chat 07 should run `H-20260907-050-07-MANDATORY-5S-LIVE-QA`: verify live Mandatory presentation is approximately 5 seconds according to authoritative server transition, remains automatic/no-skip, and does not behave as a player decision timer.
 
 ### Open Issues
-- H-049 remains blocked on Render env-deploy completion.
-- H-048 remains an upstream source-default dependency owned by Chat 03.
+- No remaining Chat 04 deployment blocker for D-052 Mandatory 5-second timing.
