@@ -1,22 +1,15 @@
 handoff_id: H-20260907-052-06-SUPPORT-DESIGN-IMPLEMENTATION
 from: 05
 to: 06
-status: BLOCKED
-title: Implement user-approved Support UX V1
+status: DONE
+title: Implement user-approved Support V1
 
-## Source
-- `docs/UI_SUPPORT_APPROVED_V1.md`
-- `docs/UI_VOLUNTARY_APPROVED_V1.md`
+## Result
+- Support cards use authoritative direct parent/child targets only.
+- Per-target `MAX` uses server `transferableMax` only.
+- No-target and target/Cash/spending-limit unavailable reasons are server-authored.
+- Existing support action/revalidation remains authoritative.
+- No outside-social relation or local transfer-cap formula was added.
 
-## Implemented
-- one recipient card per authoritative eligible direct parent/child target;
-- player-facing identity/portrait, relation, age and Status;
-- per-card − / editable amount / + / CHU CẤP controls;
-- explicit voluntary-vs-Mandatory explanation;
-- cash/quota context and no-target explanation;
-- no raw Character ID shown as primary label.
-
-## Blocker
-`H-20260907-064-03-UI-ACTION-LIMITS-REASONS-CONTRACT` for authoritative per-target MAX/disabled reason. MAX remains disabled instead of client-calculated.
-
-No eligibility/cash/quota rule is inferred locally.
+## Verification
+HEAD `ab8e7a7343c73c2f9501f18ebf33697080668629`: TypeScript build PASS; clean Client tests 64/64 PASS; desktop/mobile E2E PASS, run `34145674583`, artifact `10027576158`.
