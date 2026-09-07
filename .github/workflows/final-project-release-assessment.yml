@@ -1,0 +1,52 @@
+name: Final Project Release Assessment
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "qa/final-release-multiplayer-smoke.mjs"
+      - ".github/workflows/final-project-release-assessment.yml"
+
+jobs:
+  h085-final-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      LIVE_URL: https://intergenerational-contract.onrender.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Backend release check
+        working-directory: server/backend
+        run: |
+          npm install
+          npm run release:check
+      - name: Clean client build and test
+        working-directory: client
+        run: |
+          npm install
+          npm test
+      - name: Install browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Critical live multiplayer/runtime smoke
+        run: node qa/final-release-multiplayer-smoke.mjs
+      - name: Approved UI V1 live compatibility
+        run: node qa/approved-ui-v1-live-smoke.mjs
+      - name: Approved UI V1 authoritative fixture
+        run: node qa/approved-ui-v1-fixture.mjs
+      - name: H080 retained World Event/Marriage/mobile acceptance
+        run: node qa/world-event-approved-ui-qa.mjs
+      - name: Upload final release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h085-final-project-release-evidence
+          path: |
+            qa/final-release-artifacts
+            qa/approved-ui-v1-artifacts
+            qa/world-event-approved-ui-artifacts
+          if-no-files-found: warn
