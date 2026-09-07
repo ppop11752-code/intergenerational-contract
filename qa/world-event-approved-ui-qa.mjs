@@ -9,17 +9,16 @@ const liveUrl=process.env.LIVE_URL||'https://intergenerational-contract.onrender
 const result={liveUrl,checks:[],startedAt:new Date().toISOString()};
 const check=(name,ok,detail='')=>{result.checks.push({name,ok,detail});if(!ok)throw new Error(`${name}: ${detail}`)};
 
-// Production deployment surface: H079/H081 must actually be in the deployed JS, not only source.
-for(const asset of ['dist/resolved-ui-contracts.js','dist/world-event-chronicle-focus.js','dist/approved-ui-finalize.js']){
+// Production deployment surface: H079/H082 must actually be in the deployed JS, not only source.
+for(const asset of ['dist/resolved-ui-contracts.js','dist/approved-ui-finalize.js']){
   const res=await fetch(new URL(asset,liveUrl));
   const body=await res.text();
-  check(`production ${asset}`,res.ok&&body.length>300,`status=${res.status}; bytes=${body.length}`);
+  check(`production ${asset}`,res.ok&&body.length>1000,`status=${res.status}; bytes=${body.length}`);
   if(asset.includes('resolved-ui-contracts')){
     check('production direct World Event banner runtime',body.includes('world-event-banner-detail'),'missing direct banner detail');
     check('production removes separate World Event detail path',!body.includes('event-detail-open')&&!body.includes('world-event-detail-panel')&&!body.includes('CHI TIẾT'),'legacy detail path still deployed');
     check('production consumes structured impacts',body.includes('.impacts')&&body.includes('chronicleEntryId'),'structured impacts/link missing');
-  } else if(asset.includes('world-event-chronicle-focus')) {
-    check('production H081 exact Chronicle focus runtime',body.includes('data-chronicle-entry-id')&&body.includes('chronicleEntryId')&&!body.includes('name==='),'H081 exact-id runtime missing or name inference present');
+    check('production H082 unified Chronicle focus',body.includes('data-chronicle-entry-id')&&body.includes('focused-event')&&!body.includes('name==='),'unified exact-id focus missing or name inference present');
   } else {
     check('production Marriage disabled affordance copy',body.includes('CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN'),'approved disabled marriage copy missing');
   }
@@ -34,7 +33,6 @@ const html=`<!doctype html><meta charset="utf-8"><body>
 <section class="residence-authoritative-panel"><button data-resident-character="c2">Ứng viên</button></section>
 <script>let t=20;setInterval(()=>{t--;const e=document.querySelector('[data-timer]');if(e)e.textContent=t+'s'},250)</script>
 <script type="module" src="/dist/resolved-ui-contracts.js"></script>
-<script type="module" src="/dist/world-event-chronicle-focus.js"></script>
 <script type="module" src="/dist/approved-ui-finalize.js"></script>
 </body>`;
 
@@ -66,10 +64,8 @@ try{
   check('Chronicle row carries exact authoritative entry id',await p.locator('[data-world-event-id="we-h080"][data-chronicle-entry-id="chron-h080"]').count()===1);
   check('Chronicle focuses matching structured event',await p.locator('[data-world-event-id="we-h080"].focused-event').count()===1);
   const timerAfter=await p.locator('[data-timer]').textContent();check('event presentation does not pause/reset timer',Number.parseInt(timerAfter)<Number.parseInt(timerBefore),`${timerBefore}->${timerAfter}`);
-  // Same event name, different structured truth: verifies content follows impacts rather than name inference.
   const changed=structuredClone(snapshot);changed.room.game.worldEvent.impacts=[{system:'BIRTH',labelKey:'EVENT_BIRTH_PROPOSAL_LIMIT',value:3,delta:1,unit:'absolute'}];changed.room.game.worldEventOccurrences=[{...changed.room.game.worldEvent}];
   await p.evaluate(x=>window.dispatchEvent(new CustomEvent('ic:snapshot',{detail:x})),changed);await p.waitForTimeout(100);const changedText=await p.locator('.world-event-banner-detail').innerText();check('no event-name inference',changedText.includes('Giới hạn đề xuất sinh con')&&changedText.includes('3')&&!changedText.includes('Pool tái tạo')&&!changedText.includes('Quỹ hỗ trợ'),changedText);
-  // Marriage fidelity: authoritative eligible candidate remains visible but disabled when sender cannot send now.
   await p.locator('[data-resident-character="c2"]').click();await p.evaluate(x=>window.dispatchEvent(new CustomEvent('ic:snapshot',{detail:x})),snapshot);await p.waitForTimeout(100);const mb=p.locator('[data-profile-marriage]');check('Marriage candidate affordance remains visible',await mb.count()===1&&await mb.isVisible());check('Marriage candidate affordance disabled in own economic turn',await mb.isDisabled());check('Marriage approved explanatory copy',((await mb.textContent())||'').trim()==='CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN',(await mb.textContent())||'');
   await p.screenshot({path:`${out}/desktop.png`,fullPage:true});await desktop.close();
 
