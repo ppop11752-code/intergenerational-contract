@@ -1,45 +1,67 @@
 handoff_id: H-20260908-089-07-OFFICIAL-RELEASE-PREPARATION
 from: 00
 to: 07
-status: OPEN
+status: DONE
 title: Prepare and verify official release after maintenance cleanup
 
-## Context
-Project status is PASS WITH WARNINGS — RELEASE READY. OI-001 through OI-007 are CLOSED / VERIFIED. The two non-blocking maintenance items explicitly tracked before release are now DONE:
-- H-20260908-087-02-LEGACY-VITEST-MAINTENANCE
-- H-20260908-088-07-QA-FIXTURE-MAINTENANCE
+## Result
+**PASS — OFFICIAL RELEASE CANDIDATE VERIFIED.**
 
-Because both maintenance tasks changed canonical `main` after H085, official release should be cut only from a freshly verified current head.
+Exact commit safe to tag:
+- `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`
 
-## Required work
-1. Resolve the current canonical `main` head after H087/H088.
-2. Re-run the final project release gate (same or stronger scope than H085) on that exact head.
-3. Confirm production Render is live on the exact assessed head before final browser/runtime acceptance completes.
-4. Verify:
-   - backend release/regression gate;
-   - maintained legacy Vitest gate;
-   - clean Client build/test;
-   - production health;
-   - critical two-Human multiplayer create/join/start/get-state;
-   - disconnect/reconnect authoritative continuity;
-   - Approved UI V1 desktop/mobile critical paths;
-   - Mandatory 5s no-countdown semantics;
-   - Residence/HUD/Turn Track/QR;
-   - World Event direct banner + Chronicle focus + Marriage visible-disabled behavior;
-   - updated Approved UI V1 fixture.
-5. Produce final release notes/checklist and identify the exact commit SHA that is safe to tag.
-6. If no canonical release version/tag name already exists in current project docs, do not invent one; return to Chat 00/user for the version/tag decision.
-7. If GitHub release/tag creation is supported in the available environment and a canonical version is already locked, create it only after all gates PASS. Otherwise provide the exact tag/release command or UI action needed, with the verified SHA.
+Final workflow:
+- `Final Project Release Assessment`
+- run `34160089361`
+- job `101859847687`
+- conclusion: **SUCCESS**
+- artifact `10032335865`
+- digest `sha256:b93b3e7c5f2143844455979c466486dcaa73b3dbbdf2482f33ec11206eee846d`
 
-## Constraints
-- No gameplay/UI/protocol changes.
-- Do not weaken tests to make the release pass.
-- Any failure on the current head must be treated as a release blocker until classified and resolved.
+Render production:
+- deploy `dep-dafi0rfavr4c73c63d5g`
+- exact commit `e959cdd25a05e2f61345295b505ef6ee5c8e3dc2`
+- status `live` before final browser/runtime acceptance completed.
 
-## Expected completion
-Update `reports/07_CURRENT.md`, mark this handoff DONE/PASS or BLOCKED, and hand back to Chat 00 with:
-- final verified release SHA;
-- release verdict;
-- release notes/checklist;
-- whether a version/tag name still needs user decision;
-- whether GitHub release/tag was actually created or still requires the user/manual action.
+## Verified release checklist
+- [x] Backend `npm run release:check` PASS.
+- [x] Maintained legacy Vitest is included in backend `release:check`; H087 previously verified 10 files / 30 tests PASS and current release check remains green.
+- [x] Clean Client build/test PASS.
+- [x] Production Render exact assessed SHA live.
+- [x] Production health PASS.
+- [x] Critical two-Human create/join/start/get-state PASS.
+- [x] Disconnect/reconnect authoritative continuity PASS.
+- [x] Approved UI V1 live desktop/mobile critical paths PASS.
+- [x] Mandatory 5-second presentation/no visible countdown semantics PASS.
+- [x] Residence navigation / HUD / Turn Track / QR PASS.
+- [x] Maintained H088 Approved UI V1 authoritative fixture PASS.
+- [x] H080 retained World Event direct banner + exact Chronicle focus + Marriage visible-disabled + mobile acceptance PASS.
+- [x] OI-001 through OI-007 remain CLOSED / VERIFIED; no release regression reopens them.
+
+## Release notes
+Release candidate includes the fully verified Intergenerational Contract gameplay/runtime and Approved UI V1 integration in current agreed scope, including:
+- authoritative multiplayer room/start/state/reconnect flow;
+- finalized marriage lifecycle, combined scarcity inflation, Tutorial, Residence identity/lifecycle and server/runtime contracts;
+- Mandatory 5-second server-authoritative presentation;
+- Approved UI V1 desktop/mobile navigation, Residence/Family, Queue, HUD/Turn Track, QR, Chronicle and End Report surfaces;
+- current World Event direct-banner impact presentation with exact Chronicle linkage;
+- current Marriage profile visible-but-disabled affordance;
+- maintained legacy Vitest coverage and updated Approved UI V1 QA fixture.
+
+No gameplay rule, UI design or protocol was changed by H089. The only H089 code change was strengthening the final QA workflow to include the maintained H088 authoritative fixture.
+
+## Version/tag decision
+No canonical release version/tag name is locked in current project docs, and the repository currently has no GitHub Release. Chat 07 therefore did **not** invent a version and did **not** create a tag/release.
+
+Chat 00/user must choose the official version/tag name. After that decision, tag the verified SHA exactly, not a later documentation-only commit.
+
+Suggested command pattern once `<TAG>` is decided:
+```bash
+git fetch origin
+git tag -a <TAG> e959cdd25a05e2f61345295b505ef6ee5c8e3dc2 -m "Intergenerational Contract <TAG>"
+git push origin <TAG>
+```
+Then create the GitHub Release from that exact tag and use the release notes above.
+
+## Handoff
+Return to Chat 00/user for the official version/tag-name decision and release publication.
