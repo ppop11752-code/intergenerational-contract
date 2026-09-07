@@ -1,7 +1,7 @@
 handoff_id: H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT
 from: 08
 to: 06
-status: OPEN
+status: DONE
 title: Remove desktop World Event detail layer and restore approved banner semantics
 
 ## Authority
@@ -9,23 +9,28 @@ title: Remove desktop World Event detail layer and restore approved banner seman
 - `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`
 - H-20260908-078-08-FULL-UI-RULE-LEDGER-REAUDIT
 
-## Finding
-The user-approved World Event V1 explicitly requires **no separate desktop view-details surface**. Concrete authoritative event impacts and optional Chronicle navigation belong directly in the temporary banner. Mobile may use a bottom sheet only as same-content responsive reflow.
+## Completed
+- Removed the user-facing desktop `CHI TIẾT` / `.world-event-detail-panel` implementation path from `client/src/resolved-ui-contracts.ts`.
+- Active World Event banner now renders authoritative `WorldEventOccurrence.impacts` directly in `.world-event-banner-detail`.
+- Only systems actually present in structured impacts render rows; no event-name inference was added.
+- Optional `XEM TRONG NIÊN SỬ` remains in the banner only when `chronicleEntryId` exists and preserves exact structured chronology focus.
+- Responsive CSS reflows the same banner content; no extra mobile event truth is introduced.
+- Removed stale detail-panel/event-detail CSS and added direct-banner styling.
+- Secondary Marriage fidelity corrected in `approved-ui-finalize.ts`: authoritative candidate keeps `CẦU HÔN` affordance visible; when `canSendMarriage=false`, it is disabled with exact approved copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN` rather than disappearing.
+- No gameplay, protocol, timer or server eligibility rule changed.
 
-Current `client/src/resolved-ui-contracts.ts` instead adds a `CHI TIẾT` button to the desktop World Event banner and opens `.world-event-detail-panel`, placing the impact rows and Chronicle link in that separate panel.
+## Regression
+`client/test/resolved-ui-contracts.test.mjs` now asserts:
+- structured World Event impacts + `chronicleEntryId` are consumed;
+- direct `.world-event-banner-detail` and Chronicle link exist;
+- no `event-detail-open`, `.world-event-detail-panel` or `CHI TIẾT` path remains;
+- no event-name inference;
+- Marriage disabled own-turn affordance remains visible with approved copy.
 
-This is presentation/approved-UI drift, not a gameplay-rule defect. Event values still come from structured authoritative `WorldEventOccurrence.impacts`, and no OI-001–OI-007 rule is reopened.
+## Verification
+- Implementation/test HEAD: `447e622a906e463a99df51f99e0828fe9745cca9`.
+- GitHub Actions `UIUX Art Final E2E` run `34153241226`: clean Client suite step PASS.
+- Final production browser verification is intentionally delegated because the browser stage observes the separately deployed production build and must contain H079 before being accepted.
 
-## Required correction
-- On desktop, render authoritative affected-system impact rows directly in the temporary World Event banner.
-- Keep optional exact Chronicle navigation in the banner.
-- Remove the separate desktop `CHI TIẾT` / `.world-event-detail-panel` path.
-- Preserve mobile bottom-sheet/card only as responsive reflow of the same content, if needed.
-- Do not infer impacts from event name and do not change timers/gameplay/protocol.
-- Add/update regression coverage for the approved no-separate-desktop-detail contract.
-
-## Secondary fidelity check
-While touching Approved UI V1, verify the marriage profile send affordance remains visible-but-disabled during the sender's own economic turn with the approved explanatory copy rather than simply disappearing. This is a lower-severity fidelity item; do not alter server marriage eligibility/timing.
-
-## Verification after fix
-Chat 07 should rerun a targeted production/client acceptance for World Event banner content + exact Chronicle link and confirm no separate desktop detail surface remains.
+## Handoff
+Targeted production acceptance created for Chat 07 as `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA`.
