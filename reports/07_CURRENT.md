@@ -4,72 +4,61 @@
 
 ### Status
 
-Bị chặn — `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` hiện bị chặn bởi production CSS packaging, không còn bởi H074 Client source.
+Hoàn thành — `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA` **DONE / PASS WITH WARNINGS**. Không còn blocker sản phẩm trong phạm vi H067.
 
 ### Changed
 
-- Xác nhận `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION` DONE ở source Client.
-- Tăng cường live H067 gate để kiểm Residence click, Turn Track/HUD interaction và responsive desktop/mobile.
-- Fresh workflow `Approved UI V1 E2E` run `34149188131`, head `84b5a0309bc889ce6c3520657e965f3c6ff32473`:
-  - backend `release:check`: PASS;
-  - clean Client suite: **67/67 PASS**;
-  - H074 pointer source regressions: PASS;
-  - live browser: FAIL tại Residence marker click; Turn Track/HUD vẫn intercept.
-- Kiểm tra Dockerfile xác định runtime image chỉ copy `client/index.html`, `client/styles.css`, `client/public` và compiled `client/dist`.
-- Các stylesheet Approved UI được `index.html` tham chiếu nhưng không được đóng gói: `approved-ui-v1.css`, `residence-pointer-fix.css`, `residence-ui-v1.css`, `resolved-ui-contracts.css`.
-- Tái phân loại finding thành Deployment/static packaging defect.
-- Tạo `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING` cho Chat 04.
+- Xác nhận H075 CSS packaging và H076 Mandatory pointer correction đã deploy production.
+- Harden H067 browser gate để phân biệt đúng Tutorial coach hợp lệ, marker bị phần tử tương tác thật che khuất và pointer defect thực tế.
+- Sửa QA authoritative fixture thiếu UTF-8 charset; lỗi này từng làm `KHÔNG TÁI TẠO` bị mojibake và khiến Market quote bị phân loại sai trong harness, không phải Client.
+- Bổ sung deployed Lobby/QR smoke vào H067.
+- Final workflow `Approved UI V1 E2E` run `34151689731`, head `1bb6b443868abefee06e4242b9ef377129460341`: backend PASS, clean Client **68/68 PASS**, live desktop/mobile/QR PASS, authoritative fixture PASS.
+- Artifact `10029604545`, digest `sha256:1db5dee80dc4120205b927d237e4eb80209dff3ef765b54a757da622ae794e70`.
+- Supporting fixture run `34151580895`: PASS; artifact `10029539264`, digest `sha256:9c0984481d1462301a2a0b62e57007c62f7dfd57da3d6f6b9be76f118bc1c4b8`.
 
 ### Source
 
 - `handoffs/H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA.md`
-- `handoffs/H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION.md`
-- `handoffs/H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING.md`
-- `client/index.html`
-- `client/residence-pointer-fix.css`
-- `Dockerfile`
-- workflow run `34149188131`
-- artifact `10028775419`
-- digest `sha256:8f8064804243926bb2cc6e809a32fea2dfeaa7229add3b623717574634d4fa6d`
+- H073/H074/H075/H076 resolved handoffs
+- `.github/workflows/approved-ui-v1-e2e.yml`
+- `qa/approved-ui-v1-live-smoke.mjs`
+- `qa/approved-ui-v1-fixture.mjs`
+- workflow runs `34151689731`, `34151580895`
 
 ### Impact
 
-Approved UI runtime/source và clean regression đều khỏe, nhưng production chưa chứa đầy đủ stylesheet Approved UI V1. Vì thế UI live có thể mang class/runtime mới nhưng hành vi layout/hit-area vẫn theo CSS thiếu. H067 chưa thể PASS. Không có gameplay/protocol/timer rule nào bị thay đổi.
+Approved UI V1 Client integration đã qua release/QA gate H067 trên production. Không thay gameplay, protocol, timer rule hoặc authoritative calculation. Queue/reconnect/Marriage rare-state paths chưa được dựng thành một dedicated live multi-client scenario trong H067 nên verdict là PASS WITH WARNINGS thay vì tuyên bố exhaustive E2E.
 
 ### Verified
 
-- Backend full release regression trên current QA head: PASS.
-- Clean Client suite: 67/67 PASS.
-- H074 source pointer tests: PASS.
-- Production Approved UI landing/runtime tồn tại.
-- Residence marker live tồn tại, visible/enabled.
-- Residence live click vẫn fail vì Turn Track/HUD intercept.
-- Dockerfile hiện không copy bốn stylesheet bổ sung mà production index tham chiếu.
+- Backend release regression PASS.
+- Clean Client suite 68/68 PASS.
+- Production Approved UI CSS delivery.
+- Desktop/mobile landing + responsive layout.
+- Residence ordinary pointer navigation và panel close.
+- HUD + Turn Track interaction.
+- Timer continuity + Mandatory no visible local countdown.
+- Live privacy smoke: không thấy raw primary IDs / Persona leak.
+- Status fee, Market MAX/reason, Recovery MAX, Support MAX, Birth reason authoritative display.
+- Structured lifecycle.
+- Residence contract.
+- World Event detail → exact Chronicle linkage.
+- No render loop dưới repeated snapshots.
+- Production Lobby room PIN + QR/deep-link contract + payload privacy.
 
 ### Unverified
 
-Chờ H075 rồi rerun:
-- desktop/mobile Residence click/navigation;
-- HUD/Turn Track interaction;
-- Queue/reconnect/Marriage world-first navigation;
-- timer continuity + Mandatory no-countdown;
-- QR regression;
-- final privacy/raw-ID/Persona check;
-- responsive/mobile acceptance;
-- authoritative MAX/reason, lifecycle, World Event→Chronicle browser coverage;
-- no-render-loop closure.
+- Dedicated live production multi-client reproduction cho mọi rare Queue/reconnect/Marriage state chưa chạy trong H067. Các đường này có clean Client contract/regression coverage.
 
 ### Handoff
 
-- Chat 04: `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING` — package/deploy toàn bộ CSS được `client/index.html` tham chiếu và smoke live.
-- Sau H075 DONE, trả H067 về Chat 07 để rerun final browser QA.
+Không có handoff blocker mới từ H067.
 
 ### Open Issues
 
-- `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: BLOCKED.
+- `H-20260907-067-07-APPROVED-UI-V1-CLIENT-QA`: DONE / PASS WITH WARNINGS.
 - `H-20260908-073-04-APPROVED-UI-V1-DOCKER-BUILD`: DONE.
-- `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION`: DONE source-level.
-- `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING`: OPEN.
-- Previous Mandatory 5s QA chain remains DONE / PASS.
-- `H-20260907-038-07-UIUX-ART-FINAL-QA`: CLOSED / PASS.
+- `H-20260908-074-06-RESIDENCE-POINTER-INTERCEPTION`: DONE.
+- `H-20260908-075-04-APPROVED-UI-V1-CSS-PACKAGING`: DONE.
+- `H-20260908-076-06-APPROVED-UI-V1-MANDATORY-POINTER-INTERCEPTION`: DONE.
 - OI-001–OI-006 remain CLOSED/VERIFIED.
