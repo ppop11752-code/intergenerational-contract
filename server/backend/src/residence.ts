@@ -15,6 +15,15 @@ export interface Residence{
   reclaimedRound:number|null;
   parentResidenceIds:string[];
 }
+export interface ResidenceTransition{
+  id:string;
+  round:number;
+  year:number;
+  characterId:string;
+  kind:"adult_move"|"adult_retained";
+  fromResidenceId:string;
+  toResidenceId:string;
+}
 
 declare module "./model.js"{
   interface Character{
@@ -22,7 +31,7 @@ declare module "./model.js"{
     /** Internal lifecycle marker; founders/immigrants start true, children flip at Stage2→3. */
     residenceAdultTransitionHandled:boolean;
   }
-  interface GameState{residences:Record<string,Residence>}
+  interface GameState{residences:Record<string,Residence>;residenceTransitions:ResidenceTransition[]}
 }
 
 const hash=(s:string)=>{let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
@@ -129,14 +138,17 @@ export function reconcileDependentChildResidences(state:GameState){
 
 export function processAdultResidenceTransitions(state:GameState){
   for(const c of Object.values(state.characters).filter(c=>c.alive&&c.ageStage>=3&&!c.residenceAdultTransitionHandled)){
+    const fromResidenceId=c.currentResidenceId;
     const livingParentResidences=parentResidenceRecords(state,c);
+    let kind:ResidenceTransition["kind"]="adult_retained";
     if(livingParentResidences.length){
       const id=adultResidenceId(c.id),base=averageCoordinates(livingParentResidences)!,parentIds=livingParentResidences.map(r=>r.residenceId).sort();
       createResidence(state,id,"adult_transition",nearCoordinates(base,id),parentIds);
-      c.currentResidenceId=id;
+      c.currentResidenceId=id;kind="adult_move";
     }
     // If both direct parents are dead, keep the retained Residence and create nothing.
     c.residenceAdultTransitionHandled=true;
+    state.residenceTransitions.push({id:`residence-transition-${state.round}-${c.id}`,round:state.round,year:state.round*10,characterId:c.id,kind,fromResidenceId,toResidenceId:c.currentResidenceId});
   }
   refreshResidenceOccupancy(state);
 }

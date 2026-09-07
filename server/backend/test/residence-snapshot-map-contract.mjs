@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {GameEngine} from "../dist/engine.js";
 import {AuthoritativeRoom} from "../dist/authoritative-room.js";
-import {activeMapResidences,advanceResidenceRoundStart,finalizeResidenceEndRound} from "../dist/residence.js";
+import {activeMapResidences,advanceResidenceRoundStart,finalizeResidenceEndRound,processAdultResidenceTransitions} from "../dist/residence.js";
 
 function roomWith(game,playerId="A"){
   const room=new AuthoritativeRoom("HOME01",playerId,playerId,`socket-${playerId}`);
@@ -40,6 +40,27 @@ function roomWith(game,playerId="A"){
 }
 
 {
+  const game=new GameEngine(),parentA=game.createInitialBot(),parentB=game.createInitialBot();game.marry(parentA,parentB);
+  const child=game.createNpc(parentA.householdId);parentA.childrenIds.push(child.id);parentB.childrenIds.push(child.id);
+  const fromResidenceId=child.currentResidenceId;game.state.round=4;child.ageStage=3;child.residenceAdultTransitionHandled=false;
+  processAdultResidenceTransitions(game.state);
+  const transition=roomWith(game).publicSnapshot().game.residenceTransitions.at(-1);
+  assert.deepEqual(transition,{id:`residence-transition-4-${child.id}`,round:4,year:40,characterId:child.id,kind:"adult_move",fromResidenceId,toResidenceId:child.currentResidenceId});
+  assert.notEqual(transition.fromResidenceId,transition.toResidenceId);
+}
+
+{
+  const game=new GameEngine(),parentA=game.createInitialBot(),parentB=game.createInitialBot();game.marry(parentA,parentB);
+  const child=game.createNpc(parentA.householdId);parentA.childrenIds.push(child.id);parentB.childrenIds.push(child.id);
+  game.state.round=5;game.die(parentA,"test");game.die(parentB,"test");const retained=child.currentResidenceId;
+  child.ageStage=3;child.residenceAdultTransitionHandled=false;processAdultResidenceTransitions(game.state);
+  const transition=roomWith(game).publicSnapshot().game.residenceTransitions.at(-1);
+  assert.equal(transition.kind,"adult_retained");
+  assert.equal(transition.fromResidenceId,retained);
+  assert.equal(transition.toResidenceId,retained);
+}
+
+{
   const game=new GameEngine();game.joinPlayer("A");const actor=game.alive().find(c=>c.ownerId==="A");
   const room=roomWith(game),residenceId=actor.currentResidenceId;game.state.round=7;game.die(actor,"test");
   assert.equal(room.privateSnapshot("A").currentResidenceId,null,"queued Human has no current Home");
@@ -73,4 +94,4 @@ function roomWith(game,playerId="A"){
   assert.equal(lobby.publicSnapshot().players[0].currentResidenceId,null);
 }
 
-console.log("PASS Residence snapshot/map contract: mapping, roles, queue and reclaimed history");
+console.log("PASS Residence snapshot/map contract: mapping, roles, adulthood notices, queue and reclaimed history");

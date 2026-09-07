@@ -51,6 +51,7 @@ export class GameEngine{
       characters:{},
       households:{},
       residences:{},
+      residenceTransitions:[],
       marriageProposals:{},
       birthProposals:{},
       statusPurchases:{},

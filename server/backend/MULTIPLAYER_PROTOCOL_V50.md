@@ -156,6 +156,12 @@ current Home and is null in the lobby or Waiting Queue. Reclaimed Residence IDs
 remain resolvable through `residenceDirectory` for Chronicle/history links but
 must not be restored to the active map.
 
+Public `game.residenceTransitions` is a bounded typed event list for Stage2→3
+presentation. `adult_move` carries different `fromResidenceId` and
+`toResidenceId`; `adult_retained` carries the same stable ID for both. Clients
+must use this event kind for the approved adulthood notice and must not infer
+orphan/survivor state.
+
 Clients must not derive Residence or co-residence from Economic Household,
 parent links or map proximity. Residence role/family references are display
 data; they do not create gameplay-distance or property mechanics. Hidden NPC
