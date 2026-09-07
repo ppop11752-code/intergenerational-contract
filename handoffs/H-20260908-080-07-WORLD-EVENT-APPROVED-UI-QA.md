@@ -1,56 +1,45 @@
 handoff_id: H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA
 from: 06
 to: 07
-status: BLOCKED
+status: OPEN
 title: Verify direct World Event banner semantics on production
 
 ## Source
 - `docs/UI_WORLD_EVENT_DETAIL_APPROVED_V1.md`
 - H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT
+- H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID
 
 ## Client fix under QA
 H079 removed the separate desktop `CHI TIẾT` / `.world-event-detail-panel` path and renders structured authoritative `WorldEventOccurrence.impacts` directly inside the temporary World Event banner. Optional `XEM TRONG NIÊN SỬ` remains when exact `chronicleEntryId` exists.
 
 Secondary Marriage fidelity was also corrected: an authoritative eligible profile candidate remains visible with a disabled `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN` affordance when `canSendMarriage=false`.
 
-## H080 fresh QA evidence
-Production contains H079. Render latest live deployment observed at commit `a9e95b3a02751d468ca83e4ddc47003a5039284a`.
+## Previous H080 evidence
+Run `34153570608` verified the direct banner/no-detail-surface changes but found one blocker: exact Chronicle focus failed when `event.id != chronicleEntryId`.
 
-GitHub Actions `World Event Approved UI QA`:
-- run `34153570608`
-- job `101840631652`
-- clean Client regression: **69/69 PASS**
-- production deployed-runtime checks before failure: PASS
-- browser authoritative fixture: FAIL at exact Chronicle focus
-- artifact `10030187563`
-- digest `sha256:57a25f81878b298d784a1325bc50fe26c45f4086d1b1d392bb83198f6ad9acb3`
+## H081 correction
+H081 is DONE.
 
-Verified before the failing assertion:
-1. production has direct `.world-event-banner-detail` runtime;
-2. no deployed `event-detail-open`, `.world-event-detail-panel` or `CHI TIẾT` path;
-3. structured impacts and `chronicleEntryId` are consumed;
-4. direct banner shows event name and concrete authoritative affected-system rows;
-5. only affected systems render in fixture; no extra fixed-system rows;
-6. Chronicle link is present when `chronicleEntryId` exists;
-7. deployed Marriage approved disabled-affordance copy exists.
+Chat 06 added `client/src/world-event-chronicle-focus.ts`:
+- chronology rows retain `data-world-event-id`;
+- rows additionally receive authoritative `data-chronicle-entry-id` from the matching `WorldEventOccurrence`;
+- the World Event banner Chronicle action resolves/focuses by exact `chronicleEntryId`;
+- no event-name inference/fallback.
 
-## Blocking defect
-Exact World Event → Chronicle focus is incorrect when `chronicleEntryId !== event.id`.
+Regression: `client/test/world-event-chronicle-focus.test.mjs`.
 
-Current `resolved-ui-contracts.ts` sets `chronicleFocus = ev.chronicleEntryId`, but `chronicle()` compares/selects against `data-world-event-id`, which is rendered from `WorldEventOccurrence.id`.
+GitHub Actions `UIUX Art Final E2E` run `34153987711`, HEAD `befa279bc6fa61fe6e283e7afe14a83b23b94bc8`:
+- clean Client suite step: PASS.
 
-Fixture deliberately used `event.id = we-h080` and `chronicleEntryId = chron-h080`; matching chronology row rendered but did not receive `.focused-event`.
-
-Narrow Client handoff created:
-`H-20260908-081-06-WORLD-EVENT-CHRONICLE-FOCUS-ID`.
-
-## Remaining after H081
-Fresh rerun must finish:
-- exact Chronicle focus PASS;
-- timer continuity / no pause-reset;
-- no event-name inference;
-- mobile same-content responsive reflow;
-- targeted Marriage visible-but-disabled browser assertion.
+## Fresh QA required
+Rerun/finalize on deployed build containing H081:
+1. direct World Event banner content remains correct;
+2. no separate desktop detail surface;
+3. exact Chronicle focus PASS when `event.id != chronicleEntryId`;
+4. timer continuity / no pause-reset;
+5. no event-name inference;
+6. mobile same-content responsive reflow;
+7. targeted Marriage visible-but-disabled browser assertion.
 
 ## Completion
-BLOCKED — do not mark H080 PASS until H081 is fixed and a fresh browser rerun completes the remaining checks. No gameplay/protocol changed by Chat 07.
+OPEN — H081 removed the known blocker. Chat 07 owns fresh production/browser acceptance.
