@@ -1,36 +1,38 @@
 handoff_id: H-20260908-084-06-MARRIAGE-PROFILE-RERENDER-LOOP
 from: 07
 to: 06
-status: OPEN
+status: DONE
 title: Stop Marriage profile MutationObserver rerender loop
 
 ## Context
-H080 fresh browser acceptance after H083 verifies World Event direct banner, exact Chronicle focus through rerender, timer continuity and no event-name inference. The targeted Marriage assertion exposes a separate integrated Client defect.
+H080 fresh browser acceptance after H083 exposed an integrated Client lockup after selecting an authoritative Marriage candidate and receiving stable/repeated snapshots.
 
-## Evidence
-Workflow `World Event Approved UI QA` run `34156430047`, HEAD `a3e3805ef66271a6a21bc31995896941d993ebaf`:
-- clean Client suite **76/76 PASS**;
-- H083 exact Chronicle focus PASS;
-- timer continuity PASS (`20s -> 18s`);
-- no event-name inference PASS;
-- after clicking `[data-resident-character="c2"]`, dispatching a stable/current authoritative snapshot never returns; Playwright is terminated by the 60s guard at `page.evaluate`.
-- artifact `10031145654`, digest `sha256:baf3bb89aac89da6746f47faaea9e7b2aa9ff8927d23c0673abb3eefc320a34a`.
+## Root cause confirmed
+`client/src/approved-ui-finalize.ts` `marriageFromProfile()` unconditionally rewrote `btn.textContent` on every `decorate()`. The global `MutationObserver({childList:true,subtree:true})` observed that text-node replacement and rescheduled `decorate()`, creating a self-sustaining microtask/mutation loop while a Marriage candidate profile was active.
 
-The same hang persisted after QA removed the unrelated World Event rollback, so this is not fixture coupling.
+## Correction
+- `marriageFromProfile()` now derives a stable `profileStateSig` from exact profile target + `canSendMarriage`.
+- If the rendered signature is unchanged, it returns without mutating DOM/presentation state.
+- `data-target`, `disabled`, `textContent` and `title` are only written when their desired value differs.
+- Approved disabled semantics remain unchanged: `canSendMarriage=false` -> disabled button with exact copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN`.
+- Existing propose action remains unchanged when sending is allowed.
+- No gameplay, protocol, phase timer or Marriage rule changes.
 
-## Root cause
-`client/src/approved-ui-finalize.ts` `marriageFromProfile()` writes `btn.textContent`/other presentation state on every `decorate()` even when unchanged. Its global `MutationObserver({childList:true,subtree:true})` sees the text-node replacement, calls `schedule()`, then `decorate()` writes the same text again. Once `profileCharacterId` targets an authoritative marriage candidate, this can form an endless mutation/microtask cycle and starve browser interaction/snapshot processing.
+## Regression
+- Added `client/test/marriage-profile-rerender-loop.test.mjs` for source/idempotence guards.
+- Added `qa/marriage-profile-rerender-loop.mjs` using the real integrated runtime pair (`resolved-ui-contracts.js` + `approved-ui-finalize.js`).
+- Added workflow `.github/workflows/marriage-profile-rerender-loop.yml`.
+- Browser regression opens candidate `c2`, repeatedly dispatches the same authoritative snapshot, then proves the page/event loop remains responsive and exactly one disabled approved Marriage affordance remains visible.
 
-## Required correction
-1. Make `marriageFromProfile()` idempotent: do not mutate text/attributes/disabled/title when the rendered state is already identical.
-2. Ensure opening an eligible candidate profile then receiving repeated identical snapshots settles without a render loop.
-3. Preserve approved semantics:
-   - candidate remains visible;
-   - when `canSendMarriage=false`, button remains disabled;
-   - exact copy `CÓ THỂ GỬI NGOÀI LƯỢT CỦA BẠN`;
-   - no gameplay/protocol/timer changes.
-4. Add an integration regression with the real observer/runtime combination that repeatedly sends the same snapshot after profile selection and proves the event loop remains responsive.
-5. Return H080 to Chat 07 for fresh Marriage + mobile acceptance.
+## Verified
+- H084 workflow `Marriage Profile Rerender Loop QA` run `34156898583`: SUCCESS.
+  - clean Client regression: PASS;
+  - browser dependency/install: PASS;
+  - H084 real-browser repeated-snapshot regression: PASS.
+- Existing `World Event Approved UI QA` run `34156855982` on the H084 implementation commit also completed SUCCESS, exercising the integrated H080 surface after the fix.
+
+## Handoff
+Return `H-20260908-080-07-WORLD-EVENT-APPROVED-UI-QA` to Chat 07 for final ownership/acceptance recording.
 
 ## Completion
-OPEN — H080 remains BLOCKED only by this newly identified Marriage profile render-loop path plus the mobile assertions that could not be reached after the lockup.
+DONE — Marriage profile repeated identical snapshots settle without a MutationObserver rerender loop.
