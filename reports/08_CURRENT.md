@@ -2,117 +2,144 @@
 
 ## Status
 
-`H-20260907-072-08-RESIDENCE-LIFECYCLE-AUDIT`: **PASS**.
+`H-20260908-078-08-FULL-UI-RULE-LEDGER-REAUDIT`: **PASS WITH WARNINGS**.
 
-Independent source-level audit finds D-053 Residence identity/lifecycle consistent across Rule Ledger, engine, server snapshot/protocol, client binding and regression coverage. **OI-007 is eligible to close by Chat 00.**
+The earlier H044 finding that full-game UX/UI coverage was incomplete is now substantively resolved at the source/design level and for almost all current implementation semantics. All required gameplay-surface groups have direct user-approved V1 specifications, and current client/server contract work covers the authoritative rule surfaces.
 
-OI-001 and OI-002 remain CLOSED / independently verified.
+One concrete Approved UI V1 implementation drift remains: desktop World Event presentation violates the approved no-separate-detail-layer contract. This is a presentation/approved-design mismatch, not a gameplay-rule mismatch, and it does not reopen OI-001 through OI-007.
 
 ## Changed
 
-No gameplay, code, server, client or UI changes. Independent consistency audit only.
+No gameplay, server, client or UI code changed. Independent audit only.
+
+Created corrective handoff:
+- `H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT` → Chat 06.
 
 ## Source
 
-- D-053 in `docs/DECISION_LOG.md`.
-- `docs/RULE_LEDGER.md` Residence section.
-- `server/backend/src/residence.ts`.
-- `server/backend/src/engine.ts`.
-- `server/backend/src/authoritative-room.ts`.
-- `server/backend/test/residence-lifecycle-d053.mjs`.
-- `server/backend/test/residence-snapshot-map-contract.mjs`.
-- `server/backend/package.json`.
+- `docs/RULE_LEDGER.md`.
+- `docs/UI_GAMEPLAY_SURFACE_COVERAGE_V1.md`.
+- Current approved V1 specs for Mandatory, Status, Voluntary/Market/Recovery/Support/Birth, Marriage, Residence/Family, Waiting Queue/Reconnect, Government/Social Systems, Elderly/Mortality/Grief/Inheritance, Immigration/NPC takeover, World Event, Chronicle and End Report.
+- `client/src/main.ts`.
+- `client/src/approved-ui-v1.ts`.
+- `client/src/resolved-ui-contracts.ts`.
+- `client/src/approved-ui-finalize.ts`.
 - `client/src/residence-ui-v1.ts`.
-- `client/src/resolved-ui-contracts.ts` / approved client runtime.
-- `client/test/residence-ui-v1.test.mjs`.
-- `client/test/resolved-ui-contracts.test.mjs`.
-- Specialist reports 02/03/06/07 and successful GitHub Actions production QA evidence.
+- Client regression suites including `approved-ui-v1.test.mjs`, `display-contract.test.mjs`, `resolved-ui-contracts.test.mjs`, `residence-ui-v1.test.mjs`.
+- Server authoritative snapshot/quote contracts and existing regression gates.
+- `reports/05_CURRENT.md`, `reports/06_CURRENT.md`, `reports/07_CURRENT.md`.
+- Prior independent H072 Residence audit.
 
 ## Impact
 
-- Engine/server/client Residence contract is consistent with D-053.
-- `currentResidenceId` is authoritative; Client does not infer Residence from Household, parents or map distance.
-- Reclaimed Residence leaves current map/navigation but remains in authoritative directory/history.
-- No property ownership, sale, house inheritance, Residence reuse or gameplay-distance mechanic was found.
-- No hidden Persona leak was found in Residence public/client surfaces.
-- Chat 00 may update `docs/OPEN_ISSUES.md` and close OI-007.
+- Full-game UI rule **coverage** is no longer missing as in H044.
+- Mandatory, Status, Voluntary action groups, Residence/Queue, Government/social systems, lifecycle results, Chronicle and End Report have authoritative approved UI paths.
+- Client generally consumes authoritative quotes/results for MAX, unavailable reasons, liquidation/bankruptcy, Status fee/cap fallback, Birth eligibility, Residence identity, lifecycle results, World Event effects and scoring rather than recomputing gameplay rules.
+- One World Event presentation drift requires Chat 06 correction and targeted Chat 07 re-verification before declaring Approved UI V1 fully faithful to every direct user-approved UI contract.
 
-## Verified
+## Disposition of H044 findings
 
-### Identity and Household separation
-- Residence is a distinct state entity with stable `residenceId` and lifecycle fields.
-- Character gets mutable authoritative `currentResidenceId` through Residence module augmentation/state.
-- Snapshot regression proves child can co-reside with parents while retaining a separate Economic Household.
+1. Mandatory / liquidation / bankruptcy — **RESOLVED**. Approved V1 exists; Mandatory is presentation-only, server-driven 5s, no visible countdown/skip; structured Mandatory summary preserves liquidation/bankruptcy facts.
+2. Status Purchase / Noble cap — **RESOLVED**. Approved V1 covers representative-only phase, authoritative 15s, next-round effect, married household fee, Noble competition/fallback/refund; client consumes server quote fields.
+3. Voluntary Market / Recovery / Support / Birth — **RESOLVED**. All four have approved V1 surfaces; server-authored MAX/unavailable reasons are consumed by resolved client contracts; no local authoritative MAX calculation is used.
+4. Marriage lifecycle — **RESOLVED FOR RULE SEMANTICS, MINOR FIDELITY WARNING**. Current client displays incoming pending proposals, accepted end-round settlement state and outgoing pending/cancel behavior using server state. World-first profile send exists. Lower-severity drift: the approved profile send affordance is specified as visible-but-disabled during the sender's own economic turn, while `approved-ui-finalize.ts` removes it whenever `canSendMarriage` is false. This does not alter rule authority but should be corrected opportunistically under H079.
+5. End Report / scoring / replay — **RESOLVED**. Approved End Report uses authoritative ranking order/values, HHA-based AverageLifeAssetScore wording, no-life state, early-extinction common failure, Host-only replay and read-only final-world semantics; implementation reflects these states.
+6. Residence / Family detail — **RESOLVED**. Approved V1 exists and H072 independently verified server/client Residence identity, family references, privacy and Chronicle behavior.
+7. Child Residence focus wording — **RESOLVED**. Client navigation uses authoritative Character `currentResidenceId`, not a generic living-parent assumption.
+8. Reconnect / Waiting Queue — **RESOLVED**. Reconnect copy explicitly says old Character remains NPC-controlled and Human joins Queue end; Queue UI has no reclaim semantics.
+9. ASXH / pension / Support Fund / Government — **RESOLVED**. Approved 3-tab read-only Government surface exists; client shows public debt, budget, pension outcomes and presentation-only consolidated social-fund sum while underlying funds stay mechanically distinct.
+10. Elderly / mortality / Grief / inheritance — **RESOLVED**. Approved V1 exists; client consumes structured lifecycle results for medical, death, inheritance, queue/new-life results and does not parse Chronicle text for settlement truth.
+11. Immigration / NPC takeover — **RESOLVED**. Approved V1 exists; client marks immigrant/NPC takeover presentation without exposing hidden Persona or implying Character reclaim.
+12. World Event detail — **PARTIALLY RESOLVED / IMPLEMENTATION DRIFT**. Structured authoritative effects and exact Chronicle linkage are implemented, but desktop currently adds a separate `CHI TIẾT` panel. Approved V1 explicitly requires impacts and Chronicle link directly in the temporary banner, with no separate desktop detail surface.
+13. Chronicle detail / provenance — **RESOLVED**. Approved Chronicle V1 exists; structured history snapshots, personal score/history and structured World Event entries are consumed without inventing score/event causality.
+14. Mandatory timer semantics — **RESOLVED**. Mandatory visible countdown/progress is removed; the client follows server phase transition. Status/Voluntary continue to use authoritative deadline state.
 
-### Creation and movement
-- Founder gets independent Residence.
-- Immigrant gets independent Residence with corrected `immigrant` origin.
-- Newborn inherits parents' current Residence and creates no physical Residence.
-- Marriage Residence ID is symmetric in spouse IDs; coordinates average source Residences and are independent of proposer/target/order.
-- Dependent Stage1–2 direct children move with their direct parent into the new shared marriage Residence.
-- Surviving-parent and remarriage reconciliation follows direct-parent Residence; no step-parent replacement rule is introduced.
+## Verified rule/contract alignment
 
-### Adulthood and siblings
-- Both direct parents dead => Stage1–2 child retains current Residence.
-- Retained orphan Stage2→3 emits `adult_retained` and creates no new Residence ID/coordinates.
-- Normal Stage2→3 creates `adult_transition` Residence near living parent Residence(s), using stable server-computed coordinates.
-- Sibling transitions are independent; engine logic also permits orphan siblings to retain the same prior Residence without duplication.
-- Engine end-round ordering ages Characters first, then runs Residence adulthood transition at that same boundary.
+### Mandatory
+- No skip/manual phase transition.
+- No visible Mandatory countdown/progress.
+- Server-driven timing; client has no separate 5s Mandatory duration.
+- Structured Mandatory summary retains line-item/liquidation/bankruptcy authority.
 
-### Exact lifecycle timing
-- Last living occupant departure/death changes `occupied → empty` immediately at the current round.
-- At the start of the next round, `empty → abandoned`.
-- It remains active on the map through that following round.
-- At the end of that round, `abandoned → reclaimed`.
-- Reclaimed Residence is filtered from active map/navigation but remains resolvable by stable ID in `residenceDirectory` / Chronicle history data.
-- Occupancy refresh throws `RESIDENCE_REUSE_FORBIDDEN` if an abandoned/reclaimed Residence acquires occupants, preventing silent reuse.
+### Status
+- Current-round vs next-round semantics are clearly separated.
+- Authoritative fee/person count/affordability/unavailable reason are rendered from `statusQuote`.
+- Noble fallback/refund facts remain server-authored.
 
-### Death / bankruptcy
-- Death, joint death and Household bankruptcy invoke Residence reconciliation, so surviving dependent-child placement and immediate vacancy state are not deferred to a later unrelated phase.
+### Voluntary
+- Market/Recovery/Support/Birth remain the four economic Voluntary groups.
+- Client MAX values come from `purchasableMax`, `acceptedMax`, `transferableMax` and Birth quote slots.
+- Disabled/unavailable explanations use authoritative reason codes.
+- No resolved runtime owns a local 60s/15s/5s gameplay timer.
 
-### Protocol and privacy
-- Public snapshot serializes authoritative `residenceDirectory`, `activeMapResidenceIds`, Character/player `currentResidenceId`, and bounded `residenceTransitions`.
-- Queue/Lobby/reconnected Human has null current Home while the permanent NPC-takeover Character retains its Residence.
-- Residence occupants expose family role/reference keys but not hidden Persona.
-- Snapshot contract checks are side-effect-free.
+### Marriage
+- Incoming pending proposals retain Accept/Reject actions.
+- Accepted proposal display uses authoritative `acceptedRound` and has no Reject/Cancel controls in that accepted presentation.
+- Outgoing pending cancellation uses existing `marriage:cancel` server action.
+- Profile proposal path uses server-provided `marriageCandidates` / `canSendMarriage` and existing `marriage:propose` action.
+- Minor approved-presentation drift noted above does not change eligibility or timing.
 
-### Client
-- Client consumes `residenceDirectory`, `activeMapResidenceIds`, `currentResidenceId`, `residenceTransitions` directly.
-- Client Residence runtime contains no Household/parent-Household inference for placement.
-- Reclaimed entries are excluded from current map/navigation and retained in Residence Chronicle presentation.
-- Turn Track, minimap and Residence markers focus server-authoritative Residence IDs.
-- Adulthood notices use authoritative transition kind rather than deriving from age.
-- Coordinates are used only to position/pan presentation; no client random/distance gameplay calculation is present.
-- Local-only financial details are protected; other residents do not expose detailed private economy.
+### Residence / Queue / reconnect
+- H072 remains PASS: authoritative Residence identity, stable history, no Household inference, no Persona leak, correct queue/reconnect semantics.
 
-### Regression / gates
-- D-053 regression explicitly covers 10 lifecycle cases: founder/immigrant, newborn, symmetric marriage, survivor/remarriage, orphan no-duplicate adulthood, normal adulthood, sibling independence, end-round Stage2→3, exact empty/abandoned/reclaimed boundary, stable reclaimed history/no reuse.
-- Snapshot/map contract explicitly covers Household-vs-Residence separation, family roles, no Persona leak, both adulthood event variants, queue/reconnect NPC takeover, reclaimed history and side-effect-free serialization.
-- `server/backend/package.json` includes both Residence regressions in `npm test`, smoke and therefore `release:check`.
-- Latest Chat 07 production QA reports backend gate PASS, clean Client 68/68 PASS, production desktop/mobile Residence navigation PASS and no raw Persona leak; GitHub Actions run `34151689731` concluded `success` at head `1bb6b443868abefee06e4242b9ef377129460341`.
+### Government / social systems
+- Public debt is presented as Government/public debt.
+- Consolidated social-fund number is explicitly presentation-only and is calculated only as the display sum of authoritative exposed balances, matching approved V1; no underlying fund mutation occurs client-side.
+- Government panel is read-only.
 
-## Falsification attempts
+### Lifecycle / elderly / inheritance
+- Structured `recentLifecycleResults` drive medical/death/inheritance/queue/new-life messages.
+- Estate totals, beneficiary amounts and Government transfer are rendered from server results rather than recalculated client-side.
 
-- Tried to find Household/Residence conflation: snapshot regression shows same Residence with different Household IDs for dependent child; Client Residence runtime does not use `householdId` or `parentHouseholdId` for placement.
-- Tried to find proposer/target marriage bias: shared Residence ID sorts Character IDs and coordinates are symmetric over sorted source Residence IDs.
-- Tried to find orphan duplicate Residence: both-parent-dead path intentionally retains current ID and adulthood regression asserts Residence count unchanged.
-- Tried to find sibling coupling: transition loop handles each Character independently and regression separates sibling transitions.
-- Tried to find early/late reclamation: start-round and end-round hooks match the exact next-round boundary.
-- Tried to find Residence reuse/property mechanics: reuse is rejected by lifecycle guard; no Residence action for ownership/sale/inheritance exists in audited surfaces.
-- Tried to find gameplay distance effect: coordinates are generated in Residence presentation module and serialized/rendered; no audited gameplay calculation consumes distance.
-- Tried to find hidden Persona leak: public Residence/Character serialization excludes Persona and client Residence runtime does not reference Persona.
+### World Event / Chronicle
+- World Event numeric impacts come from structured authoritative `WorldEventOccurrence.impacts`; client does not infer mechanics from Event name.
+- Exact Chronicle linkage uses `chronicleEntryId`/structured World Event state.
+- **Mismatch:** desktop implementation still opens a separate detail panel despite direct user-approved V1 requiring same content in the temporary banner.
 
-## Verification limitation / warning
+### End Report
+- Standard ending uses authoritative ranking order/value.
+- Early extinction suppresses winner/podium and presents shared failure.
+- Humans with zero active rounds remain visible with explicit no-life state.
+- Replay action is Host-only and calls authoritative room replay.
 
-The Chat 08 runtime could not clone the GitHub repository because external DNS/network access from the local container was unavailable, so Chat 08 did not independently execute the npm commands from a local checkout in this turn. This does **not** block the verdict because the audit directly inspected the current source and regression implementations, verified their inclusion in the authoritative test gate, and independently verified the successful current GitHub Actions/production-QA run. Dedicated live multi-client reproduction of every rare Queue/reconnect/Marriage state is not exhaustive; deterministic server/client contracts cover those states and Chat 07 classifies the release QA warning as non-blocking.
+## Responsive / QA evidence
+
+- Chat 07 final H067 production QA reports backend PASS, clean Client **68/68 PASS**, desktop/mobile/QR PASS, Residence pointer/navigation PASS, timer continuity, authoritative Status/Market/Recovery/Support/Birth display, structured lifecycle and exact World Event → Chronicle linkage.
+- This QA evidence verifies runtime availability and responsive behavior but did not detect the approved World Event no-separate-detail requirement; H079 corrects that audit gap.
+- Rare multi-client Queue/reconnect/Marriage paths remain not exhaustively reproduced live, but deterministic contract coverage exists and no Rule Ledger contradiction was found here.
+
+## Falsification / contradiction checks
+
+- No reopened OI-001–OI-007 rule defect found.
+- No client-side authoritative MAX calculation found in resolved action surfaces.
+- No client-side Residence inference or scoring recomputation found in approved implementations.
+- No private-debt reintroduction found.
+- No hidden Persona leak found in audited public UI contract paths.
+- One direct approved-UI contradiction was found and isolated to World Event desktop presentation.
+
+## Verdict
+
+**PASS WITH WARNINGS** for full-game UI Rule Ledger coverage.
+
+- Rule coverage: **PASS**.
+- Gameplay semantic authority: **PASS**.
+- Direct Approved UI V1 implementation fidelity: **PASS WITH WARNING** because of the World Event desktop detail-layer drift and a lower-severity marriage affordance presentation difference.
+
+## Unverified
+
+- Targeted post-H079 production verification after the World Event presentation correction.
+- Exhaustive live multi-client reproduction of every rare Queue/reconnect/Marriage state.
 
 ## Handoff
 
-- Chat 00: close OI-007 and update `docs/OPEN_ISSUES.md` from stale `IMPLEMENTATION PENDING` wording to independently verified Residence implementation. See `H-20260908-077-00-CLOSE-OI007-RESIDENCE`.
-- No corrective handoff to Chat 01/02/03/05/06 is required from this audit.
+- Chat 06: `H-20260908-079-06-WORLD-EVENT-APPROVED-UI-DRIFT` — remove separate desktop World Event detail layer, place authoritative impact rows + Chronicle link in the temporary banner, and check the lower-severity marriage visible-disabled affordance.
+- Chat 07: rerun targeted client/production acceptance after H079 is implemented.
+- Chat 00: do not reopen OI-001–OI-007. Full-game rule coverage itself is now resolved; final Approved UI V1 fidelity coordination should wait for H079 + targeted QA.
 
 ## Open Issues
 
-- OI-007: **PASS / eligible for CLOSED by Chat 00**.
-- OI-001 and OI-002 remain CLOSED.
-- Full-game UX/UI rule coverage from the earlier H044 audit remains a separate project/UI coverage matter and is not reopened by this Residence audit.
+- H078: DONE / PASS WITH WARNINGS.
+- H079: OPEN to Chat 06.
+- OI-001 through OI-007 remain CLOSED / VERIFIED.
+- Earlier H044 full-game **missing coverage** finding is closed; only the specific implementation-fidelity warning above remains.
