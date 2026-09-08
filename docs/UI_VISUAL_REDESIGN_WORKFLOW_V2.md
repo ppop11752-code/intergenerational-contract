@@ -1,6 +1,32 @@
-# UI VISUAL REDESIGN WORKFLOW V2 — FIGMA-FIRST
+# UI VISUAL REDESIGN WORKFLOW V2 — LOW-COST FIGMA REVISION
 
-Status: **CANONICAL — USER APPROVED 2026-09-08**
+Status: **CANONICAL — USER APPROVED 2026-09-08; low-cost revision approved in Chat 00 v2.**
+
+## Current operating sequence — supersedes the original Figma-every-stage sequence
+
+Explore outside Figma → user selects direction → build editable Figma design → user approves actual Figma anchors → versioned GitHub handoff → implementation → visual and performance verification.
+
+Prepare references, content, assets, state inventory and lightweight concept previews outside Figma. Start with two alternatives on the SAME representative Main Gameplay HUD; make a third only if the first two do not meet the user's needs. Do not fully implement an HTML prototype and then rebuild the whole product in Figma. Local HTML/CSS/SVG or image concepts are exploration artifacts, not approved production authority and not a revival of historical V5–V10.1 prototypes.
+
+Choose the direction before building the canonical Figma master/design system. Direction selection is not final screen approval. The actual editable Figma anchor frames require explicit approval after construction. Existing Phase numbers below remain stable for references; execute Phase 2 and exploratory Phase 3 before Phase 1/4/5.
+
+### Cost and retrieval discipline
+
+- Reuse one recorded master file, known page/node IDs, assets and unchanged design data.
+- Group related feedback into small bounded edits; respect tool/skill operation limits rather than using one giant script.
+- Capture and inspect images after meaningful visual changes and at approval milestones; quota saving never removes visual verification.
+- Use screenshots returned by the same edit operation when supported, avoiding a redundant capture of the unchanged result.
+- Read only relevant nodes. Reuse versioned handoff data when its revision is unchanged; re-read when design changes or information is missing.
+- No promise of unlimited/free use or a known remaining quota. On a quota/access error, record the exact failure and stop retrying that path. Continue independent preparation without bypassing limits or silently replacing Figma approval.
+- Normal user work is reviewing images, giving feedback, choosing and approving, not operating Figma.
+
+### Capability evidence and limits
+
+Chat 00 v2 successfully tested account identification, blank-file creation, file structure inspection via use_figma, editable text/frame/button creation, a subsequent blue-to-green button edit, and inline screenshot retrieval on 2026-09-08.
+Test file: https://www.figma.com/design/xBiqlKUYTo4IfGM67Zaq6y?node-id=2-2
+Frame: 2:2; button: 2:4. This is a TEST FILE, not the UI Master or an approved design.
+The account reported Starter / View. Remaining quota, dedicated get_design_context/get_metadata/get_screenshot/download tools, live-page capture, and full-project design throughput were not verified. Successful use_figma calls do not prove quota reset or exemption for every operation.
+
 
 ## Purpose
 
@@ -163,7 +189,7 @@ Chat 05 curates a small, high-quality reference board, normally 10–20 referenc
 
 For each useful reference, record what is being borrowed and what is explicitly not being borrowed.
 
-Then create 2–3 materially distinct art directions in Figma. Each direction must be demonstrated on the same representative gameplay surface, preferably Main Gameplay HUD, rather than only through palette/text samples.
+Then prepare two materially distinct visual directions outside Figma on the same representative Main Gameplay HUD composition. Show image or lightweight prototype previews in chat. Create a third option only if the first two are insufficient. After the user selects a direction, construct and refine that direction as editable Figma nodes; do not build full Figma component libraries for rejected concepts.
 
 Each direction must define:
 
@@ -283,7 +309,9 @@ If an approved design is materially revised, create a new approved revision/node
 
 Chat 06 implementation handoffs must reference the exact approved Figma nodes.
 
-Chat 06 must use Figma design context rather than coding by eyeballing screenshots alone. Where useful, inspect:
+Chat 05 must save a versioned handoff bundle in GitHub, preferably under design/figma/handoff/<revision>/, containing exact fileKey/nodeId identities, frame revision and approval decision/date, viewport/state, approved screenshots, geometry/layout rules, typography/colors/spacing tokens, component states and asset files with provenance. Include an actual extraction from the approved Figma source, not inferred measurements from an image. Revisions must remain linked to the approved nodes; material changes require a new approval record.
+
+Chat 06 must use this Figma-derived design context rather than coding by eyeballing screenshots alone. Reuse the bundle while the approved revision is unchanged; read exact Figma nodes for missing information or changed revisions. This does not require repeated live retrieval of an unchanged node or a specific unverified tool. Where useful, inspect:
 
 - node structure;
 - dimensions;
@@ -294,7 +322,7 @@ Chat 06 must use Figma design context rather than coding by eyeballing screensho
 - motion context;
 - Code Connect mappings.
 
-For reusable Figma components, establish Code Connect mappings to the canonical client components when doing so reduces ambiguity and duplication.
+For reusable Figma components, establish Code Connect mappings only when they reduce ambiguity and duplication enough to justify the setup; they are not a prerequisite for the first anchor batch.
 
 Implementation order should prefer:
 

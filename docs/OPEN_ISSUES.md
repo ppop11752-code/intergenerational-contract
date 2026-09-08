@@ -74,7 +74,15 @@ Final closure handoff: `H-20260908-077-00-CLOSE-OI007-RESIDENCE`.
 
 No blocking Open Issue remains in OI-001 through OI-007.
 
-The Project has passed final release assessment and official `v1.0.0` publication.
+The Project has passed final release assessment and official `v1.0.0` publication. That historical release does not establish acceptance of the post-release visual redesign.
+
+## Post-release visual and performance work
+
+- **OPEN — production visual fidelity:** H092 audit found major mismatch. H093 direct visual correction is CLOSED/SUPERSEDED; H094 belongs to Chat 05 and remains OPEN under the user-approved low-cost Figma revision of docs/UI_VISUAL_REDESIGN_WORKFLOW_V2.md.
+- Next visual milestone: prepare two comparable Main Gameplay HUD directions outside Figma, then user selection, editable Figma anchors and explicit approval before Chat 06 implementation.
+- **OPEN — user-observed lag:** H095 assigns measured performance profiling to Chat 06 independently of visual redesign. No new performance PASS is claimed here.
+- Figma small-file create/edit/inline-screenshot test succeeded in Chat 00 v2 on 2026-09-08; remaining quota and production-scale design are unverified. Test success does not resolve visual fidelity.
+- OI-001 through OI-007 remain closed; this coordination update changes no gameplay, protocol or runtime code.
 
 ## Maintenance status
 

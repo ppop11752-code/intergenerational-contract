@@ -54,3 +54,16 @@ This file records decisions that are known to be current at the GitHub migration
 `Scarcity = 0.5R + 0.5N`
 
 Pool zero => tier scarcity 1. Measurement occurs after natural Renewable regeneration at end-round; pending Recovery applies only at next round start.
+
+## 2026-09-08 — Low-cost Figma workflow approval (Chat 00 v2)
+
+Latest user decision: “ok tiếp tục đi” approving the preceding low-cost workflow proposal.
+
+- Explore and prepare outside Figma; start with two alternatives on the same Main Gameplay HUD, third only if needed.
+- Do not fully build an HTML prototype and then rebuild the whole product in Figma.
+- After user direction selection, create/refine editable Figma design and obtain explicit approval of actual Landing/Lobby/Room/Main HUD frames, including relevant mobile compositions.
+- Figma remains final visual design authority only for explicitly approved frames; concept selection is not screen approval.
+- Preserve versioned Figma-derived screenshots, identities, tokens/layout/component states and assets in GitHub for handoff. Reuse unchanged data; retrieve changed/missing node information precisely.
+- Work in small batches with meaningful visual verification. Do not assume quota reset/unlimited operation or bypass access/rate limits.
+- Preserve gameplay/rule authority, full remaining-surface coverage, Chat 05 visual signoff and Chat 07 functional/performance gates.
+- Canonical workflow: docs/UI_VISUAL_REDESIGN_WORKFLOW_V2.md, low-cost revision. H094 remains assigned to Chat 05 and OPEN; no new visual implementation handoff is authorized before design approvals.
