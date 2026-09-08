@@ -143,3 +143,47 @@ Created corrective handoff:
 - H079: OPEN to Chat 06.
 - OI-001 through OI-007 remain CLOSED / VERIFIED.
 - Earlier H044 full-game **missing coverage** finding is closed; only the specific implementation-fidelity warning above remains.
+
+---
+
+## Operational diagnosis — Chat 00 / Chat 05 instability
+
+### Status
+**PASS WITH WARNINGS — project-side causes identified; platform crash telemetry unavailable.**
+
+### Findings
+1. **Chat 00 carries obsolete local-workspace instructions in its historical conversation.** Earlier Chat 00 context defines `/mnt/data/intergenerational-contract`, `/mnt/data/inbox`, `/mnt/data/reports`, `/mnt/data/migration`, `/mnt/data/handoffs` as `WORKSPACE TRUTH`, while the current canonical handoff addendum makes GitHub `ppop11752-code/intergenerational-contract` the shared state/handoff bus. The canonical repo does not contain the old `WORKSPACE TRUTH` instruction. This creates a real risk that a long-lived Chat 00 alternates between obsolete local paths and current GitHub state.
+2. **There is intentionally no `reports/00_CURRENT.md`.** The repo contains `reports/01_CURRENT.md` through `reports/08_CURRENT.md`. The current addendum instructs Chat 00 to read `docs/OPEN_ISSUES.md`, relevant specialist reports and OPEN handoffs; it does not require `reports/00_CURRENT.md`. Any generic specialist workflow applied to Chat 00 will therefore produce a 404 and may trigger repeated fallback/retry behavior.
+3. **Chat 00 has the highest aggregation load.** Its role requires scanning project-wide issues, multiple specialist reports, OPEN handoffs and latest user decisions before substantive answers. In a long-lived thread this creates substantially larger context/tool-call load than specialist chats.
+4. **Chat 05 is also an unusually high-context thread.** It has accumulated direct user design decisions, source-validation workflows, art direction, approved specs, implementation handoffs, visual audits and release feedback. Current `reports/05_CURRENT.md` alone reflects a new production visual-fidelity audit and another correction program. Recent commits also show rapid workflow supersession around visual correction/Figma-first redesign, increasing stale-context risk in the old Chat 05 thread.
+5. **Project state changes quickly across chats.** Multiple chats write reports/handoffs/global docs to the same branch. Long-lived Chat 00/05 threads can retain superseded instructions or handoff status unless they explicitly re-read canonical GitHub state before acting.
+
+### Classification
+- **Confirmed project-process defect:** obsolete local-workspace truth remains in historical Chat 00 context while GitHub is now canonical.
+- **Confirmed workflow trap:** no `reports/00_CURRENT.md`; Chat 00 must use its special workflow, not the 01–08 template.
+- **High-confidence stability risk:** very long, tool-heavy Chat 00 and Chat 05 histories plus rapidly superseded state increase context/tool failure probability.
+- **Unverified platform cause:** Chat 08 cannot inspect ChatGPT application/server telemetry, so literal UI errors such as `Something went wrong`, response-generation crashes or connector backend faults cannot be attributed conclusively from Project files alone.
+
+### Recommendation
+- Start fresh replacement threads `00 — PROJECT CONTROL v2` and `05 — UI/UX & ART v2` inside the same Project, using only the current Project Instructions + GitHub canonical state, rather than carrying the obsolete long conversation indefinitely.
+- For Chat 00 v2, explicitly state that GitHub is the sole shared project-state bus and that `reports/00_CURRENT.md` does not exist/is not required.
+- For Chat 05 v2, rely on `reports/05_CURRENT.md`, current OPEN handoffs and approved UI docs instead of reconstructing all historic design discussion on every turn.
+- Do not delete the old chats; retain them as historical reference, but stop using them as active operational threads after migration.
+
+### Changed
+No gameplay/code/UI/server changes. Diagnostic report only.
+
+### Impact
+Reduces stale-context, contradictory-source and repeated 404/retry risk in the two most context-heavy operational chats.
+
+### Verified
+Canonical GitHub handoff addendum, reports directory contents, current Chat 05 report, recent repository commits, and historical Chat 00 workspace instruction context.
+
+### Unverified
+OpenAI-side crash/error telemetry and exact platform exception behind any visible ChatGPT error banner.
+
+### Handoff
+Chat 00/user should migrate active coordination and UI/UX work to fresh v2 threads if repeated failures continue.
+
+### Open Issues
+Operational thread stability remains a process issue until the two long-lived chats are migrated or their obsolete instructions cease to influence execution.
