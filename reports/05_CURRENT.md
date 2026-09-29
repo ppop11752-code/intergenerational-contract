@@ -7,6 +7,8 @@
 Updated 2026-09-29, Chat 05. B “Ngọc sáng” is user-selected direction, not approval of the actual anchor.
 
 ### Changed
+- Completed independent H094 preparation in docs/UI_CORE_ANCHORS_B_PREPARATION_2026-09-29.md: approved-source reconciliation, desktop/mobile construction targets for four anchors, state/component inventory, art gaps and approval coverage. Targets are proposals, not Figma-extracted geometry.
+- Generated and visually inspected two B concept previews: Landing (village + exactly three foreground chibi characters) and Lobby (empty jade/timber gathering hall). Prompts, filenames and SHA-256 recorded in preparation pack. No UI baked into either image. Previews remain unapproved, not imported to Figma or committed as binary assets; actual composition and native pixel fidelity pending.
 - Prepared docs/UI_HUD_B_R04_CORRECTION_DRAFT_2026-09-29.md: bounded desktop changes, independent current/local token cues, mobile integration, component/state inventory and visual acceptance checks. DRAFT only; not applied or user-approved. No blocked Figma retries.
 - Recovered and inspected enlarged user screenshot image(1).png (file_00000000d6b48207b2101e1adbf5e207). This supersedes the earlier 22% overview for desktop visual inspection.
 - World, five portrait crops and minimap visibly render. Faces are recognizable and not grossly clipped in this screenshot. Small text is readable at the supplied image scale; no overlap observed among top clusters.
@@ -44,6 +46,7 @@ Updated 2026-09-29, Chat 05. B “Ngọc sáng” is user-selected direction, no
 - Client implemented, runtime/QA verified and production visual fidelity verified remain separate and unclaimed.
 
 ### Handoff
+- Resume from the preparation pack after evidence that Figma access/quota changed; construct/review actual editable anchors before approval. Independent preparation in this pass is complete; no expansion into remaining gameplay screens while anchor gate is blocked.
 - Chat 05: apply the bounded desktop corrections when quota permits; integrate already-imported art into mobile; inspect actual resulting frames and obtain explicit anchor approval.
 - Chat 06: no implementation handoff yet; H094 requires approved anchors and a versioned bundle first. H095 performance work is separate.
 - Chat 07: runtime/responsive/performance verification after implementation.
