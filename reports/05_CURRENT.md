@@ -7,6 +7,7 @@
 Updated 2026-09-29, Chat 05. B “Ngọc sáng” is user-selected direction, not approval of the actual anchor.
 
 ### Changed
+- Prepared docs/UI_HUD_B_R04_CORRECTION_DRAFT_2026-09-29.md: bounded desktop changes, independent current/local token cues, mobile integration, component/state inventory and visual acceptance checks. DRAFT only; not applied or user-approved. No blocked Figma retries.
 - Recovered and inspected enlarged user screenshot image(1).png (file_00000000d6b48207b2101e1adbf5e207). This supersedes the earlier 22% overview for desktop visual inspection.
 - World, five portrait crops and minimap visibly render. Faces are recognizable and not grossly clipped in this screenshot. Small text is readable at the supplied image scale; no overlap observed among top clusters.
 - Review findings below are design-stage corrections, not a production audit or implemented fixes.
