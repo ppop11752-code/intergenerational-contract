@@ -3,10 +3,14 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-**H094 OPEN — two exploratory HUD concepts presented; awaiting user direction selection.**
-Updated by Chat 05 on 2026-09-29. No new Figma/design approval or implementation authorization.
+**H094 OPEN — user selected B (Ngọc sáng); editable Figma HUD draft exists, raster rendering BLOCKED.**
+Updated by Chat 05 on 2026-09-29. Direction selection only; no Figma anchor approval or implementation authorization.
 
 ### Changed
+- User selected B with “B hơn” on 2026-09-29. This locks exploratory direction, not final screen approval.
+- Created canonical master https://www.figma.com/design/qfSWFHfHAsuYut2fl2sZb6 ; page 0:1; editable desktop draft frame 5:2 (1440×810), 17 text nodes. Two palette collections (3:2, 3:3) contain 7 primitives + 7 aliases. Components/variants not yet built.
+- Created clean environment image separately in conversation. Attempted raster import failed visual verification: large payload returned HTTP 413; smaller payload exceeded code limit of 50,000 characters; bounded thumbnail createImage returned a hash but both initial and corrected Figma screenshots show missing background/minimap image. Do not treat hash return as image-import success. Stop this import path pending supported asset ingestion.
+- Draft contains numbered portrait placeholders, not approved chibi assets. ART-BLOCKED; draft is not ready for user anchor signoff. No client changes.
 - Latest user instruction: “thôi dựa vào chữ đi, ảnh màn chơi chính không có ổn lắm”. Proceed from approved written decisions; prior missing-image request no longer blocks concept exploration. Existence of a previously approved screenshot was not established and must not be assumed.
 - Presented two raster concept previews in Chat 05 on the same desktop World/HUD composition: A “Mộc ấm” (dark walnut plaques, warm roofs, richly textured green world); B “Ngọc sáng” (parchment plaques, deep jade phase plaque, cool roofs, reduced ground texture).
 - Both preserve world-first composition, central civic plaza, separated floating macro clusters, lowered phase/timer, six left portrait tokens, informational upper-right minimap, Chronicle/settings and zoom controls.
@@ -21,7 +25,7 @@ Updated by Chat 05 on 2026-09-29. No new Figma/design approval or implementation
 - Historical docs/UI_PRODUCTION_VISUAL_FIDELITY_AUDIT_2026-09-08.md.
 
 ### Impact
-User selects direction next; then build selected direction as editable Figma anchors with separate explicit approval.
+B is selected. Complete editable Figma anchors and asset ingestion before requesting separate explicit screen approval.
 Do not treat generated scene objects, portrait identity markers, illustrative values or decoration as new gameplay requirements. No gameplay, timers, protocol or server semantics changed.
 
 ### Verified
@@ -32,11 +36,11 @@ Do not treat generated scene objects, portrait identity markers, illustrative va
 
 ### Unverified
 Current production before-state, live Figma access/quota, motion, mobile composition, accessibility/contrast measurements, performance, editable component structure and production-scale assets.
-No selected direction, approved new Figma anchors, versioned Figma extraction bundle, client implementation or new QA/production visual signoff.
+B direction selected; no approved new Figma anchors, versioned Figma extraction bundle, client implementation or new QA/production visual signoff.
 
 ### Handoff
-- User: choose A/B or request specific adjustments to the previews.
-- Chat 05: after selection, construct editable Figma design and obtain actual anchor approval. Concept selection is not anchor approval. Capture production before-state separately before implementation comparison.
+- User: B choice recorded; no additional choice needed now.
+- Chat 05: resolve supported raster ingestion, replace portrait placeholders and complete editable Figma design before actual anchor approval. Concept selection is not anchor approval. Capture production before-state separately before implementation comparison.
 - Chat 06: wait for approved anchors and versioned implementation handoff; H095 performance profiling stays separate.
 - Chat 07: verify functional/responsive/performance after implementation.
 - Chat 00: keep H094 OPEN and preserve four distinct approval/implementation/QA/production-fidelity levels.
@@ -44,4 +48,4 @@ No selected direction, approved new Figma anchors, versioned Figma extraction bu
 ### Open Issues
 - H092 historical visual-fidelity FAIL unresolved; no fresh runtime audit.
 - Final replacement art is not production-approved.
-- H094 selection, Figma anchor approval, versioned bundle and implementation handoff remain outstanding.
+- H094 Figma asset ingestion, anchor completion/approval, versioned bundle and implementation handoff remain outstanding; direction selection is complete.
