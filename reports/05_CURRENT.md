@@ -7,6 +7,10 @@
 Updated by Chat 05 on 2026-09-29. Direction selection only; no Figma anchor approval or implementation authorization.
 
 ### Changed
+- Continuation on 2026-09-29: tested supported figma_upload_assets route targeting 5:2. Full-resolution PNG POST failed HTTP 413; same-dimension JPEG raw POST failed HTTP 405; preferred multipart JPEG POST to a fresh single-use URL also failed HTTP 405. Stop further upload retries from this path. Cause beyond returned HTTP responses is unverified.
+- Read-back of frame 5:2 confirms fills=[]; missing background is real, not merely a screenshot artifact. Existing HUD children remain present.
+- Generated a five-person anime/chibi portrait strip in conversation for upcoming Turn Track replacement; not imported, not user-approved, not production-ready. Original clean world background is also available in conversation.
+- Browser fallback requires explicit user permission under the browser tool's plugin-fallback rule; no browser session initialized. Next action proposed: open existing UI Master and attempt supported editor image import, then verify actual frame.
 - User selected B with “B hơn” on 2026-09-29. This locks exploratory direction, not final screen approval.
 - Created canonical master https://www.figma.com/design/qfSWFHfHAsuYut2fl2sZb6 ; page 0:1; editable desktop draft frame 5:2 (1440×810), 17 text nodes. Two palette collections (3:2, 3:3) contain 7 primitives + 7 aliases. Components/variants not yet built.
 - Created clean environment image separately in conversation. Attempted raster import failed visual verification: large payload returned HTTP 413; smaller payload exceeded code limit of 50,000 characters; bounded thumbnail createImage returned a hash but both initial and corrected Figma screenshots show missing background/minimap image. Do not treat hash return as image-import success. Stop this import path pending supported asset ingestion.
@@ -40,7 +44,7 @@ B direction selected; no approved new Figma anchors, versioned Figma extraction 
 
 ### Handoff
 - User: B choice recorded; no additional choice needed now.
-- Chat 05: resolve supported raster ingestion, replace portrait placeholders and complete editable Figma design before actual anchor approval. Concept selection is not anchor approval. Capture production before-state separately before implementation comparison.
+- Chat 05: await permission for browser fallback after upload-route failures; then resolve raster ingestion, replace portrait placeholders and complete editable Figma design before actual anchor approval. Concept selection is not anchor approval. Capture production before-state separately before implementation comparison.
 - Chat 06: wait for approved anchors and versioned implementation handoff; H095 performance profiling stays separate.
 - Chat 07: verify functional/responsive/performance after implementation.
 - Chat 00: keep H094 OPEN and preserve four distinct approval/implementation/QA/production-fidelity levels.
