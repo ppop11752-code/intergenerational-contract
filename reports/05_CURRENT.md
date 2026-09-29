@@ -3,54 +3,52 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-**H094 OPEN — user selected B (Ngọc sáng); editable Figma HUD draft exists, raster rendering BLOCKED.**
-Updated by Chat 05 on 2026-09-29. Direction selection only; no Figma anchor approval or implementation authorization.
+**H094 OPEN — B selected; editable desktop HUD corrected and two mobile layout studies created. ART-BLOCKED; not ready for final anchor approval.**
+Updated 2026-09-29, Chat 05.
 
 ### Changed
-- User authorized browser fallback (“ok mở đi”) on 2026-09-29. Opened exact canonical master URL in cloud browser; page displayed “Site Unavailable — Unable to access this site”. One reload returned the same state. Editor was never reached, no browser edits/uploads performed. This is an observed access failure, not established bot detection or a general Figma outage. Browser fallback currently BLOCKED; do not ask for the same permission again.
-- Continuation on 2026-09-29: tested supported figma_upload_assets route targeting 5:2. Full-resolution PNG POST failed HTTP 413; same-dimension JPEG raw POST failed HTTP 405; preferred multipart JPEG POST to a fresh single-use URL also failed HTTP 405. Stop further upload retries from this path. Cause beyond returned HTTP responses is unverified.
-- Read-back of frame 5:2 confirms fills=[]; missing background is real, not merely a screenshot artifact. Existing HUD children remain present.
-- Generated a five-person anime/chibi portrait strip in conversation for upcoming Turn Track replacement; not imported, not user-approved, not production-ready. Original clean world background is also available in conversation.
-- Browser fallback requires explicit user permission under the browser tool's plugin-fallback rule; no browser session initialized. Next action proposed: open existing UI Master and attempt supported editor image import, then verify actual frame.
-- User selected B with “B hơn” on 2026-09-29. This locks exploratory direction, not final screen approval.
-- Created canonical master https://www.figma.com/design/qfSWFHfHAsuYut2fl2sZb6 ; page 0:1; editable desktop draft frame 5:2 (1440×810), 17 text nodes. Two palette collections (3:2, 3:3) contain 7 primitives + 7 aliases. Components/variants not yet built.
-- Created clean environment image separately in conversation. Attempted raster import failed visual verification: large payload returned HTTP 413; smaller payload exceeded code limit of 50,000 characters; bounded thumbnail createImage returned a hash but both initial and corrected Figma screenshots show missing background/minimap image. Do not treat hash return as image-import success. Stop this import path pending supported asset ingestion.
-- Draft contains numbered portrait placeholders, not approved chibi assets. ART-BLOCKED; draft is not ready for user anchor signoff. No client changes.
-- Latest user instruction: “thôi dựa vào chữ đi, ảnh màn chơi chính không có ổn lắm”. Proceed from approved written decisions; prior missing-image request no longer blocks concept exploration. Existence of a previously approved screenshot was not established and must not be assumed.
-- Presented two raster concept previews in Chat 05 on the same desktop World/HUD composition: A “Mộc ấm” (dark walnut plaques, warm roofs, richly textured green world); B “Ngọc sáng” (parchment plaques, deep jade phase plaque, cool roofs, reduced ground texture).
-- Both preserve world-first composition, central civic plaza, separated floating macro clusters, lowered phase/timer, six left portrait tokens, informational upper-right minimap, Chronicle/settings and zoom controls.
-- These are image-generated explorations with illustrative numbers, not production assets or editable Figma frames. No client changes.
-- H094 supersedes H092's old direct-correction routing and H093 visual correction.
+- User selected B “Ngọc sáng” (“B hơn”), following instruction to proceed from written approved specs. This is direction selection only.
+- Canonical Figma master: https://www.figma.com/design/qfSWFHfHAsuYut2fl2sZb6 ; page 0:1.
+- Desktop 5:2, B-r02, 1440×810: phase center corrected to x=720; actor/Chronicle labels use Noto Sans Bold; settings, home and Government glyphs replaced by editable vector icons. Government token distinguished in red.
+- Mobile 10:2 (collapsed) and 10:43 (expanded), 390×844: Round/Year + Phase/Timer + Population remain visible; inflation and public debt/ceiling shown in secondary layer; horizontal token rail, reachable Chronicle/settings and zoom controls.
+- Mobile frames are static layout studies, not interactive prototypes. Numbered tokens and map slot remain explicit placeholders.
+- The earlier automatic approval review usage-limit failure did not execute edits. Current continuation read existing state and then successfully applied the described edits.
+- No client, server, gameplay or timer changes.
 
 ### Source
-- Latest direct user instruction in Chat 05, 2026-09-29 (quoted above), overrides the missing-image prerequisite for exploration.
-- docs/UI_HUD_APPROVED_V1.md; docs/UI_ROOM_APPROVED_V1.md.
-- docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md.
+- User decisions in Chat 05 on 2026-09-29: proceed from text; select B; authorize browser fallback.
+- docs/UI_HUD_APPROVED_V1.md; docs/UI_ROOM_APPROVED_V1.md; docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md.
 - docs/UI_VISUAL_REDESIGN_WORKFLOW_V2.md; handoffs/H-20260908-094-05-FIGMA-VISUAL-REDESIGN-PROGRAM.md.
-- Historical docs/UI_PRODUCTION_VISUAL_FIDELITY_AUDIT_2026-09-08.md.
+- H092 historical audit retained; H093 direct visual correction routing superseded by H094.
 
 ### Impact
-B is selected. Complete editable Figma anchors and asset ingestion before requesting separate explicit screen approval.
-Do not treat generated scene objects, portrait identity markers, illustrative values or decoration as new gameplay requirements. No gameplay, timers, protocol or server semantics changed.
+Continue selected B as editable anchors; no Chat 06 visual implementation handoff until actual frames are approved.
+Generated decoration/illustrative data is not gameplay authority. Maintain four separate levels: user-approved direction/spec, implemented client, runtime QA, production visual fidelity.
 
 ### Verified
-- Current report/canonical written sources and eight Chat-05 handoff statuses checked on GitHub; H094 is the only OPEN task.
-- Both generated previews visually inspected in conversation: same major composition, distinct chrome palettes and environmental texture density; map remains dominant.
-- Concept limitations: decorative mill/fields are not new gameplay facilities; status-specific house architecture is not yet specified by these images; turn identity/marker coherence needs correction in editable design; small strokes/portraits do not establish pixel-perfect production rendering.
-- Historical Figma test only: https://www.figma.com/design/xBiqlKUYTo4IfGM67Zaq6y?node-id=2-2, frame 2:2/button 2:4; not the master.
+- Direct Figma read confirms desktop 5:2 existed unchanged before resuming; write result returned changed/new node IDs.
+- Desktop and both mobile screenshots inspected. Mobile direct children are within 390×844 bounds. This is basic layout verification, not full responsive/accessibility QA.
+- Desktop phase centered horizontally.
+- Existing foundations: two palette collections, seven primitive colors and seven semantic aliases.
+- Background is still absent (desktop fills=[]). Minimap currently does not render actual map information, and therefore does not meet final approved minimap requirements.
+- Current plugin reads/native-node writes succeed. No full design-system components/variants created.
 
 ### Unverified
-Current production before-state, live Figma access/quota, motion, mobile composition, accessibility/contrast measurements, performance, editable component structure and production-scale assets.
-B direction selected; no approved new Figma anchors, versioned Figma extraction bundle, client implementation or new QA/production visual signoff.
+- Image import, real informational minimap, chibi portrait integration and final decorative fidelity.
+- Mobile art/composition over actual world, interactive expansion, focus states, screen-reader behavior, motion, contrast measurements and performance.
+- Landing/Lobby/Room anchors, full asset set, versioned Figma-derived bundle, client implementation and new QA/production signoff.
+- Historic production before-state has not been newly captured.
 
 ### Handoff
-- User: B choice recorded; no additional choice needed now.
-- Chat 05: browser fallback authorized but blocked by Site Unavailable; resolve asset ingestion when a supported access path is available, replace portrait placeholders and complete editable Figma design before actual anchor approval. Concept selection is not anchor approval. Capture production before-state separately before implementation comparison.
-- Chat 06: wait for approved anchors and versioned implementation handoff; H095 performance profiling stays separate.
-- Chat 07: verify functional/responsive/performance after implementation.
-- Chat 00: keep H094 OPEN and preserve four distinct approval/implementation/QA/production-fidelity levels.
+- Chat 05: complete assets and actual map/portrait rendering before final anchor review; then extend selected direction to other core anchors.
+- Browser fallback already authorized: do not request the same permission again.
+- Chat 06 waits for explicit anchor approval and versioned handoff. H095 performance work remains separate.
+- Chat 07 verifies functional/responsive/performance after implementation.
+- Chat 00: keep H094 OPEN; do not equate layout-study progress with finished visuals.
 
 ### Open Issues
-- H092 historical visual-fidelity FAIL unresolved; no fresh runtime audit.
-- Final replacement art is not production-approved.
-- H094 Figma asset ingestion, anchor completion/approval, versioned bundle and implementation handoff remain outstanding; direction selection is complete.
+- ART-BLOCKED: direct createImage hash did not persist/render; initial payload HTTP 413, then 50,000-character code limit. Supported upload_assets PNG POST returned 413; JPEG raw and multipart POSTs returned 405. Do not repeat those paths without a concrete change.
+- Authorized cloud-browser fallback opened exact master URL but returned “Site Unavailable — Unable to access this site”; one reload unchanged. No editor reached or browser changes made. Cause unverified; not established bot detection or general Figma outage.
+- Clean B world image and five-person portrait strip were generated in conversation but not imported or production-approved.
+- Placeholder minimaps/portraits are not accepted production substitutions.
+- H092 historical visual-fidelity FAIL remains unresolved.
