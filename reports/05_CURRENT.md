@@ -31,6 +31,8 @@ Continue selected B as editable anchors; no Chat 06 visual implementation handof
 Generated decoration/illustrative data is not gameplay authority. Maintain four separate levels: user-approved direction/spec, implemented client, runtime QA, production visual fidelity.
 
 ### Verified
+- User screenshot received 2026-09-29 ~22:01 (image.png, file_00000000ac9c8208b41aefb270793fef) visually confirms desktop B-r03 background, five portrait tokens and minimap image render in the actual Figma editor. Both mobile frames still show placeholders. Editor visibly says “MCP Out of calls”. Image was recovered via uploaded file ID after original scratch path was absent.
+- Screenshot is a whole-canvas view at 22% zoom: sufficient to confirm artwork presence and broad composition, insufficient to sign off small text, exact portrait crops, pixel rendering or detailed visual fidelity. No user anchor approval inferred.
 - Direct Figma read confirms desktop 5:2 existed unchanged before resuming; write result returned changed/new node IDs.
 - Desktop and both mobile screenshots inspected. Mobile direct children are within 390×844 bounds. This is basic layout verification, not full responsive/accessibility QA.
 - Desktop phase centered horizontally.
