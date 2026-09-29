@@ -3,46 +3,45 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-**H094 OPEN — source reconciliation started; MISSING-VISUAL-SOURCE for previously approved Room/HUD visual references.**
-Updated by Chat 05 on 2026-09-29. No new design approval or visual signoff.
+**H094 OPEN — two exploratory HUD concepts presented; awaiting user direction selection.**
+Updated by Chat 05 on 2026-09-29. No new Figma/design approval or implementation authorization.
 
 ### Changed
-- Read current report, H094, low-cost workflow, approved HUD/Room specs, direct user design decisions and H092 findings.
-- Checked all eight handoff filenames addressed to Chat 05: seven DONE; H094 is the only OPEN task.
-- Current repository tree contains the v1 runtime art pack but no identifiable committed approved screenshot baseline or Figma export. H092 also records absence of an approved screenshot baseline in its available release evidence.
-- Request only the previously approved Room/Main Gameplay HUD image or its exact Figma frame link. Do not reconstruct missing visual authority from prose or use rejected runtime assets as approved references.
-- H094 supersedes H092's old direct-correction routing and H093 visual correction. Preserve H092 findings as historical audit evidence, not a fresh production inspection.
+- Latest user instruction: “thôi dựa vào chữ đi, ảnh màn chơi chính không có ổn lắm”. Proceed from approved written decisions; prior missing-image request no longer blocks concept exploration. Existence of a previously approved screenshot was not established and must not be assumed.
+- Presented two raster concept previews in Chat 05 on the same desktop World/HUD composition: A “Mộc ấm” (dark walnut plaques, warm roofs, richly textured green world); B “Ngọc sáng” (parchment plaques, deep jade phase plaque, cool roofs, reduced ground texture).
+- Both preserve world-first composition, central civic plaza, separated floating macro clusters, lowered phase/timer, six left portrait tokens, informational upper-right minimap, Chronicle/settings and zoom controls.
+- These are image-generated explorations with illustrative numbers, not production assets or editable Figma frames. No client changes.
+- H094 supersedes H092's old direct-correction routing and H093 visual correction.
 
 ### Source
-- handoffs/H-20260908-094-05-FIGMA-VISUAL-REDESIGN-PROGRAM.md, required sequence step 1.
-- docs/UI_VISUAL_REDESIGN_WORKFLOW_V2.md, low-cost revision and Phase 2 missing-source rule.
+- Latest direct user instruction in Chat 05, 2026-09-29 (quoted above), overrides the missing-image prerequisite for exploration.
 - docs/UI_HUD_APPROVED_V1.md; docs/UI_ROOM_APPROVED_V1.md.
 - docs/UI_USER_DESIGN_DECISIONS_2026-09-07.md.
-- docs/UI_PRODUCTION_VISUAL_FIDELITY_AUDIT_2026-09-08.md.
-- GitHub default-branch handoff directory and recursive tree read on 2026-09-29; no legacy ZIP substituted for current truth.
+- docs/UI_VISUAL_REDESIGN_WORKFLOW_V2.md; handoffs/H-20260908-094-05-FIGMA-VISUAL-REDESIGN-PROGRAM.md.
+- Historical docs/UI_PRODUCTION_VISUAL_FIDELITY_AUDIT_2026-09-08.md.
 
 ### Impact
-Preserve bright 3/4 pixel-fantasy world, anime/chibi portrait direction, restrained dark/parchment/wood chrome, floating HUD clusters, lowered central phase/timer, independent left Turn Track and always-informational upper-right minimap. Government/Home navigation stays in minimap. No gameplay or client changes.
-Two alternatives must use the same Main Gameplay HUD composition; user selects direction before editable Figma construction. Actual Figma anchors then require separate approval before Chat 06 implementation.
+User selects direction next; then build selected direction as editable Figma anchors with separate explicit approval.
+Do not treat generated scene objects, portrait identity markers, illustrative values or decoration as new gameplay requirements. No gameplay, timers, protocol or server semantics changed.
 
 ### Verified
-Current canonical text sources and handoff statuses checked directly on GitHub. Repository image-path inventory checked; this is not visual inspection of those assets.
-Historical capability evidence only: Chat 00's 2026-09-08 small editable Figma test at https://www.figma.com/design/xBiqlKUYTo4IfGM67Zaq6y?node-id=2-2 (frame 2:2, button 2:4). It is not a canonical master or product approval.
+- Current report/canonical written sources and eight Chat-05 handoff statuses checked on GitHub; H094 is the only OPEN task.
+- Both generated previews visually inspected in conversation: same major composition, distinct chrome palettes and environmental texture density; map remains dominant.
+- Concept limitations: decorative mill/fields are not new gameplay facilities; status-specific house architecture is not yet specified by these images; turn identity/marker coherence needs correction in editable design; small strokes/portraits do not establish pixel-perfect production rendering.
+- Historical Figma test only: https://www.figma.com/design/xBiqlKUYTo4IfGM67Zaq6y?node-id=2-2, frame 2:2/button 2:4; not the master.
 
 ### Unverified
-Original approved Room/HUD illustration; current live-production before-state; current Figma access/quota and production-scale throughput.
-No two visual concepts, selected new direction, approved editable anchors, replacement production assets or post-redesign visual/performance acceptance produced in this pass.
-Four levels remain distinct: existing textual user-approved design; prior reported client implementation; prior reported QA; failed historical production visual-fidelity assessment. None establishes redesigned UI completion.
+Current production before-state, live Figma access/quota, motion, mobile composition, accessibility/contrast measurements, performance, editable component structure and production-scale assets.
+No selected direction, approved new Figma anchors, versioned Figma extraction bundle, client implementation or new QA/production visual signoff.
 
 ### Handoff
-- Chat 05: H094 remains OPEN. Obtain missing Room/HUD visual reference, complete source reconciliation and representative before-state evidence, then present two same-HUD alternatives outside Figma.
-- User: provide only the approved Room/HUD image or exact Figma frame link needed for source comparison.
-- Chat 06: no new visual implementation authorization; H095 performance profiling remains separate.
-- Chat 07: functional/responsive/performance verification after approved implementation.
-- Chat 00: coordinate remaining gates; old H093 direct visual correction remains superseded.
+- User: choose A/B or request specific adjustments to the previews.
+- Chat 05: after selection, construct editable Figma design and obtain actual anchor approval. Concept selection is not anchor approval. Capture production before-state separately before implementation comparison.
+- Chat 06: wait for approved anchors and versioned implementation handoff; H095 performance profiling stays separate.
+- Chat 07: verify functional/responsive/performance after implementation.
+- Chat 00: keep H094 OPEN and preserve four distinct approval/implementation/QA/production-fidelity levels.
 
 ### Open Issues
-- MISSING-VISUAL-SOURCE: approved Room/Main Gameplay HUD illustration not available in inspected repository sources or this turn's visible images.
-- Historical H092 visual-fidelity FAIL remains unresolved; no fresh runtime audit performed.
-- Final replacement art remains unapproved; placeholder pack cannot establish production approval.
-- H094 direction selection, Figma anchor approval, versioned extraction bundle and implementation handoff remain outstanding.
+- H092 historical visual-fidelity FAIL unresolved; no fresh runtime audit.
+- Final replacement art is not production-approved.
+- H094 selection, Figma anchor approval, versioned bundle and implementation handoff remain outstanding.
