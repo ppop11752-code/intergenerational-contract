@@ -7,6 +7,7 @@
 Updated 2026-09-29, Chat 05.
 
 ### Changed
+- Prepared IC-Ngoc-Sang-Figma-Assets.zip (2026-09-29): original clean B world PNG + original five-person portrait strip PNG, Vietnamese import instructions and SHA-256 manifest. ZIP integrity checked. Bundle delivered for one-time user import into the existing master; no need to position or resize images manually. No further failed-path retries or new empty frames in this pass.
 - User selected B “Ngọc sáng” (“B hơn”), following instruction to proceed from written approved specs. This is direction selection only.
 - Canonical Figma master: https://www.figma.com/design/qfSWFHfHAsuYut2fl2sZb6 ; page 0:1.
 - Desktop 5:2, B-r02, 1440×810: phase center corrected to x=720; actor/Chronicle labels use Noto Sans Bold; settings, home and Government glyphs replaced by editable vector icons. Government token distinguished in red.
@@ -40,6 +41,7 @@ Generated decoration/illustrative data is not gameplay authority. Maintain four 
 - Historic production before-state has not been newly captured.
 
 ### Handoff
+- User assist needed to unblock art: unzip supplied bundle and drag its two PNGs onto a blank area of the existing master page. Tell Chat 05 after save; Chat 05 then inspects actual image nodes/hashes and continues composition. This import is not final visual approval.
 - Chat 05: complete assets and actual map/portrait rendering before final anchor review; then extend selected direction to other core anchors.
 - Browser fallback already authorized: do not request the same permission again.
 - Chat 06 waits for explicit anchor approval and versioned handoff. H095 performance work remains separate.
