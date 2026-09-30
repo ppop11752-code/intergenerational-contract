@@ -7,6 +7,7 @@
 Updated 2026-09-30, Chat 05. B direction selected; actual revised anchors NOT user-approved.
 
 ### Changed
+- User manually imported `seal-growth.svg` into the existing Figma master. Screenshot received 2026-09-30 (file_0000000094c8821187ff7fc93f07a843): shows the seal icon on page `04 — CORE SCREENS`, positioned on blank canvas outside the desktop HUD frame as directed. Asset import is complete; no evidence it has been inserted into a Landing frame or that any frame was changed.
 - Created concrete offline preview for Landing, Lobby, Room/HUD and Logo/Icon with distinct compact compositions and fixture state controls.
 - Created two editable SVG logo candidates and fourteen SVG icons. User said “hướng nào cũng được”; Chat 05 selected contract/sprout seal for refinement. Exact SVG/wordmark lockup and Landing anchor remain unapproved.
 - Generated separate transparent residence and tree sprite studies. These are new studies, not exact extraction from existing world image and not production assets.
