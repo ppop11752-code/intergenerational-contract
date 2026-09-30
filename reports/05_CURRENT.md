@@ -3,12 +3,12 @@
 ## AI SPECIALIST REPORT
 
 ### Status
-**H094 OPEN — external B design preview and asset-study batch delivered. User logo choice/feedback pending; actual Figma edits remain blocked by last observed Starter MCP limit.**
+**H094 OPEN — external B design preview delivered; user delegated logo direction and Chat 05 selected “Khế ước · Mầm sống”. Actual Figma anchors still need construction/review.**
 Updated 2026-09-30, Chat 05. B direction selected; actual revised anchors NOT user-approved.
 
 ### Changed
 - Created concrete offline preview for Landing, Lobby, Room/HUD and Logo/Icon with distinct compact compositions and fixture state controls.
-- Created two editable SVG logo candidates and fourteen SVG icons; recommend contract/sprout seal, not yet user-selected.
+- Created two editable SVG logo candidates and fourteen SVG icons. User said “hướng nào cũng được”; Chat 05 selected contract/sprout seal for refinement. Exact SVG/wordmark lockup and Landing anchor remain unapproved.
 - Generated separate transparent residence and tree sprite studies. These are new studies, not exact extraction from existing world image and not production assets.
 - Reviewed screenshots, fixed missing background rendering and minimap clipping at 768 px; compact breakpoint 900 px.
 - Delivered IC-Ngoc-Sang-Design-Draft-2026-09-30.zip (38 files), saved artifact libfile_bd60d99d53f88191ae55c22244d41950. Detailed evidence/provenance: docs/UI_OUTSIDE_FIGMA_REVIEW_B_2026-09-30.md.
@@ -36,7 +36,7 @@ Updated 2026-09-30, Chat 05. B direction selected; actual revised anchors NOT us
 - Previously reviewed user screenshot confirms Figma desktop world/portraits/minimap render; mobile Figma art integration still pending.
 
 ### Unverified
-- User-approved design: existing written specs + selected B direction only; new logos/actual anchor frames pending.
+- User-approved design: existing written specs + selected B art direction; user-authorized logo concept direction is contract/sprout seal. Exact asset and Figma anchors are still unapproved.
 - Client implemented: new redesign not implemented.
 - Runtime/QA verified: production game not tested by this pass; local preview checks are not game QA.
 - Production visual fidelity verified: no new signoff; H092 historical FAIL unresolved.
@@ -53,5 +53,5 @@ Updated 2026-09-30, Chat 05. B direction selected; actual revised anchors NOT us
 ### Open Issues
 - Last observed Figma Starter MCP quota failure; reset unknown. No automatic retries or bypass. Authorized browser fallback previously failed with Site Unavailable.
 - ART-BLOCKED for production: terrain/roads/water, Government/plaza, architectural variants, identity treatment and ambience remain incomplete; two sprite samples are not a complete kit.
-- Logo not chosen; fonts are preview fallbacks; QR deliberately placeholder; minimap is a schematic.
+- Logo concept selected; vector refinement pending. Fonts are preview fallbacks; QR deliberately placeholder; minimap is schematic.
 - Known source art is already imported to Figma (12:3 portraits, 12:4 world). Do not ask user to re-import it.
