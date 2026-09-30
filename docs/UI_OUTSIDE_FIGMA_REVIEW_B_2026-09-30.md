@@ -32,9 +32,12 @@ No production app was implemented. Action buttons explain intended behavior; the
 - Both new sprite files have RGBA alpha ranging 0–255. Source pixels not post-edited.
 - Archive integrity checked.
 
+## Direction selected after review
+On 2026-09-30 the user delegated choice with “hướng nào cũng được”. Chat 05 selected **Khế ước · Mầm sống** as the direction to refine; source decision: docs/UI_LOGO_DIRECTION_DECISION_2026-09-30.md. This does not approve the exact SVG or Landing anchor. The preview labels this direction and retains the cycle/hourglass as reference.
+
 ## Limitations / corrections still needed
 - This is not an actual Figma screenshot or user anchor approval. Existing master nodes are unchanged.
-- Logo choice awaits user input. Georgia/Arial are preview fallbacks; final typography not locked.
+- Logo concept direction is selected; exact SVG paths/wordmark lockup remain unapproved. Georgia/Arial are preview fallbacks; final typography not locked.
 - Icons are vector drafts, not proven final pixel rasterization. Native pixel scale across backgrounds, sprites and portraits remains ART-BLOCKED for production.
 - Lobby uses repeated portraits to test twelve items; Lobby-specific identity set remains missing.
 - QR is an explicitly labeled placeholder, not a functioning invitation code.
